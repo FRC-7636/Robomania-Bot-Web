@@ -68,7 +68,7 @@
                                         <md-list-item>沒有即將在 2 週內開始的會議</md-list-item>
                                     {% else %}
                                         {% for meeting in upcoming_meetings %}
-                                            <md-list-item type="link" href="{% url 'meeting_info' meeting.id %}">
+                                            <md-list-item type="link" target="_blank" href="{% url 'meeting_info' meeting.id %}">
                                                 <div class="meeting-text" slot="headline">{{ meeting.name }}</div>
                                                 <div class="meeting-text" slot="supporting-text">開始於 {{ meeting.start_time|date:"Y-m-d H:i" }}</div>
                                                 <md-icon class="meeting-text" slot="end">open_in_new</md-icon>
@@ -90,7 +90,7 @@
                                         <md-list-item>沒有在 2 週內結束的會議</md-list-item>
                                     {% else %}
                                         {% for meeting in past_meetings %}
-                                            <md-list-item type="link" href="{% url 'meeting_info' meeting.id %}">
+                                            <md-list-item type="link" target="_blank" href="{% url 'meeting_info' meeting.id %}">
                                                 <div class="meeting-text" slot="headline">{{ meeting.name }}</div>
                                                 <div class="meeting-text" slot="supporting-text">結束於 {{ meeting.end_time|date:"Y-m-d H:i" }}</div>
                                                 <md-icon class="meeting-text" slot="end">open_in_new</md-icon>
