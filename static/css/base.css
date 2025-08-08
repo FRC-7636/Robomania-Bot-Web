@@ -3,10 +3,15 @@
     color: white;
 }
 
+md-icon {
+    font-family: 'Material Symbols Outlined';
+}
+
 :root {
     --md-sys-color-primary: rgb(17, 37, 96);
     --md-sys-color-secondary: rgb(30, 66, 166);
     --md-sys-color-error: rgb(218, 18, 18);
+    --md-list-container-color: rgba(0, 0, 0, 0);
 }
 
 html {
