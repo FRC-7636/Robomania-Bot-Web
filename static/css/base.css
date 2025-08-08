@@ -118,7 +118,7 @@ header {
     background-color: rgba(0, 0, 0, 0);
     cursor: pointer;
     opacity: 0;
-    transition: ease-in-out 0.2s;
+    transition: ease-in-out 0.1s;
 }
 
 .log-btn:hover {
