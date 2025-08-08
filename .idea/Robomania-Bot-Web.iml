@@ -24,7 +24,10 @@
     <option name="TEMPLATE_CONFIGURATION" value="Django" />
     <option name="TEMPLATE_FOLDERS">
       <list>
-        <option value="$MODULE_DIR$/../Robomania-Bot-Web\templates" />
+        <option value="$MODULE_DIR$/templates" />
+        <option value="$MODULE_DIR$/Auth/templates" />
+        <option value="$MODULE_DIR$/Panel/templates" />
+        <option value="$MODULE_DIR$/Meetings/templates" />
       </list>
     </option>
   </component>
