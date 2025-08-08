@@ -73,7 +73,7 @@ p {
     width: -webkit-fill-available;
 }
 
-#profile {
+#profile-panel {
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -81,7 +81,7 @@ p {
     background-color: rgba(50, 46, 186, 0.6);
 }
 
-#meetings {
+#meetings-panel {
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -89,7 +89,7 @@ p {
     background-color: rgba(50, 46, 186, 0.6);
 }
 
-#warning-points {
+#warning-points-panel {
     display: flex;
     flex-direction: column;
     flex: 1;
