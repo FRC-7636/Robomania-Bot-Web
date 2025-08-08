@@ -1,0 +1,36 @@
+#register-form-div {
+    margin: 1.2em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+#register-form-inner-div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+}
+
+#register-form-text-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#register-form-avatar {
+    width: 10em;
+    height: 10em;
+    border-radius: 50%;
+    margin: 1em;
+}
+
+.register-input {
+    width: 30vw;
+    margin: 0.5em 1em;
+}

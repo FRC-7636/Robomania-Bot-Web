@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/Auth/register.css' %}">
+    <script src="{% static 'js/Auth/register.js' %}"></script>
+    <title>註冊</title>
+{% endblock %}
+
+{% block main_content %}
+    <div class="container" id="register-container">
+        <h1>完成你的個人資料</h1>
+        {% if error %}
+            <div style="display: flex; flex-direction: row; align-items: center; margin-bottom: 1.2em">
+                <span class="material-symbols-outlined" style="color: var(--md-sys-color-error)">error</span>
+                <span style="color: var(--md-sys-color-error)">&nbsp;{{ error }}</span>
+            </div>
+        {% endif %}
+        <md-divider inset></md-divider>
+        {% if user_info %}
+            <form action="/accounts/register/" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="avatar_url" value="{{ user_info.avatar_url }}">
+                <input type="hidden" name="discord_id" value="{{ user_info.discord_id }}">
+                <input type="hidden" name="email_address" value="{{ user_info.email_address }}">
+                <div id="register-form-div">
+                    <div id="register-form-inner-div">
+                        <div id="register-form-avatar-div">
+                            <img id="register-form-avatar" src="{{ user_info.avatar_url }}" alt="avatar">
+                        </div>
+                        <div id="register-form-text-div">
+                            <md-filled-text-field class="register-input" style="margin-top: 1em;" label="Discord ID"
+                                                  type="text" pattern="^[0-9]+$" name="fake_discord_id"
+                                                  value="{{ user_info.discord_id }}" disabled
+                                                  required></md-filled-text-field>
+                            <md-filled-text-field class="register-input" label="Email" type="email" name="fake_email_address"
+                                                  value="{{ user_info.email_address }}" disabled
+                                                  required></md-filled-text-field>
+                            <md-filled-text-field class="register-input" label="真實姓名" type="text" name="real_name"
+                                                  required></md-filled-text-field>
+                            <md-filled-text-field class="register-input" id="password-input" label="密碼"
+                                                  type="password" name="password"
+                                                  minlength="6" required></md-filled-text-field>
+                            <md-filled-text-field class="register-input" id="confirm-password-input"
+                                                  style="margin-bottom: 1em;" label="確認密碼"
+                                                  type="password" name="confirm_password" minlength="6"
+                                                  required></md-filled-text-field>
+                        </div>
+                    </div>
+                    <md-filled-button style="margin-bottom: 1em; width: 30vw;">
+                        <div style="display: flex; align-items: center; justify-content: center">
+                            <span class="material-symbols-outlined">person_add</span>
+                            &nbsp;註冊
+                        </div>
+                    </md-filled-button>
+                </div>
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,4 @@
+.venv
+user_attachments
+KEYS.env
+db.sqlite3
