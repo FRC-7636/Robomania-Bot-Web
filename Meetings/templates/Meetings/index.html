@@ -3,9 +3,95 @@
 
 {% block head %}
     <link rel="stylesheet" href="{% static 'css/Meetings/index.css' %}">
+    {% if meeting.description %}
+        <!-- Inject description as HTML content -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js" defer></script>
+        <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let converter = new showdown.Converter();
+            // Convert the Markdown description to HTML
+            document.getElementById("meeting-description").innerHTML = converter.makeHtml(`{{ meeting.description }}`);
+        })
+        </script>
+    {% endif %}
     <title>會議「{{ meeting.name }}」的資訊</title>
 {% endblock %}
 
 {% block main_content %}
-
+    <div class="soft-container" id="meeting-info-container">
+        <h1 style="margin: 0.3em 0;">會議「{{ meeting.name }}」的資訊</h1>
+        <div id="meeting-panel">
+            <div class="round-container" id="meeting-info-panel">
+                <div class="panel-title" id="meeting-info-title">
+                    <md-icon>event</md-icon>
+                    <span class="panel-title-text">會議資訊</span>
+                </div>
+                <div id="meeting-info-content-container">
+                <div class="meeting-info-content" id="meeting-info-content-1">
+                    <p><strong>名稱：</strong>{{ meeting.name }}</p>
+                    <div style="display: flex; align-items: center; height: min-content; margin-top: 1em;">
+                        <p style="margin: 0;"><strong>可請假：</strong></p>
+                        {% if meeting.can_absent %}
+                            <md-icon style="color: #60ed60;">check_circle</md-icon>
+                        {% else %}
+                            <md-icon style="color: #fd7474;">cancel</md-icon>
+                        {% endif %}
+                    </div>
+                    <div style="display: flex; align-items: center; height: min-content; margin-top: 1em;">
+                        <p style="margin: 0;"><strong>主持人：</strong></p>
+                        <div class="member-indicator">
+                            <img src="{{ meeting.host.avatar }}" alt="主持人頭像" class="member-avatar">
+                            <span class="member-name">
+                                {{ meeting.host.real_name }} ({{ meeting.host.discord_id }})
+                            </span>
+                        </div>
+                    </div>
+                    <p><strong>開始時間：</strong>{{ meeting.start_time|date:"Y/m/d H:i" }}</p>
+                    {% if meeting.end_time %}
+                        <p><strong>結束時間：</strong>{{ meeting.end_time|date:"Y/m/d H:i" }}</p>
+                    {% endif %}
+                    <p><strong>地點：</strong>{{ meeting.location }}</p>
+                </div>
+                {% if meeting.description %}
+                    <div class="meeting-info-content" id="meeting-info-content-2">
+                        <p><strong>說明：</strong></p>
+                        <div class="round-container inner-container" id="meeting-description">
+                            <!-- Description will be injected here as HTML -->
+                        </div>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+            <div class="round-container" id="meeting-actions-panel">
+                <div class="panel-title" id="meeting-actions-title">
+                    <md-icon>action_key</md-icon>
+                    <span class="panel-title-text">操作</span>
+                </div>
+                <div id="meeting-actions-content">
+                    <md-filled-button>
+                        <div style="display: flex; align-items: center; height: min-content;">
+                            <span class="material-symbols-outlined button-icon">
+                                assignment_add</span>
+                            提交假單
+                        </div>
+                    </md-filled-button>
+                    <md-divider></md-divider>
+                    <md-filled-button href="./edit/" {% if not can_edit %} disabled {% endif %}>
+                        <div style="display: flex; align-items: center; height: min-content;">
+                            <span class="material-symbols-outlined button-icon">
+                                edit</span>
+                            編輯會議
+                        </div>
+                    </md-filled-button>
+                    <md-filled-button href="./review_requests/" {% if not can_edit %} disabled {% endif %}>
+                        <div style="display: flex; align-items: center; height: min-content;">
+                            <span class="material-symbols-outlined button-icon">
+                                document_search</span>
+                            審核假單
+                        </div>
+                    </md-filled-button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

@@ -1,0 +1,104 @@
+#meeting-panel {
+    display: flex;
+    flex-direction: row;
+    width: -webkit-fill-available;
+    margin-top: 0.5em;
+}
+
+#meeting-info-panel {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: rgba(255, 255, 255, 0.25); /* Light background for contrast */
+    margin-right: 0.25em;
+}
+
+#meeting-info-content-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.meeting-info-content {
+    flex: 1;
+}
+
+#meeting-actions-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-items: center;
+    background-color: rgba(255, 255, 255, 0.25); /* Light background for contrast */
+    margin-left: 0.25em;
+}
+
+#meeting-actions-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+#meeting-actions-content md-filled-button, md-filled-tonal-button {
+    width: 100%;
+    margin: 0.5em;
+}
+
+.button-icon {
+    margin-right: 0.25em;
+    font-size: 1.3em;
+}
+
+#meeting-description {
+    max-height: 20em;
+    overflow: auto;
+    background-color: #8e8e8e;
+}
+
+#meeting-description h1 {
+    font-size: 1.75em;
+    margin: 0.4em 0;
+}
+
+#meeting-description h2 {
+    font-size: 1.5em;
+    margin: 0.4em 0;
+}
+
+#meeting-description h3 {
+    margin: 0.4em 0;
+}
+
+#meeting-description p {
+    margin: 0.2em 0;
+}
+
+#meeting-description ul ol {
+    margin: 0.2em 0;
+}
+
+#meeting-description img {
+    max-width: 100%;
+    height: auto;
+}
+
+.member-indicator {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.member-indicator .member-avatar {
+    width: 1.5em;
+    height: 1.5em;
+    border-radius: 50%;
+}
+
+.member-indicator .member-name {
+    margin-left: 0.2em;
+}
+
