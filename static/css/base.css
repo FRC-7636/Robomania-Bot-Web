@@ -56,6 +56,44 @@ header {
     width: 100%;
 }
 
+/* Style for panels */
+
+.soft-container {
+    padding-top: 70px; /* Adjust for header height */
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+.round-container {
+    border-radius: 10px;
+    padding: 0.5em;
+}
+
+.inner-container {
+    margin: 0.25em;
+}
+
+.panel-title {
+    display: flex;
+    flex-basis: auto;
+    align-items: center;
+    justify-content: center;
+}
+
+.panel-title-icon {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 40;
+    font-size: xx-large;
+}
+
+.panel-title-text {
+    font-size: 1.3em;
+    font-weight: bold;
+    margin-left: 0.2em;
+}
+
+/* End of panel styles */
+
 .header-img {
     width: 3em;
     height: 3em;
