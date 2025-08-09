@@ -19,6 +19,7 @@
     </content>
     <orderEntry type="jdk" jdkName="Python 3.13 (Robomania-Bot-Web)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="showdown" level="application" />
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_CONFIGURATION" value="Django" />
@@ -28,6 +29,7 @@
         <option value="$MODULE_DIR$/Auth/templates" />
         <option value="$MODULE_DIR$/Panel/templates" />
         <option value="$MODULE_DIR$/Meetings/templates" />
+        <option value="$MODULE_DIR$/Members/templates" />
       </list>
     </option>
   </component>
