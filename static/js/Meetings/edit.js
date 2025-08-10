@@ -66,4 +66,21 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("submit-button").addEventListener("click", function() {
         document.getElementById("meeting-form").submit();
     })
+
+    document.getElementById("delete-button").addEventListener("click", function() {
+        const confirmDelete = confirm("確定要刪除這個會議嗎？這個動作無法復原。");
+        if (confirmDelete) {
+            fetch(window.location.origin + "/meeting/" + document.getElementById("meeting-id").value + "/delete/", {
+                method: "DELETE",
+                headers: {"X-CSRFToken": document.getElementsByName("csrfmiddlewaretoken")[0].value},
+                mode: "same-origin",
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = window.location.origin;
+                } else {
+                    alert("刪除會議失敗，請稍後再試。");
+                }
+            })
+        }
+    })
 })

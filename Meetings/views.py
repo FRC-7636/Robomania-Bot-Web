@@ -1,5 +1,6 @@
 # coding=utf-8
 from django.contrib.auth.decorators import login_required, permission_required
+from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 import datetime
 from zoneinfo import ZoneInfo
@@ -40,10 +41,6 @@ def edit(request, meeting_id):
         # save changes
         meeting.save()
         return redirect("meeting_info", meeting_id=meeting_id)
-    elif request.method == "DELETE":
-        # delete meeting
-        meeting.delete()
-        return redirect("index")
     else:  # GET
         # generate member choices for host selector
         all_members = DMember.objects.all()
@@ -57,3 +54,14 @@ def edit(request, meeting_id):
                        "meeting_description":
                            meeting.description.replace("`", "\\`") if meeting.description is not None else "",
                        "member_list": member_choices})
+
+
+@permission_required(["Meetings.change_DMeeting", "Meetings.delete_DMeeting"], raise_exception=True)
+def delete(request, meeting_id):
+    meeting = get_object_or_404(DMeeting, pk=meeting_id)
+    if request.method == "DELETE":
+        # delete meeting
+        meeting.delete()
+        return HttpResponse(status=204)
+    else:
+        return HttpResponse("Method not allowed", status=405)
