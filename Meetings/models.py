@@ -30,9 +30,11 @@ class DAbsentRequest(models.Model):
         verbose_name_plural = "假單"
 
     def __str__(self):
-        return f"{self.member} - {self.meeting}"
+        return f"{self.meeting} - {self.member}"
 
     member = models.ForeignKey('Members.DMember', verbose_name="成員", on_delete=models.CASCADE)
+    reviewer = models.ForeignKey('Members.DMember', verbose_name="審核人", related_name="reviewed_requests",
+                                 on_delete=models.SET_NULL, null=True, blank=True)
     meeting = models.ForeignKey(DMeeting, verbose_name="會議", related_name="absent_requests", on_delete=models.CASCADE)
     reason = models.TextField("請假事由")
     status = models.CharField("狀態", max_length=20,

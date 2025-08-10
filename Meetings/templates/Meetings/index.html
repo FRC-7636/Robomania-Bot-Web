@@ -62,6 +62,37 @@
                         <p><strong>結束時間：</strong>{{ meeting.end_time|date:"Y/m/d H:i" }}</p>
                     {% endif %}
                     <p><strong>地點：</strong>{{ meeting.location }}</p>
+                    {% if absent_request %}
+                        <md-divider inset-end></md-divider>
+                        <div style="display: flex; align-items: center; margin: 1em 0;">
+                        <span><strong>假單狀態：</strong></span>
+                        {% if absent_request.status == "pending" %}
+                            <span class="material-symbols-outlined" style="color: #ffff5d">pending</span>
+                            <span style="margin-left: 0.2em;">待審核</span>
+                        {% elif absent_request.status == "approved" %}
+                            <span class="material-symbols-outlined" style="color: #60ed60;">check_circle</span>
+                            <span style="margin-left: 0.2em;">已批准</span>
+                        {% elif absent_request.status == "rejected" %}
+                            <span class="material-symbols-outlined" style="color: #fd7474;">cancel</span>
+                            <span style="margin-left: 0.2em;">已拒絕</span>
+                        {% else %}
+                            <span class="material-symbols-outlined" style="color: lightgray;">help_outline</span>
+                            <span style="margin-left: 0.2em;">未知狀態</span>
+                        {% endif %}
+                        </div>
+                        <p><strong>假單提交時間：</strong>{{ absent_request.created_at }}</p>
+                        {% if absent_request.reviewer %}
+                            <div style="display: flex; align-items: center; height: min-content; margin-top: 1em;">
+                                <p style="margin: 0;"><strong>假單審核者：</strong></p>
+                                <div class="member-indicator">
+                                    <img src="{{ absent_request.reviewer.avatar }}" alt="假單審核者的頭像" class="member-avatar">
+                                    <span class="member-name">
+                                        {{ absent_request.reviewer.real_name }} ({{ absent_request.reviewer.discord_id }})
+                                    </span>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endif %}
                 </div>
                 {% if meeting.description %}
                     <div class="meeting-info-content" id="meeting-info-content-2">
@@ -73,19 +104,25 @@
                 {% endif %}
                 </div>
             </div>
-            <div class="round-container" id="meeting-actions-panel">
+            <div class="round-container panel" id="meeting-actions-panel">
                 <div class="panel-title" id="meeting-actions-title">
                     <md-icon>action_key</md-icon>
                     <span class="panel-title-text">操作</span>
                 </div>
                 <div id="meeting-actions-content">
-                    <md-filled-button>
+                    <md-filled-button href="./submit_absent_request" {% if not can_send_absent_request %} disabled {% endif %}>
                         <div style="display: flex; align-items: center; height: min-content;">
                             <span class="material-symbols-outlined button-icon">
                                 assignment_add</span>
                             提交假單
                         </div>
                     </md-filled-button>
+                    {% if reason_not_absent %}
+                    <div style="display: flex; align-items: center; margin-bottom: 0.5em;">
+                        <span class="material-symbols-outlined" style="font-size: 1.2em; padding-top: 0.155em;">error</span>
+                        <span style="margin-left: 0.2em; font-size: 0.8em;">{{ reason_not_absent }}</span>
+                    </div>
+                    {% endif %}
                     <md-divider></md-divider>
                     <md-filled-button href="./edit" {% if not can_edit %} disabled {% endif %}>
                         <div style="display: flex; align-items: center; height: min-content;">
@@ -94,7 +131,7 @@
                             編輯會議
                         </div>
                     </md-filled-button>
-                    <md-filled-button href="./review_requests" {% if not can_edit %} disabled {% endif %}>
+                    <md-filled-button href="./review_absent_requests" {% if not can_edit %} disabled {% endif %}>
                         <div style="display: flex; align-items: center; height: min-content;">
                             <span class="material-symbols-outlined button-icon">
                                 document_search</span>

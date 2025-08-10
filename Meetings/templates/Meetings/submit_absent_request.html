@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/Meetings/submit_absent_request.css' %}">
+    {#    <link rel="stylesheet" href="{% static 'css/Meetings/index.css' %}">#}
+    <title>提交會議「{{ meeting.name }}」的假單</title>
+{% endblock %}
+
+{% block main_content %}
+    <div class="soft-container" id="submit-absent-request-container">
+        <h1 style="margin: 0.3em 0;">提交會議「{{ meeting.name }}」的假單</h1>
+        <div style="display: flex; gap: 0.5em; width: 100%; margin-top: 0.5em;">
+            <div class="round-container panel" id="meeting-info-panel" style="flex: 1;">
+                <div class="panel-title">
+                    <md-icon>event</md-icon>
+                    <span class="panel-title-text">會議資訊</span>
+                </div>
+                <div class="meeting-info-content" id="meeting-info-content-1">
+                    <p><strong>名稱：</strong>{{ meeting.name }}</p>
+                    <div style="display: flex; align-items: center; height: min-content; margin-top: 1em;">
+                        <p style="margin: 0;"><strong>可請假：</strong></p>
+                        {% if meeting.can_absent %}
+                            <md-icon style="color: #60ed60;">check_circle</md-icon>
+                        {% else %}
+                            <md-icon style="color: #fd7474;">cancel</md-icon>
+                        {% endif %}
+                    </div>
+                    <div style="display: flex; align-items: center; height: min-content; margin-top: 1em;">
+                        <p style="margin: 0;"><strong>主持人：</strong></p>
+                        <div class="member-indicator">
+                            <img src="{{ meeting.host.avatar }}" alt="主持人頭像" class="member-avatar">
+                            <span class="member-name">
+                            {{ meeting.host.real_name }} ({{ meeting.host.discord_id }})
+                        </span>
+                        </div>
+                    </div>
+                    <p><strong>開始時間：</strong>{{ meeting.start_time|date:"Y/m/d H:i" }}</p>
+                    {% if meeting.end_time %}
+                        <p><strong>結束時間：</strong>{{ meeting.end_time|date:"Y/m/d H:i" }}</p>
+                    {% endif %}
+                    <p><strong>地點：</strong>{{ meeting.location }}</p>
+                </div>
+            </div>
+            <div class="round-container panel" id="absent-rules-panel" style="flex: 1;">
+                <div class="panel-title">
+                    <md-icon>rule</md-icon>
+                    <span class="panel-title-text">請假須知</span>
+                </div>
+                <ul class="absent-rules" style="padding-left: 1.6em">
+                    <li>請假最晚需在<strong>會議開始前 5 分鐘</strong>處理完畢。<br>
+                        系統會在會議開始前 5 分鐘停止接受假單。
+                    </li>
+                    <li>填寫請假事由時，請提供<strong>完整且合理的理由</strong>。<br>
+                        <span style="font-size: 0.8em; font-style: italic;">寫「家裡有事」的絕對會被退回去！</span>
+                    </li>
+                    <li><strong>送出假單不代表請假完成。</strong><br>
+                        假單送出後，仍需由主幹審查你的假單。
+                    </li>
+                    <li>假單的狀態分為 3 種：
+                        <ul>
+                            <li>待審核</li>
+                            <li>已批准</li>
+                            <li>已拒絕</li>
+                        </ul>
+                        <strong>僅有「已批准」的假單才算請假成功。</strong>
+                    </li>
+                    <li>若會議開始時，你的假單仍呈現「待審核」狀態，請盡快向主幹詢問，避免因缺席而遭記點。</li>
+                </ul>
+            </div>
+            <div class="round-container panel" id="request-form-panel" style="flex: 1;">
+                <div class="panel-title">
+                    <md-icon>contract_edit</md-icon>
+                    <span class="panel-title-text">填寫假單</span>
+                </div>
+                <form method="post" id="absent-request-form" style="width: 100%; height: 100%; margin-top: 0.5em;">
+                    {% csrf_token %}
+                    <div id="absent-request-form-container">
+                        <md-filled-text-field label="請假事由" name="reason" type="textarea" id="reason-input"
+                                              minlength="5" required></md-filled-text-field>
+                        <md-filled-button>送出</md-filled-button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
