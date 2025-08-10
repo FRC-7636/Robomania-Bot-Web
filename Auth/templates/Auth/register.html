@@ -21,8 +21,6 @@
             <form action="/accounts/register/" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="avatar_url" value="{{ user_info.avatar_url }}">
-                <input type="hidden" name="discord_id" value="{{ user_info.discord_id }}">
-                <input type="hidden" name="email_address" value="{{ user_info.email_address }}">
                 <div id="register-form-div">
                     <div id="register-form-inner-div">
                         <div id="register-form-avatar-div">
@@ -30,11 +28,11 @@
                         </div>
                         <div id="register-form-text-div">
                             <md-filled-text-field class="register-input" style="margin-top: 1em;" label="Discord ID"
-                                                  type="text" pattern="^[0-9]+$" name="fake_discord_id"
-                                                  value="{{ user_info.discord_id }}" disabled
+                                                  type="text" pattern="^[0-9]+$" name="discord_id"
+                                                  value="{{ user_info.discord_id }}" readonly
                                                   required></md-filled-text-field>
-                            <md-filled-text-field class="register-input" label="Email" type="email" name="fake_email_address"
-                                                  value="{{ user_info.email_address }}" disabled
+                            <md-filled-text-field class="register-input" label="Email" type="email" name="email_address"
+                                                  value="{{ user_info.email_address }}" readonly
                                                   required></md-filled-text-field>
                             <md-filled-text-field class="register-input" label="真實姓名" type="text" name="real_name"
                                                   required></md-filled-text-field>
