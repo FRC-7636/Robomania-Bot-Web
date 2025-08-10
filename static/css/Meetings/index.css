@@ -3,15 +3,12 @@
     flex-direction: row;
     width: -webkit-fill-available;
     margin-top: 0.5em;
+    gap: 0.5em;
 }
 
 #meeting-info-panel {
     flex: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
     background-color: rgba(255, 255, 255, 0.25); /* Light background for contrast */
-    margin-right: 0.25em;
 }
 
 #meeting-info-content-container {
@@ -31,7 +28,6 @@
     align-items: flex-start;
     justify-items: center;
     background-color: rgba(255, 255, 255, 0.25); /* Light background for contrast */
-    margin-left: 0.25em;
 }
 
 #meeting-actions-content {
