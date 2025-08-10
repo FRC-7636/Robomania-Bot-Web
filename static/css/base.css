@@ -182,6 +182,7 @@ header.collapsed {
     z-index: 2000;
     border: none;
     background-color: #012A5E;
+    box-shadow: 0 7px 13px 0 rgba(0,0,0,0.37);
     cursor: pointer;
     transition: ease-in-out 0.1s;
 }
