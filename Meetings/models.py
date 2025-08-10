@@ -9,7 +9,7 @@ class DMeeting(models.Model):
         verbose_name_plural = "會議"
 
     def __str__(self):
-        return self.name
+        return f"{self.name} (#{self.pk})"
 
     name = models.CharField("名稱", max_length=255)
     creator = models.ForeignKey('Members.DMember', verbose_name="創建者", related_name="created_meetings",
