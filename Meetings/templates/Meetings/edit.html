@@ -6,13 +6,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
     <script src="{% static 'js/Meetings/edit.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
-    <title>編輯會議「{{ meeting.name }}」</title>
+    <title>編輯會議 #{{ meeting.pk }}</title>
 {% endblock %}
 
 {% block main_content %}
     <div class="soft-container" id="meeting-edit-container">
-        <h1 style="margin: 0.3em 0;">編輯會議</h1>
+        <h1 style="margin: 0.3em 0;">編輯會議 #{{ meeting.pk }}</h1>
         <form id="meeting-form" name="meeting-form" method="POST" style="width: 100%;">
+            <input type="hidden" id="meeting-id" name="meeting-id" value="{{ meeting.pk }}">
             <div style="display: flex; flex-direction: row; gap: 0.5em; flex: 1;">
                 {% csrf_token %}
                 <div class="round-container" id="meeting-editor">
