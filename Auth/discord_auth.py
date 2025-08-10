@@ -79,17 +79,12 @@ if __name__ == '__main__':
     from dotenv import load_dotenv
     from os import getenv
 
-    load_dotenv("KEYS.env")
+    load_dotenv("CONFIG.env")
     n_access_token = refresh_access_token(
         getenv("DISCORD_CLIENT_ID"),
         getenv("DISCORD_CLIENT_SECRET"),
         "pDWeGOhOto4Xj4Ki9X3s2SB6RnSD9r"
     )
-    # n_access_token = get_access_token_response(
-    #     1402621019432157266,
-    #     "IcMEWlJ0yAiDnwuyu2_4VyXV1WzRl2MG",
-    #     "0csAcPNPZnRv6BOIrl15YOUzN3gRqh"
-    # )
     print(n_access_token.get('access_token'))
     print(n_access_token.get('refresh_token'))
     result = get_user_guild_ids(n_access_token.get('access_token'))

@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Robomania_Bot_Web.settings')
-    load_dotenv("KEYS.env")
+    load_dotenv("CONFIG.env")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
