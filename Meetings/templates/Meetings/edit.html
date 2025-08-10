@@ -2,9 +2,106 @@
 {% load static %}
 
 {% block head %}
-
+    <link rel="stylesheet" href="{% static 'css/Meetings/edit.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+    <script src="{% static 'js/Meetings/edit.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+    <title>編輯會議「{{ meeting.name }}」</title>
 {% endblock %}
 
 {% block main_content %}
-
+    <div class="soft-container" id="meeting-edit-container">
+        <h1 style="margin: 0.3em 0;">編輯會議</h1>
+        <form id="meeting-form" name="meeting-form" method="POST" style="width: 100%;">
+            <div style="display: flex; flex-direction: row; gap: 0.5em; flex: 1;">
+                {% csrf_token %}
+                <div class="round-container" id="meeting-editor">
+                    <div class="panel-title" id="meeting-info-title">
+                        <md-icon>edit</md-icon>
+                        <span class="panel-title-text">基本資訊</span>
+                    </div>
+                    <div id="meeting-editor-form">
+                        <md-filled-text-field name="name" label="會議名稱" value="{{ meeting.name }}"
+                                              style="margin-top: 0.5em;"
+                                              required></md-filled-text-field>
+                        <md-filled-select name="host" label="主持人" required>
+                            {% for member in member_list %}
+                                <md-select-option value="{{ member.discord_id }}"
+                                                  {% if member.discord_id == meeting.host.discord_id %}selected{% endif %}>
+                                    <div class="member-indicator">
+                                        <img class="member-avatar" src="{{ member.avatar }}"
+                                             alt="{{ member.real_name }} ({{ member.discord_id }}) 的頭像">
+                                        <span class="member-name">{{ member.real_name }} ({{ member.discord_id }})</span>
+                                    </div>
+                                </md-select-option>
+                            {% endfor %}
+                        </md-filled-select>
+                        <input type="hidden" name="can-absent" id="can-absent-bool" value="{{ meeting.can_absent }}">
+                        <div style="display: flex; align-items: center;">
+                        <label style="display: flex; align-items: center;">
+                            可請假：
+                            <md-switch icons {% if meeting.can_absent %}selected{% endif %} id="can-absent-switch"></md-switch>
+                        </label>
+                        </div>
+                        <md-filled-text-field name="start-time-text" id="start-time-text"
+                                              label="開始時間 (使用下方工具選擇)"
+                                              value="{{ meeting.start_time|date:"Y/m/d H:i" }}" readonly>
+                        </md-filled-text-field>
+                        <label>
+                            選擇開始時間：
+                            <input type="datetime-local" name="start-time" id="start-time-selector" style="color: black;"
+                                   value="{{ meeting.start_time|date:"Y-m-d\TH:i" }}" required>
+                        </label>
+                        <md-filled-text-field name="end-time-text" id="end-time-text"
+                                              label="結束時間 (使用下方工具選擇)"
+                                              value="{{ meeting.end_time|date:"Y/m/d H:i" }}" readonly>
+                        </md-filled-text-field>
+                        <label>
+                            選擇結束時間：
+                            <input type="datetime-local" name="end-time" id="end-time-selector" style="color: black;"
+                                   value="{{ meeting.end_time|date:"Y-m-d\TH:i" }}">
+                        </label>
+                        <md-filled-text-field name="location" label="地點" value="{{ meeting.location }}" required></md-filled-text-field>
+                    </div>
+                </div>
+                <div class="round-container" id="meeting-description-editor">
+                <div class="panel-title" id="meeting-info-title">
+                    <md-icon>markdown</md-icon>
+                    <span class="panel-title-text">說明編輯器</span>
+                </div>
+                <label for="md-editor" hidden></label>
+                <textarea name="description" id="md-editor"></textarea>
+                <script>
+                    const easyMDE = new EasyMDE({
+                        element: document.getElementById("md-editor"),
+                        autosave: {
+                            enabled: true,
+                            uniqueId: "meeting-description-editor",
+                        },
+                    });
+                    {% autoescape off %}
+                    easyMDE.value(`{{ meeting_description }}`);
+                    {% endautoescape %}
+                </script>
+            </div>
+            </div>
+            <div id="button-container">
+            <md-filled-button type="button" id="submit-button" style="flex: 3;">
+                <div style="display: flex; align-items: center; height: min-content;">
+                    <span class="material-symbols-outlined button-icon">
+                        check
+                    </span>更新會議
+                </div>
+            </md-filled-button>
+            <md-filled-tonal-button type="button" id="delete-button"
+                                    style="flex: 1; --md-filled-tonal-button-container-color: #ff3333">
+                <div style="display: flex; align-items: center; height: min-content;">
+                    <span class="material-symbols-outlined button-icon">
+                        delete
+                    </span>刪除會議
+                </div>
+            </md-filled-tonal-button>
+            </div>
+        </form>
+    </div>
 {% endblock %}

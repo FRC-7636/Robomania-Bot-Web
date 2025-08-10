@@ -1,0 +1,68 @@
+#form-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+#meeting-editor {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: -webkit-fill-available;
+    background-color: rgba(255, 255, 255, 0.25); /* Light background for contrast */
+    margin-top: 0.5em;
+}
+
+#meeting-description-editor {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: -webkit-fill-available;
+    background-color: rgba(255, 255, 255, 0.25); /* Light background for contrast */
+    margin-top: 0.5em;
+}
+
+#meeting-editor-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5em;
+}
+
+.member-indicator {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.member-indicator .member-avatar {
+    width: 1.2em;
+    height: 1.2em;
+    border-radius: 50%;
+}
+
+.member-indicator .member-name {
+    margin-left: 0.2em;
+    color: black;
+}
+
+.EasyMDEContainer {
+    width: 100%;
+    margin-top: 0.5em;
+}
+
+.EasyMDEContainer * {
+    color: black;
+}
+
+#button-container {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 0.5em;
+    gap: 0.5em;
+}
