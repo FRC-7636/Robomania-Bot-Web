@@ -86,6 +86,19 @@
     height: auto;
 }
 
+#meeting-description blockquote {
+    margin: 0.5em 0;
+    padding-left: 1em;
+    border-left: 4px solid #ccc;
+    color: #555;
+}
+
+#meeting-description code {
+    background-color: #272727;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+}
+
 .member-indicator {
     display: flex;
     flex-direction: row;
@@ -101,4 +114,3 @@
 .member-indicator .member-name {
     margin-left: 0.2em;
 }
-

@@ -8,9 +8,20 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js" defer></script>
         <script>
         document.addEventListener("DOMContentLoaded", function() {
-            let converter = new showdown.Converter();
+            let converter = new showdown.Converter(
+                {
+                    simplifiedAutoLink: true,
+                    excludeTrailingPunctuationFromURLs: true,
+                    strikethrough: true,
+                    simpleLineBreaks: true,
+                    ghCodeBlocks: true,
+                    tasklists: true,
+                }
+            );
             // Convert the Markdown description to HTML
-            document.getElementById("meeting-description").innerHTML = converter.makeHtml(`{{ meeting.description }}`);
+            {% autoescape off %}
+            document.getElementById("meeting-description").innerHTML = converter.makeHtml(`{{ meeting_description }}`);
+            {% endautoescape %}
         })
         </script>
     {% endif %}
@@ -76,14 +87,14 @@
                         </div>
                     </md-filled-button>
                     <md-divider></md-divider>
-                    <md-filled-button href="./edit/" {% if not can_edit %} disabled {% endif %}>
+                    <md-filled-button href="./edit" {% if not can_edit %} disabled {% endif %}>
                         <div style="display: flex; align-items: center; height: min-content;">
                             <span class="material-symbols-outlined button-icon">
                                 edit</span>
                             編輯會議
                         </div>
                     </md-filled-button>
-                    <md-filled-button href="./review_requests/" {% if not can_edit %} disabled {% endif %}>
+                    <md-filled-button href="./review_requests" {% if not can_edit %} disabled {% endif %}>
                         <div style="display: flex; align-items: center; height: min-content;">
                             <span class="material-symbols-outlined button-icon">
                                 document_search</span>
