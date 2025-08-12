@@ -93,6 +93,9 @@
                                 </div>
                             </div>
                         {% endif %}
+                        {% if absent_request.reviewer_comment %}
+                            <p><strong>審核者留言：</strong>{{ absent_request.reviewer_comment }}</p>
+                        {% endif %}
                     {% endif %}
                 </div>
                 {% if meeting.description %}

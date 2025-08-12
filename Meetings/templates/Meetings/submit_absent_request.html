@@ -77,7 +77,7 @@
                     {% csrf_token %}
                     <div id="absent-request-form-container">
                         <md-filled-text-field label="請假事由" name="reason" type="textarea" id="reason-input"
-                                              minlength="5" required></md-filled-text-field>
+                                              minlength="5" maxlength="100" required></md-filled-text-field>
                         <md-filled-button>送出</md-filled-button>
                     </div>
                 </form>

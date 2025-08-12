@@ -33,11 +33,20 @@ class DAbsentRequest(models.Model):
         return f"{self.meeting} - {self.member}"
 
     member = models.ForeignKey('Members.DMember', verbose_name="成員", on_delete=models.CASCADE)
+    meeting = models.ForeignKey(
+        DMeeting,
+        verbose_name="會議",
+        related_name="absent_requests",
+        on_delete=models.CASCADE,
+    )
+    reason = models.TextField("請假事由")
+    status = models.CharField(
+        "狀態",
+        max_length=20,
+        choices=[("pending", "待審核"), ("approved", "已批准"), ("rejected", "已拒絕")],
+        default="pending",
+    )
+    created_at = models.DateTimeField("創建時間", auto_now_add=True)
     reviewer = models.ForeignKey('Members.DMember', verbose_name="審核人", related_name="reviewed_requests",
                                  on_delete=models.SET_NULL, null=True, blank=True)
-    meeting = models.ForeignKey(DMeeting, verbose_name="會議", related_name="absent_requests", on_delete=models.CASCADE)
-    reason = models.TextField("請假事由")
-    status = models.CharField("狀態", max_length=20,
-                              choices=[('pending', '待審核'), ('approved', '已批准'), ('rejected', '已拒絕')],
-                              default='pending')
-    created_at = models.DateTimeField("創建時間", auto_now_add=True)
+    reviewer_comment = models.TextField("審核意見", blank=True, null=True)

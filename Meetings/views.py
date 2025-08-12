@@ -32,9 +32,9 @@ def index(request, meeting_id):
             "status": absent_request.status,
             "reason": absent_request.reason,
             "created_at": absent_request.created_at.astimezone(TAIPEI_TZ).strftime("%Y/%m/%d %H:%M"),
-            "reviewer": absent_request.reviewer
+            "reviewer": absent_request.reviewer,
+            "reviewer_comment": absent_request.reviewer_comment,
         }
-        print(condensed_absent_request)
     return render(
         request,
         "Meetings/index.html",
