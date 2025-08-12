@@ -80,6 +80,7 @@
                             <span style="margin-left: 0.2em;">未知狀態</span>
                         {% endif %}
                         </div>
+                        <p><strong>假單內容：</strong>{{ absent_request.reason }}</p>
                         <p><strong>假單提交時間：</strong>{{ absent_request.created_at }}</p>
                         {% if absent_request.reviewer %}
                             <div style="display: flex; align-items: center; height: min-content; margin-top: 1em;">
