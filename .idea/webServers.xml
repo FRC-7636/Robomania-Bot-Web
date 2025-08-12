@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="deefce03-e353-41b7-88f2-fe3905e5e0e2" name="allen95wei-Ubuntu" url="">
+        <fileTransfer mountedRoot="Z:\" accessType="MOUNT" port="0" />
+      </webServer>
+    </option>
+  </component>
+</project>
