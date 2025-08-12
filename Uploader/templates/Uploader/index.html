@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/Uploader/index.css' %}">
+    <script src="{% static 'js/Uploader/index.js' %}"></script>
+    <title>上傳檔案</title>
+{% endblock %}
+
+{% block main_content %}
+    <div class="soft-container" id="uploader-container">
+        <h1 style="margin: 0.3em 0;">上傳檔案</h1>
+        <div class="round-container" id="result-container">
+            <div class="panel-title">
+                <span class="material-symbols-outlined" id="result-icon" style="font-size: xx-large"></span>
+                <span class="panel-title-text">上傳結果</span>
+            </div>
+            <div id="vertical-spacer"></div>
+            <span id="result-text">AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</span>
+        </div>
+        <form name="upload-form" method="post" enctype="multipart/form-data"
+              style="width: -webkit-fill-available; margin-top: 0.5em;">
+            {% csrf_token %}
+            <div class="round-container panel" id="uploader-panel">
+                <input id="file-input" type="file" name="file" required>
+                <div class="round-container" id="file-dropzone"></div>
+                <div id="drop-hint-container">
+                    <span class="material-symbols-outlined drop-hint" id="drop-hint-icon">file_open</span>
+                    <span class="drop-hint" id="drop-hint-text">拖放檔案至此</span>
+                    <span>或點擊以選擇檔案</span>
+                </div>
+                <div id="detail-container">
+                    <div class="round-container panel detail-panel" id="file-info-panel">
+                        <div class="panel-title" id="file-info-title">
+                            <md-icon>info</md-icon>
+                            <span class="panel-title-text">檔案資訊</span>
+                        </div>
+                        <p><strong>檔案名稱：</strong><span id="file-name">(未知)</span></p>
+                        <p><strong>檔案大小：</strong><span id="file-size">(未知)</span></p>
+                        <p style="margin-bottom: 1em;"><strong>檔案類型(MIME)：</strong><span
+                                id="file-type">(未知)</span></p>
+                    </div>
+                    <div class="round-container panel detail-panel" id="upload-rules-panel">
+                        <div class="panel-title" id="upload-rules-title">
+                            <md-icon>rule</md-icon>
+                            <span class="panel-title-text">託管服務規定</span>
+                        </div>
+                        <ul class="upload-rules" style="padding-left: 1.6em;">
+                            <li>一次僅可上傳<strong>一個</strong>檔案。</li>
+                            <li>為維持服務穩定，檔案大小不得超過<strong>100 MB</strong>。</li>
+                            <li>不得上傳<strong>違法、不安全或不宜之內容</strong>。</li>
+                            <li>管理員有權<strong>移除任何檔案</strong>。</li>
+                            <li>此服務目前測試中，可能於任何時間下線，亦不保證檔案的完整性。</li>
+                        </ul>
+                    </div>
+                    <div class="round-container panel detail-panel" id="file-settings-panel">
+                        <div class="panel-title" id="file-settings-title">
+                            <md-icon>settings</md-icon>
+                            <span class="panel-title-text">託管設定(目前停用中)</span>
+                        </div>
+                        <div id="file-settings-content">
+                            <md-filled-text-field label="檔案名稱" name="name" maxlength="20" id="file-name-input"
+                                                  supporting-text="使用者下載檔案時，將顯示此名稱"
+                                                  required></md-filled-text-field>
+                            <input id="require-login-input" type="hidden" name="require_login" value="false">
+                            <div style="display: flex; flex-direction: row; align-items: center;">
+                                <span><strong>需要登入：</strong></span>
+                                <md-switch id="require-login-switch" icons></md-switch>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="upload-button-container">
+                    <md-filled-button id="upload-button" style="width: -webkit-fill-available;" disabled>
+                        <div style="display: flex; align-items: center; justify-content: center;">
+                            <span class="material-symbols-outlined">cloud_upload</span>
+                            <span style="margin-left: 0.5em;">上傳</span>
+                        </div>
+                    </md-filled-button>
+                    <span style="font-size: 0.75em;">上傳檔案即表示你同意「託管服務規定」。</span>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

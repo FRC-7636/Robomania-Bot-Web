@@ -1,0 +1,134 @@
+.panel {
+    background-color: rgba(255, 255, 255, 0.25);
+    width: -webkit-fill-available;
+    /*height: -webkit-fill-available;*/
+    gap: 0.5em;
+}
+
+#file-input {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+#file-dropzone {
+    background-color: rgba(255, 255, 255, 0.2);
+    width: -webkit-fill-available;
+    height: 15em;
+    border: #5e81ee 0 solid;
+    transition: ease-in-out 0.1s;
+    cursor: pointer;
+    position: relative;
+    z-index: 10;
+}
+
+#drop-hint-container {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    align-items: center;
+    justify-content: center;
+    width: -webkit-fill-available;
+    height: 16em;
+    position: absolute;
+    z-index: 0;
+}
+
+.highlight {
+    border: #5e81ee 3px solid !important;
+}
+
+.drop-hint {
+    z-index: 0;
+}
+
+#drop-hint-text {
+    font-size: 2em;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+}
+
+#drop-hint-icon {
+    font-size: 5em;
+}
+
+#detail-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: -webkit-fill-available;
+    gap: 0.5em;
+}
+
+.detail-panel {
+    flex: 1;
+    height: -webkit-fill-available;
+    gap: 0;
+}
+
+#file-info-panel {
+    gap: 1em;
+}
+
+#file-info-panel p {
+    margin: 0;
+}
+
+.warning {
+    color: #ffff5d
+}
+
+.upload-rules strong {
+    background-color: var(--md-sys-color-primary);
+}
+
+#upload-button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25em;
+    width: 100%;
+}
+
+#file-settings-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 0.5em;
+    gap: 0.5em;
+}
+
+.result-success {
+    display: flex !important;
+    background-color: rgba(88, 210, 88, 0.5);
+}
+
+.result-error {
+    display: flex !important;
+    background-color: rgba(235, 88, 88, 0.5);
+}
+
+#result-container {
+    display: none;
+    align-items: center;
+    width: -webkit-fill-available;
+}
+
+#vertical-spacer {
+    margin: 0 7px 0 9px;
+    width: 2px;
+    border-left: 2px solid white;
+    height: -webkit-fill-available;
+}
+
+#result-text {
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-wrap: nowrap;
+    white-space: nowrap;
+}

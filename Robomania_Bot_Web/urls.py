@@ -26,5 +26,6 @@ urlpatterns = [
     path("member/", include("Members.urls")),
     path("meeting/", include("Meetings.urls")),
     path("accounts/", include("Auth.urls")),
-
+    path("upload/", include("Uploader.urls")),
+    path("user_uploads/", include("Uploader.urls_user_uploads")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

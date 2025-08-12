@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "Meetings.apps.MeetingsConfig",
     "Auth.apps.AuthConfig",
     "Panel.apps.PanelConfig",
+    "Uploader.apps.UploaderConfig",
 ]
 
 MIDDLEWARE = [
