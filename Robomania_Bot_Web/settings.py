@@ -137,8 +137,8 @@ STATIC_ROOT = BASE_DIR.parent / 'web_statics'
 
 # User uploads
 
-MEDIA_URL = 'media/'
-MEDIA_ROOT = BASE_DIR / 'user_attachments'
+MEDIA_URL = 'user_uploads/'
+MEDIA_ROOT = BASE_DIR.parent / 'user_uploads'
 
 
 # Default primary key field type
