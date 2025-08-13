@@ -89,12 +89,51 @@ def index(request, meeting_id):
 
 
 @login_required
+@permission_required("Meetings.add_DMeeting", raise_exception=True)
+def create(request):
+    if request.method == "POST":
+        # validate form data
+        is_valid, error_field = validate_meeting_data(request.POST)
+        if not is_valid:
+            return HttpResponse(f"Invalid data for field: {error_field}", status=400)
+        # create new meeting
+        meeting = DMeeting(
+            name=request.POST.get("name", ""),
+            description=request.POST.get("description", ""),
+            host=DMember.objects.get(discord_id=int(request.POST.get("host", ""))),
+            start_time=datetime.datetime.fromisoformat(request.POST.get("start-time")).astimezone(TAIPEI_TZ),
+            end_time=datetime.datetime.fromisoformat(request.POST.get("end-time")).astimezone(TAIPEI_TZ)
+            if request.POST.get("end-time", None)
+            else None,
+            location=request.POST.get("location", ""),
+            can_absent=request.POST.get("can-absent", "False").lower() == "true",
+            creator=request.user,
+        )
+        # save meeting
+        meeting.save()
+        # redirect to meeting info page
+        return redirect("meeting_info", meeting_id=meeting.pk)
+    else:  # GET
+        # generate member choices for host selector
+        all_members = DMember.objects.all()
+        member_choices = []
+        for member in all_members:
+            member_choices.append(
+                {"discord_id": member.discord_id, "real_name": member.real_name, "avatar": member.avatar}
+            )
+        return render(request, 'Meetings/edit.html', {"member_list": member_choices})
+
+
+@login_required
 @permission_required(["Meetings.change_DMeeting", "Meetings.delete_DMeeting"], raise_exception=True)
 def edit(request, meeting_id):
     meeting = get_object_or_404(DMeeting, pk=meeting_id)
     if request.method == "POST":
         # update meeting
-        meeting.title = request.POST.get("title", "")
+        is_valid, error_field = validate_meeting_data(request.POST)
+        if not is_valid:
+            return HttpResponse(f"Invalid data for field: {error_field}", status=400)
+        meeting.name = request.POST.get("name", "")
         meeting.description = request.POST.get("description", "")
         meeting.host = DMember.objects.get(discord_id=int(request.POST.get("host", "")))
         meeting.start_time = datetime.datetime.fromisoformat(request.POST.get("start-time")).astimezone(TAIPEI_TZ)

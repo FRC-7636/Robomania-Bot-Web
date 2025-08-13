@@ -6,12 +6,24 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
     <script src="{% static 'js/Meetings/edit.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
-    <title>編輯會議 #{{ meeting.pk }}</title>
+    <title>
+    {% if meeting %}
+        編輯會議 #{{ meeting.pk }}
+    {% else %}
+        新增會議
+    {% endif %}
+    </title>
 {% endblock %}
 
 {% block main_content %}
     <div class="soft-container" id="meeting-edit-container">
-        <h1 style="margin: 0.3em 0;">編輯會議 #{{ meeting.pk }}</h1>
+        <h1 style="margin: 0.3em 0;">
+            {% if meeting %}
+                編輯會議 #{{ meeting.pk }}
+            {% else %}
+                新增會議
+            {% endif %}
+        </h1>
         <form id="meeting-form" name="meeting-form" method="POST" style="width: 100%;">
             <input type="hidden" id="meeting-id" name="meeting-id" value="{{ meeting.pk }}">
             <div style="display: flex; flex-direction: row; gap: 0.5em; flex: 1;">
@@ -37,7 +49,7 @@
                                 </md-select-option>
                             {% endfor %}
                         </md-filled-select>
-                        <input type="hidden" name="can-absent" id="can-absent-bool" value="{{ meeting.can_absent }}">
+                        <input type="hidden" name="can-absent" id="can-absent-bool" value="{{ meeting.can_absent|default:'false' }}">
                         <div style="display: flex; align-items: center;">
                         <label style="display: flex; align-items: center;">
                             可請假：
@@ -89,11 +101,18 @@
             <div id="button-container">
             <md-filled-button type="button" id="submit-button" style="flex: 3;">
                 <div style="display: flex; align-items: center; height: min-content;">
+                    {% if meeting %}
                     <span class="material-symbols-outlined button-icon">
                         check
                     </span>更新會議
+                    {% else %}
+                    <span class="material-symbols-outlined button-icon">
+                        add
+                    </span>新增會議
+                    {% endif %}
                 </div>
             </md-filled-button>
+            {% if meeting %}
             <md-filled-tonal-button type="button" id="delete-button"
                                     style="flex: 1; --md-filled-tonal-button-container-color: #ff3333">
                 <div style="display: flex; align-items: center; height: min-content;">
@@ -102,6 +121,7 @@
                     </span>刪除會議
                 </div>
             </md-filled-tonal-button>
+            {% endif %}
             </div>
         </form>
     </div>
