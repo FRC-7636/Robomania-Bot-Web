@@ -34,7 +34,7 @@
                         </span>
                             </div>
                         </md-list-item>
-                        <div class="request-item-divider"></div>
+                        <div class="divider"></div>
                         {% if pending_requests %}
                             {% for request in pending_requests %}
                                 <md-list-item>
@@ -75,8 +75,7 @@
                                         </div>
                                     </div>
                                 </md-list-item>
-{#                                <md-divider class="request-item-divider" inset></md-divider>#}
-                                <div class="request-item-divider"></div>
+                                <div class="divider"></div>
                             {% endfor %}
                         {% else %}
                             <md-list-item>
@@ -84,7 +83,7 @@
                                     <span class="request-item-text">沒有待審核的假單</span>
                                 </div>
                             </md-list-item>
-                            <div class="request-item-divider"></div>
+                            <div class="divider"></div>
                         {% endif %}
                     </md-list>
                 </div>
@@ -118,7 +117,7 @@
                         </span>
                             </div>
                         </md-list-item>
-                        <div class="request-item-divider"></div>
+                        <div class="divider"></div>
                         {% if reviewed_requests %}
                             {% for request in reviewed_requests %}
                                 <md-list-item>
@@ -157,7 +156,7 @@
                                         </div>
                                     </div>
                                 </md-list-item>
-                                <div class="request-item-divider"></div>
+                                <div class="divider"></div>
                             {% endfor %}
                         {% else %}
                             <md-list-item>
@@ -165,7 +164,7 @@
                                     <span class="request-item-text">沒有已處理的假單</span>
                                 </div>
                             </md-list-item>
-                            <div class="request-item-divider"></div>
+                            <div class="divider"></div>
                         {% endif %}
                     </md-list>
                 </div>

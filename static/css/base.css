@@ -62,6 +62,12 @@ header.collapsed {
     width: 100%;
 }
 
+.divider {
+    height: 1px;
+    border-top: black 1px solid;
+    padding: 0 1em;
+}
+
 /* Style for panels */
 
 .soft-container {
