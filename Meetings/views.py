@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 import datetime
 from zoneinfo import ZoneInfo
+from json import loads
 
 from .models import DMeeting, DAbsentRequest
 from Members.models import DMember
@@ -90,6 +91,7 @@ def edit(request, meeting_id):
                        "member_list": member_choices})
 
 
+@login_required
 @permission_required(["Meetings.change_DMeeting", "Meetings.delete_DMeeting"], raise_exception=True)
 def delete(request, meeting_id):
     meeting = get_object_or_404(DMeeting, pk=meeting_id)
@@ -127,3 +129,37 @@ def submit_absent_request(request, meeting_id):
         return redirect("meeting_info", meeting_id=meeting_id)
     else:
         return render(request, "Meetings/submit_absent_request.html", {"meeting": meeting})
+
+
+@login_required
+@permission_required("Meetings.change_DAbsentRequest", raise_exception=True)
+def review_absent_requests_page(request, meeting_id):
+    meeting = get_object_or_404(DMeeting, pk=meeting_id)
+    absent_requests = meeting.absent_requests.all()
+    pending_requests = absent_requests.filter(status="pending")
+    reviewed_requests = absent_requests.exclude(status="pending")
+    return render(
+        request,
+        "Meetings/review_absent_requests.html",
+        {
+            "meeting": meeting,
+            "pending_requests": pending_requests,
+            "reviewed_requests": reviewed_requests,
+        },
+    )
+
+
+@login_required
+@permission_required("Meetings.change_DAbsentRequest", raise_exception=True)
+def review_absent_requests_api(request, meeting_id):
+    meeting = get_object_or_404(DMeeting, pk=meeting_id)
+    if request.method == "POST":
+        edit_requests = loads(request.POST.get("edited_requests", "{}"))
+        for request_id, review_result in edit_requests.items():
+            absent_request = meeting.absent_requests.get(pk=int(request_id))
+            absent_request.reviewer = request.user
+            absent_request.status = review_result["status"]
+            absent_request.reviewer_comment = review_result["comment"]
+            absent_request.save()
+        return HttpResponse(status=200)
+    return HttpResponse("Method not allowed", status=405)

@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/Meetings/review_absent_requests.css' %}">
+    <script src="{% static 'js/Meetings/review_absent_requests.js' %}"></script>
+    <title>審核會議「{{ meeting.name }}」的假單</title>
+{% endblock %}
+
+{% block main_content %}
+    <div class="soft-container" id="review-requests-container">
+        <h1 style="margin: 0.3em 0;">審核會議「{{ meeting.name }}」的假單</h1>
+        <input type="hidden" id="meeting-id" value="{{ meeting.id }}">
+        <div id="requests-panel">
+            <div class="round-container panel requests-container" id="pending-requests-container">
+                <div class="panel-title">
+                    <span class="material-symbols-outlined panel-title-icon">pending</span>
+                    <span class="panel-title-text">待審核</span>
+                </div>
+                <div class="round-container" style="width: 100%; background-color: darkgray; margin-top: 0.25em">
+                    <md-list id="pending-requests-list">
+                        <md-list-item>
+                            <div class="request-item">
+                                <span class="request-status request-item-text"><strong>狀態</strong></span>
+                                <div class="vertical-spacer"></div>
+                                <span class="request-member request-item-text"><strong>成員</strong></span>
+                                <div class="vertical-spacer"></div>
+                                <span class="request-date request-item-text"><strong>送出時間</strong></span>
+                                <div class="vertical-spacer"></div>
+                                <span class="request-reason request-item-text"><strong>請假原因</strong></span>
+                                <div class="vertical-spacer"></div>
+                                <span class="request-actions request-item-text" style="align-items: center;">
+                            <strong>操作</strong>
+                        </span>
+                            </div>
+                        </md-list-item>
+                        <div class="request-item-divider"></div>
+                        {% if pending_requests %}
+                            {% for request in pending_requests %}
+                                <md-list-item>
+                                    <div class="request-item">
+                                        <span class="request-status request-item-text material-symbols-outlined symbol-yellow">pending</span>
+                                        <div class="vertical-spacer"></div>
+                                        <div class="request-member member-indicator">
+                                            <img src="{{ request.member.avatar }}"
+                                                 alt="{{ request.member.name }} 的頭像" class="member-avatar">
+                                            <span class="member-name">{{ request.member.real_name }}</span>
+                                        </div>
+                                        <div class="vertical-spacer"></div>
+                                        <span class="request-date request-item-text">{{ request.created_at | date:"Y/m/d H:i" }}</span>
+                                        <div class="vertical-spacer"></div>
+                                        <span class="request-reason request-item-text">{{ request.reason }}</span>
+                                        <div class="vertical-spacer"></div>
+                                        <div class="request-actions request-item-text">
+                                            <md-filled-select id="action_select-{{ request.pk }}" label="批准 / 拒絕">
+                                                <md-select-option value="none" selected>
+                                                    <div class="request-actions-item">
+                                                        <span slot="headline">不操作</span>
+                                                    </div>
+                                                </md-select-option>
+                                                <md-select-option value="approved">
+                                                    <div class="request-actions-item">
+                                                        <span slot="headline">✅ 批准</span>
+                                                    </div>
+                                                </md-select-option>
+                                                <md-select-option value="rejected">
+                                                    <div class="request-actions-item">
+                                                        <span slot="headline">❌ 拒絕</span>
+                                                    </div>
+                                                </md-select-option>
+                                            </md-filled-select>
+                                            <md-filled-text-field id="action_comment-{{ request.pk }}" label="留言"
+                                                                  name="reviewer-comment" maxlength="50"
+                                                                  disabled></md-filled-text-field>
+                                        </div>
+                                    </div>
+                                </md-list-item>
+{#                                <md-divider class="request-item-divider" inset></md-divider>#}
+                                <div class="request-item-divider"></div>
+                            {% endfor %}
+                        {% else %}
+                            <md-list-item>
+                                <div class="request-item">
+                                    <span class="request-item-text">沒有待審核的假單</span>
+                                </div>
+                            </md-list-item>
+                            <div class="request-item-divider"></div>
+                        {% endif %}
+                    </md-list>
+                </div>
+                {% csrf_token %}
+                <md-filled-button id="submit-button" type="button" disabled>
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                        <span class="material-symbols-outlined">database_upload</span>
+                        <span style="margin-left: 0.25em;">提交審核結果</span>
+                    </div>
+                </md-filled-button>
+            </div>
+            <div class="round-container panel requests-container" id="reviewed-requests-container">
+                <div class="panel-title">
+                    <span class="material-symbols-outlined panel-title-icon">archive</span>
+                    <span class="panel-title-text">已處理</span>
+                </div>
+                <div class="round-container" style="width: 100%; background-color: darkgray; margin-top: 0.25em">
+                    <md-list id="reviewed-requests-list">
+                        <md-list-item>
+                            <div class="request-item">
+                                <span class="request-status request-item-text"><strong>狀態</strong></span>
+                                <div class="vertical-spacer"></div>
+                                <span class="request-member request-item-text"><strong>成員</strong></span>
+                                <div class="vertical-spacer"></div>
+                                <span class="request-date request-item-text"><strong>送出時間</strong></span>
+                                <div class="vertical-spacer"></div>
+                                <span class="request-reason request-item-text"><strong>請假原因</strong></span>
+                                <div class="vertical-spacer"></div>
+                                <span class="request-actions request-item-text" style="align-items: center;">
+                            <strong>審核資訊</strong>
+                        </span>
+                            </div>
+                        </md-list-item>
+                        <div class="request-item-divider"></div>
+                        {% if reviewed_requests %}
+                            {% for request in reviewed_requests %}
+                                <md-list-item>
+                                    <div class="request-item">
+                                        {% if request.status == "pending" %}
+                                        <span class="request-status request-item-text material-symbols-outlined symbol-yellow">pending</span>
+                                        {% elif request.status == "approved" %}
+                                        <span class="request-status request-item-text material-symbols-outlined symbol-green">check_circle</span>
+                                        {% elif request.status == "rejected" %}
+                                        <span class="request-status request-item-text material-symbols-outlined symbol-red">cancel</span>
+                                        {% endif %}
+                                        <div class="vertical-spacer"></div>
+                                        <div class="request-member member-indicator">
+                                            <img src="{{ request.member.avatar }}"
+                                                 alt="{{ request.member.real_name }} 的頭像" class="member-avatar">
+                                            <span class="member-name">{{ request.member.real_name }}</span>
+                                        </div>
+                                        <div class="vertical-spacer"></div>
+                                        <span class="request-date request-item-text">{{ request.created_at | date:"Y/m/d H:i" }}</span>
+                                        <div class="vertical-spacer"></div>
+                                        <span class="request-reason request-item-text">{{ request.reason }}</span>
+                                        <div class="vertical-spacer"></div>
+                                        <div class="review-detail request-actions">
+                                            <div class="member-indicator" style="flex-direction: row; gap: 0;">
+                                            <span class="request-item-text"><strong>審查者：</strong></span>
+                                                <img src="{{ request.reviewer.avatar }}" alt="{{ request.member.real_name }} 的頭像" class="member-avatar">
+                                                <span class="member-name" style="margin-left: 0.5em;">{{ request.reviewer.real_name }}</span>
+                                            </div>
+                                            <span class="request-item-text"><strong>留言：</strong>
+                                                {% if request.reviewer_comment != "" %}
+                                                    {{ request.reviewer_comment }}
+                                                {% else %}
+                                                    (無)
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </md-list-item>
+                                <div class="request-item-divider"></div>
+                            {% endfor %}
+                        {% else %}
+                            <md-list-item>
+                                <div class="request-item">
+                                    <span class="request-item-text">沒有已處理的假單</span>
+                                </div>
+                            </md-list-item>
+                            <div class="request-item-divider"></div>
+                        {% endif %}
+                    </md-list>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,113 @@
+#requests-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    width: 100%;
+    margin-top: 0.5em;
+}
+
+.panel {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+.requests-container {
+    gap: 0.5em;
+}
+
+#submit-button {
+    width: 100%;
+}
+
+/* List styles */
+
+md-list, md-list-item {
+    width: 100%;
+}
+
+.vertical-spacer {
+    margin: 0 7px 0 9px;
+    width: 2px;
+    border-left: 1px solid black;
+    height: -webkit-fill-available;
+}
+
+.request-item {
+    display: flex;
+    width: 100%;
+    align-items: center;
+}
+
+.request-item-text {
+    display: flex;
+    justify-content: center;
+    color: black;
+}
+
+.request-item-text strong {
+    color: black;
+}
+
+.request-item-divider {
+    height: 1px;
+    border-top: black 1px solid;
+    padding: 0 1em;
+}
+
+.request-status {
+    flex: 1;
+}
+
+.symbol-green {color: #3eff3e !important;}
+
+.symbol-yellow {color: #ffff5d !important;}
+
+.symbol-red {color: #ff4c4c !important;}
+
+.request-member {
+    flex: 1;
+}
+
+.request-date {
+    flex: 3;
+}
+
+.request-reason {
+    flex: 5;
+}
+
+.request-actions {
+    flex: 4;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1em
+}
+
+.request-actions-item span {
+    color: black;
+}
+
+.member-indicator {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.member-indicator .member-avatar {
+    width: 1.2em;
+    height: 1.2em;
+    border-radius: 50%;
+}
+
+.member-indicator .member-name {
+    color: black;
+}
+
+.review-detail {
+    align-items: flex-start;
+}
+
+.review-detail .member-indicator {
+    flex-direction: row;
+    gap: 0;
+}
