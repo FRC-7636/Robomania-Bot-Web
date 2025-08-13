@@ -24,14 +24,18 @@ def validate_meeting_data(data):
     if not data.get("start-time"):
         return False, "start-time (missing)"
     try:
-        start_time = datetime.datetime.fromisoformat(data["start-time"]).astimezone(TAIPEI_TZ)
+        start_time = datetime.datetime.fromisoformat(data["start-time"]).astimezone(
+            TAIPEI_TZ
+        )
     except ValueError:
         return False, "start-time (incorrect format)"
     if start_time < datetime.datetime.now(tz=TAIPEI_TZ):
         return False, "start-time (too early)"
     if data.get("end-time"):
         try:
-            end_time = datetime.datetime.fromisoformat(data["end-time"]).astimezone(TAIPEI_TZ)
+            end_time = datetime.datetime.fromisoformat(data["end-time"]).astimezone(
+                TAIPEI_TZ
+            )
         except ValueError:
             return False, "end-time"
         if end_time < start_time:
@@ -63,7 +67,9 @@ def index(request, meeting_id):
         condensed_absent_request = {
             "status": absent_request.status,
             "reason": absent_request.reason,
-            "created_at": absent_request.created_at.astimezone(TAIPEI_TZ).strftime("%Y/%m/%d %H:%M"),
+            "created_at": absent_request.created_at.astimezone(TAIPEI_TZ).strftime(
+                "%Y/%m/%d %H:%M"
+            ),
             "reviewer": absent_request.reviewer,
             "reviewer_comment": absent_request.reviewer_comment,
         }
@@ -101,10 +107,16 @@ def create(request):
             name=request.POST.get("name", ""),
             description=request.POST.get("description", ""),
             host=DMember.objects.get(discord_id=int(request.POST.get("host", ""))),
-            start_time=datetime.datetime.fromisoformat(request.POST.get("start-time")).astimezone(TAIPEI_TZ),
-            end_time=datetime.datetime.fromisoformat(request.POST.get("end-time")).astimezone(TAIPEI_TZ)
-            if request.POST.get("end-time", None)
-            else None,
+            start_time=datetime.datetime.fromisoformat(
+                request.POST.get("start-time")
+            ).astimezone(TAIPEI_TZ),
+            end_time=(
+                datetime.datetime.fromisoformat(
+                    request.POST.get("end-time")
+                ).astimezone(TAIPEI_TZ)
+                if request.POST.get("end-time", None)
+                else None
+            ),
             location=request.POST.get("location", ""),
             can_absent=request.POST.get("can-absent", "False").lower() == "true",
             creator=request.user,
@@ -119,13 +131,19 @@ def create(request):
         member_choices = []
         for member in all_members:
             member_choices.append(
-                {"discord_id": member.discord_id, "real_name": member.real_name, "avatar": member.avatar}
+                {
+                    "discord_id": member.discord_id,
+                    "real_name": member.real_name,
+                    "avatar": member.avatar,
+                }
             )
-        return render(request, 'Meetings/edit.html', {"member_list": member_choices})
+        return render(request, "Meetings/edit.html", {"member_list": member_choices})
 
 
 @login_required
-@permission_required(["Meetings.change_DMeeting", "Meetings.delete_DMeeting"], raise_exception=True)
+@permission_required(
+    ["Meetings.change_DMeeting", "Meetings.delete_DMeeting"], raise_exception=True
+)
 def edit(request, meeting_id):
     meeting = get_object_or_404(DMeeting, pk=meeting_id)
     if request.method == "POST":
@@ -136,9 +154,13 @@ def edit(request, meeting_id):
         meeting.name = request.POST.get("name", "")
         meeting.description = request.POST.get("description", "")
         meeting.host = DMember.objects.get(discord_id=int(request.POST.get("host", "")))
-        meeting.start_time = datetime.datetime.fromisoformat(request.POST.get("start-time")).astimezone(TAIPEI_TZ)
+        meeting.start_time = datetime.datetime.fromisoformat(
+            request.POST.get("start-time")
+        ).astimezone(TAIPEI_TZ)
         if request.POST.get("end-time", None):
-            meeting.end_time = datetime.datetime.fromisoformat(request.POST.get("end-time")).astimezone(TAIPEI_TZ)
+            meeting.end_time = datetime.datetime.fromisoformat(
+                request.POST.get("end-time")
+            ).astimezone(TAIPEI_TZ)
         else:
             meeting.end_time = None
         meeting.location = request.POST.get("location", "")
@@ -152,17 +174,31 @@ def edit(request, meeting_id):
         member_choices = []
         for member in all_members:
             member_choices.append(
-                {"discord_id": member.discord_id, "real_name": member.real_name, "avatar": member.avatar}
+                {
+                    "discord_id": member.discord_id,
+                    "real_name": member.real_name,
+                    "avatar": member.avatar,
+                }
             )
-        return render(request, 'Meetings/edit.html',
-                      {"meeting": meeting,
-                       "meeting_description":
-                           meeting.description.replace("`", "\\`") if meeting.description is not None else "",
-                       "member_list": member_choices})
+        return render(
+            request,
+            "Meetings/edit.html",
+            {
+                "meeting": meeting,
+                "meeting_description": (
+                    meeting.description.replace("`", "\\`")
+                    if meeting.description is not None
+                    else ""
+                ),
+                "member_list": member_choices,
+            },
+        )
 
 
 @login_required
-@permission_required(["Meetings.change_DMeeting", "Meetings.delete_DMeeting"], raise_exception=True)
+@permission_required(
+    ["Meetings.change_DMeeting", "Meetings.delete_DMeeting"], raise_exception=True
+)
 def delete(request, meeting_id):
     meeting = get_object_or_404(DMeeting, pk=meeting_id)
     if request.method == "DELETE":
@@ -194,11 +230,15 @@ def submit_absent_request(request, meeting_id):
         reason = request.POST.get("reason", None)
         if reason is None:
             return HttpResponse("Reason for absence is required.", status=400)
-        absent_request = DAbsentRequest(member=request.user, meeting=meeting, reason=reason)
+        absent_request = DAbsentRequest(
+            member=request.user, meeting=meeting, reason=reason
+        )
         absent_request.save()
         return redirect("meeting_info", meeting_id=meeting_id)
     else:
-        return render(request, "Meetings/submit_absent_request.html", {"meeting": meeting})
+        return render(
+            request, "Meetings/submit_absent_request.html", {"meeting": meeting}
+        )
 
 
 @login_required
