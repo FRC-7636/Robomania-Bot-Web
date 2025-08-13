@@ -12,6 +12,37 @@ from Members.models import DMember
 TAIPEI_TZ = ZoneInfo("Asia/Taipei")
 
 
+def validate_meeting_data(data):
+    if not data.get("name"):
+        return False, "name"
+    if not data.get("host"):
+        return False, "host"
+    else:
+        host_id = int(data["host"])
+        if not DMember.objects.filter(discord_id=host_id).exists():
+            return False, "host"
+    if not data.get("start-time"):
+        return False, "start-time (missing)"
+    try:
+        start_time = datetime.datetime.fromisoformat(data["start-time"]).astimezone(TAIPEI_TZ)
+    except ValueError:
+        return False, "start-time (incorrect format)"
+    if start_time < datetime.datetime.now(tz=TAIPEI_TZ):
+        return False, "start-time (too early)"
+    if data.get("end-time"):
+        try:
+            end_time = datetime.datetime.fromisoformat(data["end-time"]).astimezone(TAIPEI_TZ)
+        except ValueError:
+            return False, "end-time"
+        if end_time < start_time:
+            return False, "end-time"
+    if not data.get("location"):
+        return False, "location"
+    if not data.get("can-absent"):
+        return False, "can-absent"
+    return True, ""
+
+
 # Create your views here.
 @login_required
 def index(request, meeting_id):
