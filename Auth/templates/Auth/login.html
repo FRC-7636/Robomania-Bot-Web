@@ -22,7 +22,7 @@
             </div>
         {% endif %}
         <md-divider inset></md-divider>
-        <md-filled-button id="login-discord-btn" style="margin: 1.2em;" href="https://discord.com/oauth2/authorize?client_id=1402621019432157266&response_type=code&prompt=none&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Faccounts%2Flogin%2Fdiscord%2F&scope=identify+email+guilds">
+        <md-filled-button id="login-discord-btn" style="margin: 1.2em;" href="https://discord.com/oauth2/authorize?client_id=1402621019432157266&response_type=code&prompt=none&redirect_uri={{ cb_url }}%2Faccounts%2Flogin%2Fdiscord%2F&scope=identify+email+guilds">
             <div style="display: flex; align-items: center; justify-content: center;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-discord"
                      viewBox="0 0 16 16">

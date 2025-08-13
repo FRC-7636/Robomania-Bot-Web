@@ -22,7 +22,7 @@ def login_view(request):
             return render(
                 request,
                 "Auth/login.html",
-                {"error": "提供的 Discord ID 或密碼不正確。"},
+                {"error": "提供的 Discord ID 或密碼不正確。", "cb_url": getenv("DISCORD_LOGIN_CALLBACK_URL")},
             )
     else:  # GET
         if request.user.is_authenticated:
@@ -32,7 +32,8 @@ def login_view(request):
                 return render(
                     request,
                     "Auth/login.html",
-                    {"error": request.GET.get("error", None)},
+                    {"error": request.GET.get("error", None),
+                     "cb_url": getenv("DISCORD_LOGIN_CALLBACK_URL")},
                 )
             elif request.GET.get("success", None):
                 return render(
@@ -40,7 +41,7 @@ def login_view(request):
                     "Auth/login.html",
                     {"success": request.GET.get("success", None)},
                 )
-            return render(request, "Auth/login.html")
+            return render(request, "Auth/login.html", {"cb_url": getenv("DISCORD_LOGIN_CALLBACK_URL")})
 
 
 def discord_login_view(request):
