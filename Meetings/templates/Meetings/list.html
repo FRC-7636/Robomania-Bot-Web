@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/Meetings/list.css' %}">
+    <script src="{% static 'js/Meetings/list.js' %}"></script>
+    <title>會議列表</title>
+{% endblock %}
+
+{% block main_content %}
+    <div class="soft-container" id="meetings-list-container">
+        <div style="display: flex; align-items:center; justify-content: space-between; width: 100%;">
+            <h1 style="margin: 0.3em 0;">會議列表</h1>
+            <md-filled-button href="{% url "meeting_create" %}" style="height: fit-content;" {% if not can_create %} disabled {% endif %}>
+                <div style="display: flex; align-items: center; justify-content: center;">
+                    <span class="material-symbols-outlined">add</span>
+                </div>
+            </md-filled-button>
+        </div>
+        <div class="round-container" id="meetings-list">
+            <div class="round-container inner-container meetings-list-div" id="meetings-list-content">
+                <md-list style="width: 100%;">
+                    <md-list-item>
+                        <div class="meeting-item">
+                            <span class="meeting-item-text meeting-id list-head" id="pk-head-click"><strong
+                                    id="pk-head">#</strong></span>
+                            <div class="vertical-spacer"></div>
+                            <span class="meeting-item-text meeting-name list-head" id="name-head-click"><strong
+                                    id="name-head">會議名稱</strong></span>
+                            <div class="vertical-spacer"></div>
+                            <span class="meeting-item-text meeting-host list-head" id="host-head-click"><strong
+                                    id="host-head">主持人</strong></span>
+                            <div class="vertical-spacer"></div>
+                            <span class="meeting-item-text meeting-time list-head" id="time-head-click"><strong
+                                    id="time-head">時間</strong></span>
+                            <div class="vertical-spacer"></div>
+                            <span class="meeting-item-text meeting-location list-head"><strong  {# id="location-head-click" #}
+                                    id="location-head">地點</strong></span>
+                            <div class="vertical-spacer"></div>
+                            <span class="meeting-item-text meeting-can-absent list-head" id="can_absent-head-click"><strong
+                                    id="can_absent-head">可請假</strong></span>
+                            <div class="vertical-spacer"></div>
+                            <span class="meeting-item-text meeting-req-count list-head"><strong>假單數量</strong></span>
+                        </div>
+                    </md-list-item>
+                    <div class="divider"></div>
+                    {% for meeting in meetings %}
+                        <md-list-item type="link" href="{% url 'meeting_info' meeting.pk %}">
+                            <div class="meeting-item">
+                                <span class="meeting-item-text meeting-id">{{ meeting.pk }}</span>
+                                <div class="vertical-spacer"></div>
+                                <span class="meeting-item-text meeting-name">{{ meeting.name }}</span>
+                                <div class="vertical-spacer"></div>
+                                <div class="member-indicator meeting-item-text meeting-host">
+                                    <img class="member-avatar" src="{{ meeting.host.avatar }}"
+                                         alt="{{ meeting.host.real_name }} 的頭像">
+                                    <span class="member-name">{{ meeting.host.real_name }} ({{ meeting.host.discord_id }})</span>
+                                </div>
+                                <div class="vertical-spacer"></div>
+                                <div class="meeting-time meeting-time-container">
+                                    <span class="meeting-item-text">{{ meeting.start_time|date:"Y/m/d H:i" }}</span>
+                                    <span class="meeting-item-text material-symbols-outlined" style="font-size: medium">arrow_downward</span>
+                                    <span class="meeting-item-text">
+                                    {% if meeting.end_time %}
+                                        {{ meeting.end_time|date:"Y/m/d H:i" }}
+                                    {% else %}
+                                        (未設定)
+                                    {% endif %}
+                                </span>
+                                </div>
+                                <div class="vertical-spacer"></div>
+                                <span class="meeting-item-text meeting-location">{{ meeting.location }}</span>
+                                <div class="vertical-spacer"></div>
+                                <span class="meeting-item-text meeting-can-absent">
+                                {% if meeting.can_absent %}
+                                    <span class="material-symbols-outlined symbol-green">check_circle</span>
+                                    </span>
+                                    <div class="vertical-spacer"></div>
+                                    <span class="meeting-item-text meeting-req-count">{{ meeting.absent_requests.count }}
+                                {% else %}
+                                <span class="material-symbols-outlined symbol-red">cancel</span>
+                                </span>
+                                    <div class="vertical-spacer"></div>
+                                    <span class="meeting-item-text meeting-req-count">(不適用)
+                                {% endif %}
+                                    </span>
+                            </div>
+                        </md-list-item>
+                        <div class="divider"></div>
+                    {% empty %}
+                        <md-list-item>沒有會議</md-list-item>
+                    {% endfor %}
+                </md-list>
+            </div>
+        </div>
+    </div>
+{% endblock %}

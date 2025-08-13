@@ -1,7 +1,7 @@
 # coding=utf-8
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, redirect, reverse, get_object_or_404
 import datetime
 from zoneinfo import ZoneInfo
 from json import loads
@@ -90,6 +90,29 @@ def index(request, meeting_id):
                 request.user.has_perm("Meetings.change_DMeeting")
                 and request.user.has_perm("Meetings.delete_DMeeting")
             ),
+        },
+    )
+
+
+@login_required
+def list_view(request):
+    meetings = DMeeting.objects.all()
+    if request.GET.get("order_by", "").replace("-", "") not in (
+        "pk",
+        "name",
+        "host",
+        "start_time",
+        "end_time",
+        "can_absent",
+    ):
+        return redirect(f"{reverse('meeting_list')}?order_by=pk")
+    meetings = meetings.order_by(request.GET["order_by"])
+    return render(
+        request,
+        "Meetings/list.html",
+        {
+            "meetings": meetings,
+            "can_create": request.user.has_perm("Meetings.add_DMeeting"),
         },
     )
 
