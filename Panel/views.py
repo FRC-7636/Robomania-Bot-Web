@@ -16,8 +16,8 @@ def index(request):
         now = datetime.datetime.now(tz=TAIPEI_TZ)
         two_weeks_ago = (now - datetime.timedelta(weeks=2)).replace(tzinfo=TAIPEI_TZ)
         two_weeks_ahead = (now + datetime.timedelta(weeks=2)).replace(tzinfo=TAIPEI_TZ)
-        upcoming_meetings = DMeeting.objects.filter(start_time__range=(now, two_weeks_ahead))
-        past_meetings = DMeeting.objects.filter(end_time__range=(two_weeks_ago, now))
+        upcoming_meetings = DMeeting.objects.filter(start_time__range=(now, two_weeks_ahead)).order_by("start_time")
+        past_meetings = DMeeting.objects.filter(end_time__range=(two_weeks_ago, now)).order_by("-end_time")
         return render(
             request,
             'Panel/index.html',
