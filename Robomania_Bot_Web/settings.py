@@ -27,7 +27,7 @@ SECRET_KEY = getenv("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = getenv("IS_DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["59.126.69.202"]
 
 
 # Application definition
@@ -132,13 +132,13 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
-STATIC_ROOT = BASE_DIR.parent / 'web_statics'
+STATIC_ROOT = BASE_DIR / 'web_statics'
 
 
 # User uploads
 
-MEDIA_URL = 'user_uploads/'
-MEDIA_ROOT = BASE_DIR.parent / 'user_uploads'
+MEDIA_URL = 'user_uploads_nginx/'
+MEDIA_ROOT = BASE_DIR / 'user_uploads'
 
 
 # Default primary key field type

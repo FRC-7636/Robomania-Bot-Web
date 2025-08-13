@@ -1,0 +1,4 @@
+source CONFIG.env
+export DISCORD_CLIENT_ID
+export DISCORD_CLIENT_SECRET
+export IS_DEBUG
