@@ -1,5 +1,7 @@
 # coding=utf-8
 import requests
+from os import getenv
+from urllib.parse import unquote
 from pprint import pprint
 
 
@@ -13,7 +15,7 @@ def get_access_token_response(client_id: int | str, client_secret: str, code: st
         'client_secret': client_secret,
         'grant_type': 'authorization_code',
         'code': code,
-        'redirect_uri': 'http://127.0.0.1:8000/accounts/login/discord/',
+        'redirect_uri': f'{unquote(getenv("DISCORD_LOGIN_CALLBACK_URL"))}/accounts/login/discord/',
         'scope': 'identify email guilds'
     }
 
