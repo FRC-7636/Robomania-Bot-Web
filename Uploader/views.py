@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.conf import settings
+from django.utils.http import content_disposition_header
 from magika import Magika
 from uuid import uuid4
 from os import remove
@@ -48,6 +49,6 @@ def download(request, uuid):
         response = HttpResponse(status=404)
     else:
         response = HttpResponse(content_type=user_file.mimetype)
-        response['Content-Disposition'] = f'attachment; filename="{user_file.name}"'
+        response['Content-Disposition'] = content_disposition_header(False, user_file.name)
         response["X-Accel-Redirect"] = user_file.file.url
     return response
