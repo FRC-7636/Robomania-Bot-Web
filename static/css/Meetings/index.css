@@ -44,11 +44,6 @@
     margin: 0.5em;
 }
 
-.button-icon {
-    margin-right: 0.25em;
-    font-size: 1.3em;
-}
-
 #meeting-description {
     max-height: 20em;
     overflow: auto;

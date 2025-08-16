@@ -68,6 +68,11 @@ header.collapsed {
     padding: 0 1em;
 }
 
+.button-icon {
+    margin-right: 0.25em;
+    font-size: 1.3em;
+}
+
 /* Style for panels */
 
 .soft-container {
