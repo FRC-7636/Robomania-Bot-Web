@@ -13,8 +13,7 @@
 }
 
 .meeting-divider {
-    color: darkgray;
-    height: 2px;
+    border-color: darkgray;
 }
 
 p {
@@ -83,4 +82,18 @@ p {
     flex-direction: column;
     width: 100%;
     height: -webkit-fill-available;
+}
+
+#warning-points-history {
+    width: -webkit-fill-available;
+}
+
+#warning-status {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.25em;
+    width: -webkit-fill-available;
+    height: 100%;
 }

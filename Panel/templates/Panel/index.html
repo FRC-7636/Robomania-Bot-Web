@@ -29,10 +29,11 @@
                         <span class="panel-title-text">個人資料</span>
                     </div>
                     <img src="{{ request.user.avatar }}" alt="{{ request.user.real_name }} 的頭像" id="profile-avatar">
-                    <div class="profile-info">
+                    <div class="profile-info" style="display: flex; flex-direction: column; height: -webkit-fill-available;">
                         <p><strong>真實姓名：</strong>{{ request.user.real_name }}</p>
                         <p><strong>Discord ID：</strong>{{ request.user.discord_id }}</p>
                         <p><strong>Email：</strong>{{ request.user.email_address }}</p>
+                        <p><strong>目前點數：</strong>{{ request.user.warning_points }} 點</p>
                         <p><strong>組別：</strong>{% if not request.user.groups.all %}(無){% endif %}</p>
                         {% if request.user.groups.all %}
                             <ul style="margin: 0;">
@@ -50,13 +51,19 @@
                             </ul>
                         {% endif %}
                     </div>
+                    <md-filled-button type="button" href="{% url 'meeting_list' %}" style="margin-top: 0.25em; width: 100%;">
+                        <div style="display: flex; align-items: center;">
+                            <span class="material-symbols-outlined button-icon">open_in_new</span>
+                            <span>開啟「成員」</span>
+                        </div>
+                    </md-filled-button>
                 </div>
                 <div class="round-container inner-container panel" id="meetings-panel">
                     <div class="panel-title" id="meetings-title">
                         <span class="material-symbols-outlined panel-title-icon">groups_3</span>
                         <span class="panel-title-text">近期會議</span>
                     </div>
-                    <div id="meetings-container" style="width: 100%;">
+                    <div id="meetings-container">
                         <div class="round-container inner-container meetings-list-div" id="upcoming-meetings-list-div">
                             <div style="display: flex; align-items: center;">
                                 <md-icon style="color: black;">upcoming</md-icon>
@@ -73,7 +80,7 @@
                                                 <div class="meeting-text" slot="supporting-text">開始於 {{ meeting.start_time|date:"Y-m-d H:i" }}</div>
                                                 <md-icon class="meeting-text" slot="end">open_in_new</md-icon>
                                             </md-list-item>
-                                            <md-divider class="meeting-divider"></md-divider>
+                                            <div class="divider meeting-divider"></div>
                                         {% endfor %}
                                     {% endif %}
                                 </md-list>
@@ -101,12 +108,32 @@
                                 </md-list>
                             </div>
                         </div>
+                        <md-filled-button type="button" href="{% url 'meeting_list' %}" style="margin-top: 0.25em;">
+                            <div style="display: flex; align-items: center;">
+                                <span class="material-symbols-outlined button-icon">open_in_new</span>
+                                <span>開啟「會議」</span>
+                            </div>
+                        </md-filled-button>
                     </div>
                 </div>
                 <div class="round-container inner-container panel" id="warning-points-panel">
                     <div class="panel-title" id="warning-points-title">
                         <span class="material-symbols-outlined panel-title-icon">error</span>
                         <span class="panel-title-text">記點狀態</span>
+                    </div>
+                    <div class="round-container inner-container" id="warning-points-history">
+                        <div class="
+                        {% if request.user.warning_points == 0 %}
+                        points-safe
+                        {% elif request.user.warning_points < 5 %}
+                        points-warning
+                        {% else %}
+                        points-danger
+                        {% endif %}
+" id="warning-status">
+                            <span class="material-symbols-outlined">beenhere</span>
+                            <span>你無須擔心你的記點狀態。</span>
+                        </div>
                     </div>
                 </div>
             </div>
