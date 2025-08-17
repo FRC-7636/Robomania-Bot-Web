@@ -60,8 +60,16 @@ class DMember(AbstractBaseUser, PermissionsMixin):
 
 
 class WarningHistory(models.Model):
-    member = models.ForeignKey(DMember, on_delete=models.CASCADE)
-    time = models.DateTimeField()
-    reason = models.TextField()
-    points = models.FloatField(default=0.0)
-    notes = models.TextField(blank=True, null=True)
+    class Meta:
+        verbose_name = "記點歷史"
+        verbose_name_plural = "記點歷史"
+        ordering = ["-time"]
+
+    member = models.ForeignKey(DMember, verbose_name="成員", related_name="warning_history", on_delete=models.CASCADE)
+    operator = models.ForeignKey(
+        DMember, verbose_name="操作人員", related_name="operated_warnings", on_delete=models.CASCADE,
+    )
+    time = models.DateTimeField("時間", auto_now_add=True)
+    reason = models.TextField("事由")
+    points = models.FloatField("點數", default=0.0)
+    notes = models.TextField("附註", blank=True, null=True)
