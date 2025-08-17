@@ -1,0 +1,97 @@
+.panel {
+    background-color: rgba(255, 255, 255, 0.25);
+    flex: 1;
+}
+
+#panels-container {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5em;
+    width: 100%;
+    margin-top: 0.5em;
+}
+
+#profile-avatar {
+    height: 7em;
+    width: 7em;
+    border-radius: 50%;
+    box-shadow: 0 0 20px 7px rgba(0,0,0,0.25);
+    align-self: center;
+    margin: 0.5em;
+}
+
+.profile-info p {
+    margin: 0.1em;
+}
+
+#warning-points-history-list {
+    margin-top: 0.5em;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    background-color: darkgray;
+}
+
+.list-item-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.list-item-content span {
+    color: black;
+}
+
+.pts-indicator {
+    font-size: large;
+    font-weight: bold;
+}
+
+.pts-positive {
+    color: #af0000 !important;
+}
+
+.pts-negative {
+    color: #007a00 !important;
+}
+
+.list-item-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1em;
+}
+
+.list-item-subtitle {
+    font-size: 0.85em;
+}
+
+.member-indicator {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.member-indicator .member-avatar {
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+}
+
+.member-indicator .member-name {
+    margin-left: 0.2em;
+}
+
+#actions-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    width: 100%;
+    height: 100%;
+}
+
+#actions-container md-filled-button {
+    width: 100%;
+}

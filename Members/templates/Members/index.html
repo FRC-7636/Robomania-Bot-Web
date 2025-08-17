@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/Members/index.css' %}">
+    <title>{{ member.real_name }} 的資訊</title>
+{% endblock %}
+
+{% block main_content %}
+    <div class="soft-container" id="member-info-container">
+        <h1 style="margin: 0.3em 0;">「{{ member.real_name }}」的資訊</h1>
+        <div id="panels-container">
+            <div class="round-container panel" id="member-info-panel">
+                <div class="panel-title">
+                    <span class="material-symbols-outlined">info</span>
+                    <span class="panel-title-text">基本資訊</span>
+                </div>
+                <img src="{{ member.avatar }}" alt="{{ member.real_name }} 的頭像" id="profile-avatar">
+                <div class="profile-info"
+                     style="display: flex; flex-direction: column; height: -webkit-fill-available;">
+                    <p><strong>真實姓名：</strong>{{ member.real_name }}</p>
+                    <p><strong>Discord ID：</strong>{{ member.discord_id }}</p>
+                    <p><strong>Email：</strong>{{ member.email_address }}</p>
+                    <p><strong>目前點數：</strong>{{ member.warning_points }} 點</p>
+                    <p><strong>組別：</strong>{% if not member.groups.all %}(無){% endif %}</p>
+                    {% if member.groups.all %}
+                        <ul style="margin: 0;">
+                            {% for group in member.groups.all %}
+                                <li>{{ group.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    <p><strong>職務：</strong>{% if not member.jobs %}(無){% endif %}</p>
+                    {% if member.jobs %}
+                        <ul style="margin: 0;">
+                            {% for job in member.jobs %}
+                                <li>{{ job }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="round-container panel" id="warn-history-panel">
+                <div class="panel-title">
+                    <span class="material-symbols-outlined">history</span>
+                    <span class="panel-title-text">記點歷史</span>
+                </div>
+                <div class="round-container" id="warning-points-history-list">
+                    <md-list>
+                    {% if warning_history %}
+                        {% for history in warning_history %}
+                            <md-list-item>
+                                <div class="list-item-content">
+                                    <span class="{% if history.points > 0 %}pts-positive{% elif history.points < 0 %}pts-negative{% endif %} pts-indicator">
+                                        {% if history.points > 0 %}+{% endif %}{{ history.points }} 點</span>
+                                    <div class="list-item-text">
+                                        <span class="list-item-title">{{ history.reason }}{% if history.notes %}
+                                            ({{ history.notes }}){% endif %}</span>
+                                        <div class="member-indicator"><span>由&nbsp;</span>
+                                            <img src="{{ history.operator.avatar }}"
+                                                 alt="{{ history.operator.real_name }} 的頭像" class="member-avatar">
+                                            <span class="member-name">{{ history.operator.real_name }}</span>
+                                            <span>&nbsp;操作</span>
+                                        </div>
+                                        <span class="list-item-subtitle">
+                                            於 {{ history.time|date:"Y-m-d H:i" }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </md-list-item>
+                            <div class="divider"></div>
+                        {% endfor %}
+                    {% else %}
+                        <md-list-item>
+                            <div class="list-item-content">
+                                <span class="list-item-title">無記點歷史</span>
+                            </div>
+                        </md-list-item>
+                        <div class="divider"></div>
+                    {% endif %}
+                    </md-list>
+                </div>
+            </div>
+            <div class="round-container panel" id="actions-panel">
+                <div class="panel-title">
+                    <span class="material-symbols-outlined">action_key</span>
+                    <span class="panel-title-text">操作</span>
+                </div>
+                <div id="actions-container">
+                    <md-filled-button type="button" href="./edit" {% if not can_edit %}disabled{% endif %}>
+                        <div style="display: flex; align-items: center; height: min-content;">
+                            <span class="material-symbols-outlined button-icon">
+                                edit</span>
+                            <span>編輯基本資訊</span>
+                        </div>
+                    </md-filled-button>
+                    {% if is_self %}
+                        <div style="display: flex; align-items: center; gap: 0.25em;">
+                            <span class="material-symbols-outlined" style="font-size: 1.2em;">error</span>
+                            <span style="font-size: 0.8em;">
+                            如要修改密碼，請至帳號頁面修改。
+                        </span>
+                        </div>
+                    {% endif %}
+                    <div class="divider" style="width: -webkit-fill-available; border-color: white;"></div>
+                    <md-filled-button type="button" href="./edit_warning_points"
+                                      {% if not can_edit_warning_points %}disabled{% endif %}>
+                        <div style="display: flex; align-items: center; height: min-content;">
+                            <span class="material-symbols-outlined button-icon">
+                                unknown_2</span>
+                            <span>記/銷點</span>
+                        </div>
+                    </md-filled-button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
