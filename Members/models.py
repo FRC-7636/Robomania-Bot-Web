@@ -65,6 +65,9 @@ class WarningHistory(models.Model):
         verbose_name_plural = "記點歷史"
         ordering = ["-time"]
 
+    def __str__(self):
+        return f"{self.member} - {self.points} ({self.reason})"
+
     member = models.ForeignKey(DMember, verbose_name="成員", related_name="warning_history", on_delete=models.CASCADE)
     operator = models.ForeignKey(
         DMember, verbose_name="操作人員", related_name="operated_warnings", on_delete=models.CASCADE,
