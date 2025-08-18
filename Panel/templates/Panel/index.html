@@ -31,7 +31,7 @@
                     </div>
                     <div id="content-height-ref">
                     <img src="{{ request.user.avatar }}" alt="{{ request.user.real_name }} 的頭像" id="profile-avatar">
-                    <div class="profile-info" style="display: flex; flex-direction: column; height: -webkit-fill-available;">
+                    <div class="inner-container profile-info" style="display: flex; flex-direction: column; height: -webkit-fill-available;">
                         <p><strong>真實姓名：</strong>{{ request.user.real_name }}</p>
                         <p><strong>Discord ID：</strong>{{ request.user.discord_id }}</p>
                         <p><strong>Email：</strong>{{ request.user.email_address }}</p>
@@ -52,6 +52,7 @@
                                 {% endfor %}
                             </ul>
                         {% endif %}
+                    </div>
                     </div>
                     <md-filled-button type="button" href="{% url 'meeting_list' %}" style="margin-top: 0.25em; width: 100%;">
                         <div style="display: flex; align-items: center;">
@@ -104,7 +105,7 @@
                                                 <div class="meeting-text" slot="supporting-text">結束於 {{ meeting.end_time|date:"Y-m-d H:i" }}</div>
                                                 <md-icon class="meeting-text" slot="end">open_in_new</md-icon>
                                             </md-list-item>
-                                            <md-divider class="meeting-divider"></md-divider>
+                                            <div class="divider meeting-divider"></div>
                                         {% endfor %}
                                     {% endif %}
                                 </md-list>
@@ -123,20 +124,67 @@
                         <span class="material-symbols-outlined panel-title-icon">error</span>
                         <span class="panel-title-text">記點狀態</span>
                     </div>
-                    <div class="round-container inner-container" id="warning-points-history">
-                        <div class="
-                        {% if request.user.warning_points == 0 %}
-                        points-safe
-                        {% elif request.user.warning_points < 5 %}
-                        points-warning
-                        {% else %}
-                        points-danger
-                        {% endif %}
-" id="warning-status">
+                    <div id="warning-history-container">
+                    {% if request.user.warning_points == 0 %}
+                        <div class="points-safe round-container inner-container" id="warning-status">
                             <span class="material-symbols-outlined">beenhere</span>
-                            <span>你無須擔心你的記點狀態。</span>
+                            <span>你無須擔心你的記點狀態。請繼續保持！</span>
+                        </div>
+                    {% elif request.user.warning_points < 4 %}
+                        <div class="points-warning round-container inner-container" id="warning-status">
+                            <span class="material-symbols-outlined">warning</span>
+                            <span>你目前仍有尚未銷去的記點。</span>
+                        </div>
+                    {% else %}
+                        <div class="points-danger round-container inner-container" id="warning-status">
+                            <span class="material-symbols-outlined">release_alert</span>
+                            <span>已接近退隊門檻。請立即採取行動！</span>
+                        </div>
+                    {% endif %}
+                    <div class="round-container inner-container" id="warning-points-history">
+                        <div style="display: flex; align-items: center;">
+                            <md-icon style="color: black;">history</md-icon>
+                            <strong style="color: black; margin-left: 0.2em">最近 5 則記/銷點紀錄</strong>
+                        </div>
+                        <div id="warning-history-list-container">
+                            <md-list id="warning-history-list">
+                                {% if recent_warn_history %}
+                                    {% for history in recent_warn_history %}
+                                        <md-list-item>
+                                            <div class="list-item-content">
+                                                <span class="{% if history.points > 0 %}pts-positive{% elif history.points < 0 %}pts-negative{% endif %} pts-indicator">
+                                                    {% if history.points > 0 %}+{% endif %}{{ history.points }} 點</span>
+                                                <div class="list-item-text">
+                                                    <span class="list-item-title">{{ history.reason }}{% if history.notes %}
+                                                        ({{ history.notes }}){% endif %}</span>
+                                                    <div class="member-indicator"><span>由&nbsp;</span>
+                                                        <img src="{{ history.operator.avatar }}"
+                                                             alt="{{ history.operator.real_name }} 的頭像" class="member-avatar">
+                                                        <span class="member-name">{{ history.operator.real_name }}</span>
+                                                        <span>&nbsp;操作</span>
+                                                    </div>
+                                                    <span class="list-item-subtitle">
+                                                        於 {{ history.time|date:"Y-m-d H:i" }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </md-list-item>
+                                        <div class="divider meeting-divider"></div>
+                                    {% endfor %}
+                                {% else %}
+                                    <md-list-item>沒有任何記/銷點紀錄</md-list-item>
+                                    <div class="divider meeting-divider"></div>
+                                {% endif %}
+                            </md-list>
                         </div>
                     </div>
+                    </div>
+                    <md-filled-button type="button" href="{% url 'member_info' request.user.discord_id %}" style="margin-top: 0.25em; width: 100%;">
+                        <div style="display: flex; align-items: center;">
+                            <span class="material-symbols-outlined button-icon">open_in_new</span>
+                            <span>查看完整記錄</span>
+                        </div>
+                    </md-filled-button>
                 </div>
             </div>
         </div>

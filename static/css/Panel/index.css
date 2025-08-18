@@ -1,11 +1,13 @@
 .meetings-list-div {
     flex: 1;
+    height: 50%;
+    overflow: hidden;
     background-color: lightgray;
 }
 
 .meetings-list {
-    max-height: 80%;
     overflow-y: auto;
+    height: calc(100% - 1.5em);
 }
 
 .meeting-text {
@@ -68,6 +70,13 @@ p {
     background-color: rgba(48, 44, 194, 0.5);
 }
 
+#content-height-ref {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    flex-direction: column;
+}
+
 #profile-avatar {
     height: 7em;
     width: 7em;
@@ -84,8 +93,25 @@ p {
     height: -webkit-fill-available;
 }
 
+#warning-history-container {
+    width: 100%;
+}
+
 #warning-points-history {
     width: -webkit-fill-available;
+    height: calc(100% - 2.5em - 0.5em - 0.5em);
+}
+
+.points-safe {
+    background-color: rgba(25, 192, 25, 0.5);
+}
+
+.points-warning {
+    background-color: rgba(255, 217, 25, 0.5);
+}
+
+.points-danger {
+    background-color: rgba(251, 58, 58, 0.7);
 }
 
 #warning-status {
@@ -95,5 +121,64 @@ p {
     justify-content: flex-start;
     gap: 0.25em;
     width: -webkit-fill-available;
-    height: 100%;
+}
+
+#warning-points-history {
+    margin-top: 0.5em;
+    background-color: lightgray;
+}
+
+#warning-history-list-container {
+    height: calc(100% - 1em - 0.5em);
+    overflow-y: auto;
+}
+
+.list-item-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.list-item-content span {
+    color: black;
+}
+
+.pts-indicator {
+    font-size: large;
+    font-weight: bold;
+}
+
+.pts-positive {
+    color: #af0000 !important;
+}
+
+.pts-negative {
+    color: #007a00 !important;
+}
+
+.list-item-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1em;
+}
+
+.list-item-subtitle {
+    font-size: 0.85em;
+}
+
+.member-indicator {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.member-indicator .member-avatar {
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+}
+
+.member-indicator .member-name {
+    margin-left: 0.2em;
 }
