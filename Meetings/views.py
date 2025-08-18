@@ -29,8 +29,6 @@ def validate_meeting_data(data):
         )
     except ValueError:
         return False, "start-time (incorrect format)"
-    if start_time < datetime.datetime.now(tz=TAIPEI_TZ):
-        return False, "start-time (too early)"
     if data.get("end-time"):
         try:
             end_time = datetime.datetime.fromisoformat(data["end-time"]).astimezone(
