@@ -3,6 +3,7 @@
 
 {% block head %}
     <link rel="stylesheet" href="{% static 'css/Panel/index.css' %}">
+    <script src="{% static 'js/Panel/index.js' %}"></script>
     <title>首頁</title>
 {% endblock %}
 
@@ -28,6 +29,7 @@
                         <span class="material-symbols-outlined panel-title-icon">person</span>
                         <span class="panel-title-text">個人資料</span>
                     </div>
+                    <div id="content-height-ref">
                     <img src="{{ request.user.avatar }}" alt="{{ request.user.real_name }} 的頭像" id="profile-avatar">
                     <div class="profile-info" style="display: flex; flex-direction: column; height: -webkit-fill-available;">
                         <p><strong>真實姓名：</strong>{{ request.user.real_name }}</p>
@@ -108,13 +110,13 @@
                                 </md-list>
                             </div>
                         </div>
-                        <md-filled-button type="button" href="{% url 'meeting_list' %}" style="margin-top: 0.25em;">
-                            <div style="display: flex; align-items: center;">
-                                <span class="material-symbols-outlined button-icon">open_in_new</span>
-                                <span>開啟「會議」</span>
-                            </div>
-                        </md-filled-button>
                     </div>
+                    <md-filled-button type="button" href="{% url 'meeting_list' %}" style="margin-top: 0.25em; width: 100%;">
+                        <div style="display: flex; align-items: center;">
+                            <span class="material-symbols-outlined button-icon">open_in_new</span>
+                            <span>開啟「會議」</span>
+                        </div>
+                    </md-filled-button>
                 </div>
                 <div class="round-container inner-container panel" id="warning-points-panel">
                     <div class="panel-title" id="warning-points-title">
