@@ -1,0 +1,40 @@
+:root {
+    --md-filter-chip-selected-container-color: rgb(167, 195, 238);
+}
+
+.round-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5em;
+    background-color: rgba(255, 255, 255, 0.25);
+    width: 100%;
+    margin-top: 0.5em;
+}
+
+#member-editor-form-div {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0.5em;
+    width: 100%;
+}
+
+#member-editor-form md-filled-text-field {
+    width: 100%;
+}
+
+md-filter-chip {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.divider {
+    width: -webkit-fill-available !important;
+    border-color: white;
+}
+
+#submit-button {
+    width: 100%;
+    margin-top: 0.5em;
+}

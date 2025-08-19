@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/Members/edit.css' %}">
+    <script src="{% static 'js/Members/edit.js' %}"></script>
+    <title>編輯「{{ member.real_name }}」的資訊</title>
+{% endblock %}
+
+{% block main_content %}
+    <div class="soft-container" id="member-edit-container">
+        <h1 style="margin: 0.3em 0;">編輯「{{ member.real_name }}」的資訊</h1>
+        <form method="POST" id="member-editor-form" style="width: 100%;">
+            <div id="member-editor-form-div">
+                <div class="round-container" id="info-editor">
+                    <div class="panel-title">
+                        <span class="material-symbols-outlined">edit</span>
+                        <span class="panel-title-text">基本資訊</span>
+                    </div>
+                    {% csrf_token %}
+                    <md-filled-text-field label="Discord ID" value="{{ member.discord_id }}" required
+                                          readonly></md-filled-text-field>
+                    <md-filled-text-field label="真實姓名" name="real_name" value="{{ member.real_name }}"
+                                          required></md-filled-text-field>
+                    <md-filled-text-field label="Email" name="email_address" type="email"
+                                          value="{{ member.email_address }}" required></md-filled-text-field>
+                </div>
+                <div class="round-container" id="roles-editor">
+                    <input type="hidden" name="groups" id="groups-input" value="{{ joined_groups }}">
+                    <div class="panel-title">
+                        <span class="material-symbols-outlined">group</span>
+                        <span class="panel-title-text">管理組別資訊</span>
+                    </div>
+                    <span><strong>工作組別</strong></span>
+                    <md-chip-set id="dept-selector">
+                        {% for group in all_groups.dept_groups %}
+                            <md-filter-chip label="{{ group }}"
+                                            {% if group in joined_groups %}selected{% endif %}{% if not can_edit_groups %}disabled{% endif %}></md-filter-chip>
+                        {% endfor %}
+                    </md-chip-set>
+                    <div class="divider"></div>
+                    <span><strong>身分組別</strong></span>
+                    <md-chip-set id="identity-selector">
+                        {% for group in all_groups.identity_groups %}
+                            <md-filter-chip label="{{ group }}"
+                                            {% if group in joined_groups %}selected{% endif %}{% if not can_edit_groups %}disabled{% endif %}></md-filter-chip>
+                        {% endfor %}
+                    </md-chip-set>
+                </div>
+            </div>
+            <md-filled-button id="submit-button">
+                <div style="display: flex; align-items: center; justify-content: center;">
+                    <span class="material-symbols-outlined button-icon">check</span>
+                    <span>儲存變更</span>
+                </div>
+            </md-filled-button>
+        </form>
+    </div>
+{% endblock %}
