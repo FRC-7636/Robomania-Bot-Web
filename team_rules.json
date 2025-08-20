@@ -1,0 +1,58 @@
+{
+  "negative": [
+    {
+      "content": "垃圾亂丟",
+      "points": 0.5
+    },
+    {
+      "content": "開會/培訓 無故遲到(5分鐘)",
+      "points": 0.5
+    },
+    {
+      "content": "開會/培訓 無故未到",
+      "points": 1.0
+    },
+    {
+      "content": "兩天內沒有交工筆(賽季時為三天)",
+      "points": 1.0
+    },
+    {
+      "content": "謊報請假時間/原因",
+      "points": 1.0
+    },
+    {
+      "content": "無故遲交文件超過一天",
+      "points": 1.0
+    },
+    {
+      "content": "上課/工作時滑手機",
+      "points": 2.0
+    },
+    {
+      "content": "打遊戲太吵",
+      "points": 2.0
+    },
+    {
+      "content": "操作不當導致公安意外",
+      "points": 2.0
+    },
+    {
+      "content": "嚴重影響隊伍形象",
+      "points": 3.0
+    }
+  ],
+  "positive": [
+    {
+      "content": "自主倒垃圾",
+      "points": 0.5
+    },
+    {
+      "content": "培訓時去外面拿午餐",
+      "points": 0.5
+    },
+    {
+      "content": "中午時間/第八節 打掃工作室",
+      "points": 1.0
+    }
+  ]
+}

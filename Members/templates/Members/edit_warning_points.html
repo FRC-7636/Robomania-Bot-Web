@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/Members/edit_warning_points.css' %}">
+    <script src="{% static 'js/Members/edit_warning_points.js' %}"></script>
+    <title>「{{ member.real_name }}」記/銷點</title>
+{% endblock %}
+
+{% block main_content %}
+    <div class="soft-container" id="member-edit-warning-points-container">
+        <h1 style="margin: 0.3em 0;">「{{ member.real_name }}」記/銷點</h1>
+        <div id="content-container">
+            <div class="round-container" id="member-info">
+                <div class="panel-title">
+                    <span class="material-symbols-outlined">info</span>
+                    <span class="panel-title-text">記/銷點成員</span>
+                </div>
+                <img src="{{ member.avatar }}" alt="{{ member.real_name }} 的頭像" id="profile-avatar">
+                <div class="profile-info"
+                     style="display: flex; flex-direction: column; height: -webkit-fill-available;">
+                    <p><strong>真實姓名：</strong>{{ member.real_name }}</p>
+                    <p><strong>目前點數：</strong>{{ member.warning_points }} 點</p>
+                    <p><strong>操作後點數：</strong>{{ member.warning_points }} 點</p>
+                </div>
+            </div>
+            <div class="round-container" id="team-rules">
+                <div class="panel-title">
+                    <span class="material-symbols-outlined">rule</span>
+                    <span class="panel-title-text">隊規</span>
+                </div>
+                <span><strong>記點事項：</strong></span>
+                <ul class="team-rules-list">
+                    {% for rule in team_rules.negative %}
+                        <li>{{ rule.points }} 點 - {{ rule.content }}</li>
+                    {% endfor %}
+                </ul>
+                <span><strong>銷點事項：</strong></span>
+                <ul class="team-rules-list">
+                    {% for rule in team_rules.positive %}
+                        <li>{{ rule.points }} 點 - {{ rule.content }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="round-container" id="operations">
+                <div class="panel-title">
+                    <span class="material-symbols-outlined">action_key</span>
+                    <span class="panel-title-text">操作</span>
+                </div>
+                <form id="warning-points-form" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="reason" id="reason-input" value="" required>
+                    <md-filled-select label="選擇對應隊規" id="rule-selector" required>
+                        <md-select-option disabled>記點</md-select-option>
+                        {% for rule in team_rules.negative %}
+                            <md-select-option
+                                    value="{{ rule.points }} 點 - {{ rule.content }}">
+                                {{ rule.points }} 點 - {{ rule.content }}</md-select-option>
+                        {% endfor %}
+                        <md-select-option disabled>銷點</md-select-option>
+                        {% for rule in team_rules.positive %}
+                            <md-select-option
+                                    value="-{{ rule.points }} 點 - {{ rule.content }}">
+                                {{ rule.points }} 點 - {{ rule.content }}</md-select-option>
+                        {% endfor %}
+                        <md-select-option disabled>非隊規事項</md-select-option>
+                        <md-select-option value="custom">意外記/銷點</md-select-option>
+                    </md-filled-select>
+                    <md-filled-text-field type="number" id="points-input" label="點數" name="points" suffix-text="點"
+                                          supporting-text="記點請輸入正數，銷點則輸入負數" step="0.5" min="-5" max="5"
+                                          required readonly></md-filled-text-field>
+                    <md-filled-text-field type="textarea" label="備註" name="notes" id="notes-input" max-length="100"></md-filled-text-field>
+                </form>
+                <md-filled-button id="submit-button">
+                    <div style="display: flex; flex-direction: row; align-items: center;">
+                        <span class="material-symbols-outlined button-icon">check</span>
+                        <span class="button-text">確認</span>
+                    </div>
+                </md-filled-button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
