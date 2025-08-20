@@ -137,7 +137,12 @@ p {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 0.5em;
+    gap: 1em;
+}
+
+.list-item-note {
+    font-size: 0.8em;
+    font-style: italic;
 }
 
 .list-item-content span {

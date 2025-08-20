@@ -153,10 +153,12 @@
                                         <md-list-item>
                                             <div class="list-item-content">
                                                 <span class="{% if history.points > 0 %}pts-positive{% elif history.points < 0 %}pts-negative{% endif %} pts-indicator">
-                                                    {% if history.points > 0 %}+{% endif %}{{ history.points }} 點</span>
+                                                    {% if history.points > 0 %}+{% endif %}{{ history.points }}</span>
                                                 <div class="list-item-text">
-                                                    <span class="list-item-title">{{ history.reason }}{% if history.notes %}
-                                                        ({{ history.notes }}){% endif %}</span>
+                                                    <span class="list-item-title">{{ history.reason }}</span>
+                                                    {% if history.notes %}
+                                                        <span class="list-item-note">{{ history.notes }}</span>
+                                                    {% endif %}
                                                     <div class="member-indicator"><span>由&nbsp;</span>
                                                         <img src="{{ history.operator.avatar }}"
                                                              alt="{{ history.operator.real_name }} 的頭像" class="member-avatar">
