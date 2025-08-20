@@ -3,6 +3,7 @@
 
 {% block head %}
     <link rel="stylesheet" href="{% static 'css/Members/index.css' %}">
+    <script src="{% static 'js/Members/index.js' %}"></script>
     <title>「{{ member.real_name }}」的資訊</title>
 {% endblock %}
 
@@ -15,6 +16,7 @@
                     <span class="material-symbols-outlined">info</span>
                     <span class="panel-title-text">基本資訊</span>
                 </div>
+                <div id="content-height-ref">
                 <img src="{{ member.avatar }}" alt="{{ member.real_name }} 的頭像" id="profile-avatar">
                 <div class="profile-info"
                      style="display: flex; flex-direction: column; height: -webkit-fill-available;">
@@ -39,6 +41,7 @@
                         </ul>
                     {% endif %}
                 </div>
+                </div>
             </div>
             <div class="round-container panel" id="warn-history-panel">
                 <div class="panel-title">
@@ -52,10 +55,12 @@
                             <md-list-item>
                                 <div class="list-item-content">
                                     <span class="{% if history.points > 0 %}pts-positive{% elif history.points < 0 %}pts-negative{% endif %} pts-indicator">
-                                        {% if history.points > 0 %}+{% endif %}{{ history.points }} 點</span>
+                                        {% if history.points > 0 %}+{% endif %}{{ history.points }}</span>
                                     <div class="list-item-text">
-                                        <span class="list-item-title">{{ history.reason }}{% if history.notes %}
-                                            ({{ history.notes }}){% endif %}</span>
+                                        <span class="list-item-title">{{ history.reason }}</span>
+                                        {% if history.notes %}
+                                            <span class="list-item-note">{{ history.notes }}</span>
+                                        {% endif %}
                                         <div class="member-indicator"><span>由&nbsp;</span>
                                             <img src="{{ history.operator.avatar }}"
                                                  alt="{{ history.operator.real_name }} 的頭像" class="member-avatar">
