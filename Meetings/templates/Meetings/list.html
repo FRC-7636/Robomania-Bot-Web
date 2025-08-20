@@ -12,8 +12,9 @@
         <div style="display: flex; align-items:center; justify-content: space-between; width: 100%;">
             <h1 style="margin: 0.3em 0;">會議列表</h1>
             <md-filled-button href="{% url "meeting_create" %}" style="height: fit-content;" {% if not can_create %} disabled {% endif %}>
-                <div style="display: flex; align-items: center; justify-content: center;">
-                    <span class="material-symbols-outlined">add</span>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 0.3em;">
+                    <span class="material-symbols-outlined">calendar_add_on</span>
+                    <span>新增會議</span>
                 </div>
             </md-filled-button>
         </div>
