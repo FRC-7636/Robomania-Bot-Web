@@ -27,7 +27,7 @@ SECRET_KEY = getenv("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = getenv("IS_DEBUG", "True").lower() == "true"
 
-ALLOWED_HOSTS = ["59.126.69.202", "127.0.0.1"]
+ALLOWED_HOSTS = ["frc7636.dpdns.org", "127.0.0.1"]
 
 
 # Application definition
