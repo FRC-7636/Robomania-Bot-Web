@@ -1,6 +1,6 @@
 # coding=utf-8
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import get_object_or_404, render, redirect, reverse
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Group
 from json import load, loads, JSONDecodeError
@@ -56,6 +56,21 @@ def info(request, member_id):
         ),
     }
     return render(request, "Members/index.html", data)
+
+
+@login_required
+def list_members(request):
+    members = DMember.objects.all()
+    if request.GET.get("order_by", "").replace("-", "") not in (
+        "pk",
+        "discord_id",
+        "real_name",
+        "warning_points",
+        "email_address",
+    ):
+        return redirect(f"{reverse('member_list')}?order_by=pk")
+    members = members.order_by(request.GET["order_by"])
+    return render(request, "Members/list.html", {"members": members})
 
 
 @login_required

@@ -1,0 +1,77 @@
+#members-list {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.25);
+    margin-top: 0.5em;
+}
+
+#members-list-content {
+    background-color: darkgray;
+}
+
+.member-item {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.vertical-spacer {
+    margin: 0 7px 0 9px;
+    width: 2px;
+    border-left: 1px solid black;
+    height: -webkit-fill-available;
+}
+
+.member-item-text {
+    color: black;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.member-item-text strong {
+    color: black;
+}
+
+.list-head {
+    cursor: pointer;
+    transition: background-color 0.1s ease-in-out;
+}
+
+.list-head:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.member-id {
+    flex: 1;
+}
+
+.member-avatar {
+    flex: 1;
+}
+
+.member-avatar-img {
+    display: flex;
+    width: 30%;
+    border-radius: 50%;
+}
+
+.member-real-name {
+    flex: 2;
+}
+
+.member-gen {
+    flex: 1;
+}
+
+.member-discord-id {
+    flex: 3;
+}
+
+.member-email-address {
+    flex: 3;
+}
+
+.member-warning-points {
+    flex: 1;
+}

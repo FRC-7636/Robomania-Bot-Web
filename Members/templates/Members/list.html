@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <script src="{% static 'js/Members/list.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/Members/list.css' %}">
+    <title>成員列表</title>
+{% endblock %}
+
+{% block main_content %}
+    <div class="soft-container" id="member-list-container">
+        <h1 style="margin: 0.3em 0;">成員列表</h1>
+        <div class="round-container" id="members-list">
+            <div class="round-container inner-container members-list-div" id="members-list-content">
+                <md-list style="width: 100%;">
+                    <md-list-item>
+                        <div class="member-item">
+                            <span class="member-item-text member-id list-head" id="pk-head-click"><strong
+                                    id="pk-head">#</strong></span>
+                            <div class="vertical-spacer"></div>
+                            <span class="member-item-text member-avatar list-head"><strong
+                                    id="avatar-head">頭像</strong></span>
+                            <div class="vertical-spacer"></div>
+                            <span class="member-item-text member-real-name list-head" id="real_name-head-click"><strong
+                                    id="real_name-head">真實姓名</strong></span>
+                            <div class="vertical-spacer"></div>
+                            <span class="member-item-text member-gen list-head"
+                                  id="gen-head-click"><strong id="gen-head">屆別</strong></span>
+                            <div class="vertical-spacer"></div>
+                            <span class="member-item-text member-discord-id list-head" id="discord_id-head-click">
+                                <strong id="discord_id-head">Discord ID</strong></span>
+                            <div class="vertical-spacer"></div>
+                            <span class="member-item-text member-email-address list-head" id="email_address-head-click">
+                                <strong id="email_address-head">Email</strong></span>
+                            <div class="vertical-spacer"></div>
+                            <span class="member-item-text member-warning-points list-head" id="warning_points-head-click">
+                                <strong id="warning_points-head">警告點數</strong></span>
+                        </div>
+                    </md-list-item>
+                    <div class="divider"></div>
+                    {% for member in members %}
+                        <md-list-item type="link" href="{% url 'member_info' member.discord_id %}">
+                            <div class="member-item">
+                                <span class="member-item-text member-id">{{ member.pk }}</span>
+                                <div class="vertical-spacer"></div>
+                                <div class="member-avatar"
+                                     style="display: flex; align-items: center; justify-content: center;">
+                                    <img class="member-avatar-img" src="{{ member.avatar }}"
+                                         alt="{{ member.real_name }} 的頭像">
+                                </div>
+                                <div class="vertical-spacer"></div>
+                                <span class="member-item-text member-real-name">{{ member.real_name }}</span>
+                                <div class="vertical-spacer"></div>
+                                <span class="member-item-text member-gen">{{ member.gen }}</span>
+                                <div class="vertical-spacer"></div>
+                                <span class="member-item-text member-discord-id">{{ member.discord_id }}</span>
+                                <div class="vertical-spacer"></div>
+                                <span class="member-item-text member-email-address">{{ member.email_address }}</span>
+                                <div class="vertical-spacer"></div>
+                                <span class="member-item-text member-warning-points">{{ member.warning_points }}</span>
+                            </div>
+                        </md-list-item>
+                        <div class="divider"></div>
+                    {% empty %}
+                        <md-list-item>沒有成員</md-list-item>
+                    {% endfor %}
+                </md-list>
+            </div>
+        </div>
+    </div>
+{% endblock %}
