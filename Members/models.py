@@ -46,6 +46,7 @@ class DMember(AbstractBaseUser, PermissionsMixin):
     username = None
     discord_id = models.PositiveBigIntegerField("Discord ID", unique=True)
     real_name = models.CharField("真實姓名", blank=True, null=True)
+    gen = models.PositiveIntegerField("屆別", blank=True, null=True)
     jobs = models.JSONField("職務", blank=True, null=True)
     warning_points = models.FloatField("警告點數", default=0.0)
     email_address = models.EmailField("Email", blank=True, null=True)

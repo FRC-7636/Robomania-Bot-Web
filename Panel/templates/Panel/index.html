@@ -35,6 +35,7 @@
                         <p><strong>真實姓名：</strong>{{ request.user.real_name }}</p>
                         <p><strong>Discord ID：</strong>{{ request.user.discord_id }}</p>
                         <p><strong>Email：</strong>{{ request.user.email_address }}</p>
+                        <p><strong>屆別：</strong>第 {{ request.user.gen }} 屆</p>
                         <p><strong>目前點數：</strong>{{ request.user.warning_points }} 點</p>
                         <p><strong>組別：</strong>{% if not request.user.groups.all %}(無){% endif %}</p>
                         {% if request.user.groups.all %}
