@@ -191,5 +191,42 @@
                 </div>
             </div>
         </div>
+        <div class="divider" style="width: -webkit-fill-available; margin: 0.5em 0; border-color: white;"></div>
+        <div id="service-panels">
+            <div class="round-container service-panel">
+                <div class="panel-title">
+                    <span class="material-symbols-outlined panel-title-icon">key_vertical</span>
+                    <span class="panel-title-text">帳號管理</span>
+                </div>
+                <div class="buttons-container">
+                    <md-filled-button href="{% url "password_change" %}" style="width: 100%;">
+                        <div style="display: flex; align-items: center;">
+                            <span class="material-symbols-outlined button-icon">password</span>
+                            <span>變更密碼</span>
+                        </div>
+                    </md-filled-button>
+                    <md-filled-button style="width: 100%;">
+                        <div style="display: flex; align-items: center;">
+                            <span class="material-symbols-outlined button-icon">account_circle</span>
+                            <span>從 Discord 重新同步頭像</span>
+                        </div>
+                    </md-filled-button>
+                </div>
+            </div>
+            <div class="round-container service-panel">
+                <div class="panel-title">
+                    <span class="material-symbols-outlined panel-title-icon">service_toolbox</span>
+                    <span class="panel-title-text">實用服務</span>
+                </div>
+                <div class="buttons-container">
+                    <md-filled-button type="button" href="{% url "upload_index" %}" style="width: 100%;">
+                        <div style="display: flex; align-items: center;">
+                            <span class="material-symbols-outlined button-icon">cloud_upload</span>
+                            <span>檔案託管</span>
+                        </div>
+                    </md-filled-button>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
