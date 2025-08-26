@@ -1,8 +1,9 @@
 # coding=utf-8
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from os import getenv
+from os import getenv  # noqa
 
 from Members.models import DMember
 from .discord_auth import *
@@ -82,9 +83,9 @@ def discord_login_view(request):
         return redirect("/accounts/login/?error=Discord 授權失敗，請重新登入。")
 
 
+@login_required
 def logout_view(request):
-    if request.user.is_authenticated:
-        logout(request)
+    logout(request)
     return redirect("/accounts/login/")
 
 
@@ -112,3 +113,17 @@ def register_view(request, user_info=None):
                 return HttpResponse("Bad Request: register_view should not be called without Discord auth.", status=400)
         else:
             return redirect("/")  # Redirect to home if user is already authenticated
+
+
+@login_required
+def password_change_view(request):
+    if request.method == "POST":
+        if request.user.check_password(request.POST.get("old-password", None)):
+            request.user.set_password(request.POST.get("new-password", None))
+            request.user.save()
+            logout(request)
+            return redirect("/accounts/login/?success=密碼修改成功，請重新登入。")
+        else:
+            return redirect("/accounts/password_change/?error=提供的密碼錯誤。")
+    else:
+        return render(request, "Auth/password_change.html")
