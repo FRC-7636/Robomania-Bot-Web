@@ -129,17 +129,17 @@
                     {% if request.user.warning_points == 0 %}
                         <div class="points-safe round-container inner-container" id="warning-status">
                             <span class="material-symbols-outlined">beenhere</span>
-                            <span>你無須擔心你的記點狀態。請繼續保持！</span>
+                            <span id="warn-status-text">你無須擔心你的記點狀態。請繼續保持！</span>
                         </div>
                     {% elif request.user.warning_points < 4 %}
                         <div class="points-warning round-container inner-container" id="warning-status">
                             <span class="material-symbols-outlined">warning</span>
-                            <span>你目前仍有尚未銷去的記點。</span>
+                            <span id="warn-status-text">你目前仍有尚未銷去的記點。</span>
                         </div>
                     {% else %}
                         <div class="points-danger round-container inner-container" id="warning-status">
                             <span class="material-symbols-outlined">release_alert</span>
-                            <span>已接近退隊門檻。請立即採取行動！</span>
+                            <span id="warn-status-text">已接近退隊門檻。請立即採取行動！</span>
                         </div>
                     {% endif %}
                     <div class="round-container inner-container" id="warning-points-history">
