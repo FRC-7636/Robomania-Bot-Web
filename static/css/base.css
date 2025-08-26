@@ -69,7 +69,7 @@ header.collapsed {
 }
 
 .divider {
-    height: 1px;
+    height: 0;
     border-top: black 1px solid;
     padding: 0 1em;
 }
