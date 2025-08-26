@@ -101,6 +101,18 @@ document.addEventListener("DOMContentLoaded", function(event) {
         document.getElementById("require-login-input").value = e.target.selected;
     })
 
+    document.getElementById("upload-button").addEventListener("click", function () {
+        const fileNameInput = document.getElementById("file-name-input");
+        if (fileNameInput.value.length > 20) {
+            fileNameInput.error = true;
+            fileNameInput.errorText = "檔案名稱不得超過 20 個字元。";
+        } else {
+            fileNameInput.error = false;
+            fileNameInput.errorText = "";
+            document.getElementById("upload-form").requestSubmit();
+        }
+    })
+
     const url = new URL(window.location.href);
     if (url.searchParams.has("success")) {
         const fileUUID = url.searchParams.get("success");
