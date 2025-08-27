@@ -23,7 +23,7 @@
                     <p><strong>真實姓名：</strong>{{ member.real_name }}</p>
                     <p><strong>Discord ID：</strong>{{ member.discord_id }}</p>
                     <p><strong>Email：</strong>{{ member.email_address }}</p>
-                    <p><strong>屆別：</strong>第 {{ request.user.gen }} 屆</p>
+                    <p><strong>屆別：</strong>第 {{ member.gen }} 屆</p>
                     <p><strong>目前點數：</strong>{{ member.warning_points }} 點</p>
                     <p><strong>組別：</strong>{% if not member.groups.all %}(無){% endif %}</p>
                     {% if member.groups.all %}
