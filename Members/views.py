@@ -8,7 +8,12 @@ from pprint import pprint
 from os import path
 from logging import warning
 
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import DjangoModelPermissions
+from rest_framework.viewsets import ModelViewSet
+
 from .models import DMember, WarningHistory
+from .serializers import DMemberSerializer
 
 
 TEAM_RULES = {"negative": [], "positive": []}
@@ -146,3 +151,11 @@ def edit_warning_points(request, member_id):
         reload_team_rules()
         data = {"member": member, "team_rules": TEAM_RULES}
         return render(request, "Members/edit_warning_points.html", data)
+
+
+class MembersViewSet(ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [DjangoModelPermissions]
+
+    queryset = DMember.objects.all()
+    serializer_class = DMemberSerializer
