@@ -23,7 +23,10 @@ def login_view(request):
             return render(
                 request,
                 "Auth/login.html",
-                {"error": "提供的 Discord ID 或密碼不正確。", "cb_url": getenv("DISCORD_LOGIN_CALLBACK_URL")},
+                {
+                    "error": "提供的 Discord ID 或密碼不正確。",
+                    "cb_url": getenv("DISCORD_LOGIN_CALLBACK_URL"),
+                },
             )
     else:  # GET
         if request.user.is_authenticated:
@@ -33,8 +36,10 @@ def login_view(request):
                 return render(
                     request,
                     "Auth/login.html",
-                    {"error": request.GET.get("error", None),
-                     "cb_url": getenv("DISCORD_LOGIN_CALLBACK_URL")},
+                    {
+                        "error": request.GET.get("error", None),
+                        "cb_url": getenv("DISCORD_LOGIN_CALLBACK_URL"),
+                    },
                 )
             elif request.GET.get("success", None):
                 return render(
@@ -42,7 +47,11 @@ def login_view(request):
                     "Auth/login.html",
                     {"success": request.GET.get("success", None)},
                 )
-            return render(request, "Auth/login.html", {"cb_url": getenv("DISCORD_LOGIN_CALLBACK_URL")})
+            return render(
+                request,
+                "Auth/login.html",
+                {"cb_url": getenv("DISCORD_LOGIN_CALLBACK_URL")},
+            )
 
 
 def discord_login_view(request):
@@ -98,7 +107,9 @@ def register_view(request, user_info=None):
             avatar=request.POST.get("avatar_url"),
             password=request.POST.get("password"),
         )
-        return redirect("/accounts/login/?success=註冊成功。你現在可以使用 Discord 登入，或使用密碼登入。")
+        return redirect(
+            "/accounts/login/?success=註冊成功。你現在可以使用 Discord 登入，或使用密碼登入。"
+        )
     else:  # GET
         if not request.user.is_authenticated:
             if user_info is not None:
@@ -106,11 +117,16 @@ def register_view(request, user_info=None):
                     "discord_id": user_info["id"],
                     "email_address": user_info["email"],
                     "avatar_url": f"https://cdn.discordapp.com/avatars/{user_info['id']}/{user_info['avatar']}.png"
-                                  f"?size=256",
+                    f"?size=256",
                 }
-                return render(request, "Auth/register.html", {"user_info": condensed_user_info})
+                return render(
+                    request, "Auth/register.html", {"user_info": condensed_user_info}
+                )
             else:  # User accessed this view without Discord auth
-                return HttpResponse("Bad Request: register_view should not be called without Discord auth.", status=400)
+                return HttpResponse(
+                    "Bad Request: register_view should not be called without Discord auth.",
+                    status=400,
+                )
         else:
             return redirect("/")  # Redirect to home if user is already authenticated
 
@@ -127,3 +143,30 @@ def password_change_view(request):
             return redirect("/accounts/password_change/?error=提供的密碼錯誤。")
     else:
         return render(request, "Auth/password_change.html")
+
+
+@login_required
+def sync_avatar_view(request):
+    code = request.GET.get("code", None)
+    if code:
+        response = get_access_token_response(
+            getenv("DISCORD_CLIENT_ID"),
+            getenv("DISCORD_CLIENT_SECRET"),
+            code,
+            redirect_uri_suffix="/accounts/sync_avatar/",
+            scope="identify",
+        )
+        access_token = response["access_token"]
+        user_info = get_user_info(access_token)
+        if str(request.user.discord_id) == user_info["id"]:
+            request.user.avatar = (
+                f"https://cdn.discordapp.com/avatars/{user_info['id']}/{user_info['avatar']}"
+                f".png?size=256"
+            )
+            request.user.save()
+        return redirect("/")
+    else:
+        return redirect(
+            f"https://discord.com/oauth2/authorize?client_id=1402621019432157266&response_type=code&prompt=none"
+            f"&redirect_uri={getenv("DISCORD_LOGIN_CALLBACK_URL")}%2Faccounts%2Fsync_avatar%2F&scope=identify"
+        )

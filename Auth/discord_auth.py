@@ -5,7 +5,9 @@ from urllib.parse import unquote
 from pprint import pprint
 
 
-def get_access_token_response(client_id: int | str, client_secret: str, code: str) -> dict:
+def get_access_token_response(client_id: int | str, client_secret: str, code: str,
+                              redirect_uri_suffix="/accounts/login/discord/",
+                              scope="identify email guilds") -> dict:
     """
     Get access token from Discord using the provided client ID, client secret, and authorization code.
     """
@@ -15,8 +17,8 @@ def get_access_token_response(client_id: int | str, client_secret: str, code: st
         'client_secret': client_secret,
         'grant_type': 'authorization_code',
         'code': code,
-        'redirect_uri': f'{unquote(getenv("DISCORD_LOGIN_CALLBACK_URL"))}/accounts/login/discord/',
-        'scope': 'identify email guilds'
+        'redirect_uri': f'{unquote(getenv("DISCORD_LOGIN_CALLBACK_URL"))}{redirect_uri_suffix}',
+        'scope': scope
     }
 
     response = requests.post(url, data=data)
