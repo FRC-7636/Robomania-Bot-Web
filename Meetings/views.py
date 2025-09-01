@@ -315,6 +315,8 @@ class MeetingsViewSet(ModelViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [DjangoModelPermissions]
 
+    filterset_fields = ['host__discord_id', 'start_time', 'end_time', 'can_absent']
+
     queryset = DMeeting.objects.all()
     serializer_class = DMeetingSerializer
 

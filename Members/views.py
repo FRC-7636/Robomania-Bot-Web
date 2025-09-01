@@ -157,5 +157,7 @@ class MembersViewSet(ModelViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [DjangoModelPermissions]
 
+    filterset_fields = ("discord_id", "real_name", "email_address")
+
     queryset = DMember.objects.all()
     serializer_class = DMemberSerializer

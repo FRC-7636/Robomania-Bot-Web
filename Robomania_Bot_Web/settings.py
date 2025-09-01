@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     # DRF
     "rest_framework",
     "rest_framework.authtoken",
+    "django_filters",
 ]
 
 MIDDLEWARE = [
@@ -79,6 +80,11 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Robomania_Bot_Web.wsgi.application'
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+}
 
 
 # Database
