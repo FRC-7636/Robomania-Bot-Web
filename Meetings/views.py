@@ -6,7 +6,14 @@ import datetime
 from zoneinfo import ZoneInfo
 from json import loads
 
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import DjangoModelPermissions
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.decorators import action
+from rest_framework.response import Response
+
 from .models import DMeeting, DAbsentRequest
+from .serializers import DMeetingSerializer
 from Members.models import DMember
 
 TAIPEI_TZ = ZoneInfo("Asia/Taipei")
@@ -43,6 +50,14 @@ def validate_meeting_data(data):
     if not data.get("can-absent"):
         return False, "can-absent"
     return True, ""
+
+
+def update_upcoming_meetings():
+    now = datetime.datetime.now(tz=TAIPEI_TZ)
+    upcoming_meetings = DMeeting.objects.filter(start_time__gt=now).order_by(
+        "start_time"
+    )
+    return upcoming_meetings
 
 
 # Create your views here.
@@ -294,3 +309,17 @@ def review_absent_requests_api(request, meeting_id):
             absent_request.save()
         return HttpResponse(status=200)
     return HttpResponse("Method not allowed", status=405)
+
+
+class MeetingsViewSet(ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [DjangoModelPermissions]
+
+    queryset = DMeeting.objects.all()
+    serializer_class = DMeetingSerializer
+
+    @action(methods=["GET"], detail=False)
+    def upcoming(self, request):
+        upcoming_meetings = update_upcoming_meetings()
+        serializer = self.get_serializer(upcoming_meetings, many=True)
+        return Response(serializer.data)

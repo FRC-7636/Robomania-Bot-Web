@@ -19,6 +19,12 @@ from django.contrib import admin
 from django.urls import path, re_path, include
 from django.conf.urls.static import static
 from django.conf import settings
+from rest_framework import routers
+
+from Meetings.views import MeetingsViewSet
+
+router = routers.DefaultRouter()
+router.register(r"meetings", MeetingsViewSet)
 
 urlpatterns = [
     re_path(r'^$', include("Panel.urls")),
@@ -28,4 +34,5 @@ urlpatterns = [
     path("accounts/", include("Auth.urls")),
     path("upload/", include("Uploader.urls")),
     path("user_uploads/", include("Uploader.urls_user_uploads")),
+    path("api/", include(router.urls)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -45,6 +45,9 @@ INSTALLED_APPS = [
     "Auth.apps.AuthConfig",
     "Panel.apps.PanelConfig",
     "Uploader.apps.UploaderConfig",
+    # DRF
+    "rest_framework",
+    "rest_framework.authtoken",
 ]
 
 MIDDLEWARE = [
