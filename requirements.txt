@@ -1,5 +1,6 @@
-djangorestframework
-Django>=5.2.5
+Django>=5.2.6
+djangorestframework>=3.16.1
+django-filter>=25.1
 requests>=2.32.4
 python-dotenv>=1.1.1
 pillow>=11.3.0
