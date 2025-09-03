@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from os import getenv  # noqa
 
 from Members.models import DMember
-from .discord_auth import *
+from .discord_auth import DiscordAuth
 
 
 # Create your views here.
@@ -57,30 +57,21 @@ def login_view(request):
 def discord_login_view(request):
     code = request.GET.get("code", None)
     if code:
-        response = get_access_token_response(
-            getenv("DISCORD_CLIENT_ID"),
-            getenv("DISCORD_CLIENT_SECRET"),
-            code,
-        )
-        access_token, refresh_token = (
-            response["access_token"],
-            response["refresh_token"],
-        )
-        user_info = get_user_info(access_token)
+        dc_auth_obj = DiscordAuth(getenv("DISCORD_CLIENT_ID"), getenv("DISCORD_CLIENT_SECRET"))
+        dc_auth_obj.update_access_token(code)
+        user_info = dc_auth_obj.get_user_info()
         # check if user is already exists
         discord_id = user_info["id"]
-        if DMember.objects.filter(discord_id=discord_id).exists():
+        if (
+            DMember.objects.filter(discord_id=discord_id).exists()
+            and DMember.objects.get(discord_id=discord_id).password != ""
+        ):
             user = DMember.objects.get(discord_id=discord_id)
             # login the user
             login(request, user)
             return redirect("/")
         else:
-            access_token = refresh_access_token(
-                getenv("DISCORD_CLIENT_ID"),
-                getenv("DISCORD_CLIENT_SECRET"),
-                refresh_token,
-            )["access_token"]
-            guild_ids = get_user_guild_ids(access_token)
+            guild_ids = dc_auth_obj.get_user_guild_ids()
             # 檢查是否已加入 FRC# 7636 的 Discord 伺服器
             if 1114203090950836284 in guild_ids:
                 return register_view(request, user_info)
@@ -149,15 +140,9 @@ def password_change_view(request):
 def sync_avatar_view(request):
     code = request.GET.get("code", None)
     if code:
-        response = get_access_token_response(
-            getenv("DISCORD_CLIENT_ID"),
-            getenv("DISCORD_CLIENT_SECRET"),
-            code,
-            redirect_uri_suffix="/accounts/sync_avatar/",
-            scope="identify",
-        )
-        access_token = response["access_token"]
-        user_info = get_user_info(access_token)
+        dc_auth_obj = DiscordAuth(getenv("DISCORD_CLIENT_ID"), getenv("DISCORD_CLIENT_SECRET"))
+        dc_auth_obj.update_access_token(code, redirect_uri_suffix="/accounts/sync_avatar/", scope="identify")
+        user_info = dc_auth_obj.get_user_info()
         if str(request.user.discord_id) == user_info["id"]:
             request.user.avatar = (
                 f"https://cdn.discordapp.com/avatars/{user_info['id']}/{user_info['avatar']}"
