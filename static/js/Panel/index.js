@@ -18,3 +18,15 @@ window.addEventListener("resize", measureHeight);
 window.addEventListener("resize", resizeWarnStatus);
 window.addEventListener("load", measureHeight);
 window.addEventListener("load", resizeWarnStatus);
+
+document.addEventListener("DOMContentLoaded", () => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const syncResult = searchParams.get("sync");
+
+    if (syncResult === "success") {
+        alert("頭像同步完成！");
+    } else if (syncResult === "failed") {
+        alert("頭像同步失敗。\n請確認你登入的 Discord 帳號為你的帳號，並且在授權頁面按下「授權」。");
+        window.history.replaceState({}, document.title, "/");
+    }
+});

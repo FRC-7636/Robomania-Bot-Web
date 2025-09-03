@@ -149,7 +149,8 @@ def sync_avatar_view(request):
                 f".png?size=256"
             )
             request.user.save()
-        return redirect("/")
+            return redirect("/?sync=success")
+        return redirect("/?sync=failed")
     else:
         return redirect(
             f"https://discord.com/oauth2/authorize?client_id=1402621019432157266&response_type=code&prompt=none"
