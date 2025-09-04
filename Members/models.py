@@ -44,7 +44,7 @@ class DMember(AbstractBaseUser, PermissionsMixin):
         return f"{self.discord_id} ({self.real_name})"
 
     username = None
-    discord_id = models.PositiveBigIntegerField("Discord ID", unique=True)
+    discord_id = models.CharField("Discord ID", max_length=30, unique=True)
     real_name = models.CharField("真實姓名", blank=True, null=True)
     gen = models.PositiveIntegerField("屆別", blank=True, null=True)
     jobs = models.JSONField("職務", blank=True, null=True)
