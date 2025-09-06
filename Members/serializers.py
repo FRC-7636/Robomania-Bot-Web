@@ -15,3 +15,9 @@ class DMemberSerializer(serializers.ModelSerializer):
             "avatar",
             "warning_points",
         ]
+
+    def to_representation(self, instance):
+        pk = instance.pk
+        representation = super().to_representation(instance)
+        representation["id"] = pk
+        return representation
