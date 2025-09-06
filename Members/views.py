@@ -70,6 +70,7 @@ def list_members(request):
         "pk",
         "discord_id",
         "real_name",
+        "gen",
         "warning_points",
         "email_address",
     ):
@@ -157,7 +158,7 @@ class MembersViewSet(ModelViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [DjangoModelPermissions]
 
-    filterset_fields = ("discord_id", "real_name", "email_address")
+    filterset_fields = ("discord_id", "real_name", "email_address", "gen", "warning_points")
 
     queryset = DMember.objects.all()
     serializer_class = DMemberSerializer
