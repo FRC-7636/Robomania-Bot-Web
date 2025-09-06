@@ -91,13 +91,21 @@ def logout_view(request):
 
 def register_view(request, user_info=None):
     if request.method == "POST":
-        DMember.objects.create_user(
-            discord_id=request.POST.get("discord_id"),
-            real_name=request.POST.get("real_name"),
-            email_address=request.POST.get("email_address"),
-            avatar=request.POST.get("avatar_url"),
-            password=request.POST.get("password"),
-        )
+        if not DMember.objects.filter(discord_id=request.POST.get("discord_id")).exists():
+            DMember.objects.create_user(
+                discord_id=request.POST.get("discord_id"),
+                real_name=request.POST.get("real_name"),
+                email_address=request.POST.get("email_address"),
+                avatar=request.POST.get("avatar_url"),
+                password=request.POST.get("password"),
+            )
+        elif DMember.objects.get(discord_id=request.POST.get("discord_id")).password is None:
+            member_obj = DMember.objects.get(discord_id=request.POST.get("discord_id"))
+            member_obj.real_name = request.POST.get("real_name")
+            member_obj.email_address = request.POST.get("email_address")
+            member_obj.avatar = request.POST.get("avatar_url")
+            member_obj.password = request.POST.get("password")
+            member_obj.save()
         return redirect(
             "/accounts/login/?success=註冊成功。你現在可以使用 Discord 登入，或使用密碼登入。"
         )
