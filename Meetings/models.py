@@ -48,5 +48,5 @@ class DAbsentRequest(models.Model):
     )
     created_at = models.DateTimeField("創建時間", auto_now_add=True)
     reviewer = models.ForeignKey('Members.DMember', verbose_name="審核人", related_name="reviewed_requests",
-                                 on_delete=models.SET_NULL, null=True, blank=True)
+                                 on_delete=models.SET_NULL, null=True, blank=True, default=None)
     reviewer_comment = models.TextField("審核意見", blank=True, null=True)

@@ -21,12 +21,13 @@ from django.conf.urls.static import static
 from django.conf import settings
 from rest_framework import routers
 
-from Meetings.views import MeetingsViewSet
+from Meetings.views import MeetingsViewSet, AbsentRequestsViewSet
 from Members.views import MembersViewSet
 
 router = routers.DefaultRouter()
 router.register(r"meetings", MeetingsViewSet)
 router.register(r"members", MembersViewSet)
+router.register(r"absent_requests", AbsentRequestsViewSet)
 
 urlpatterns = [
     re_path(r'^$', include("Panel.urls")),

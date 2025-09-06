@@ -13,7 +13,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from .models import DMeeting, DAbsentRequest
-from .serializers import DMeetingSerializer
+from .serializers import DMeetingSerializer, DAbsentRequestSerializer
 from Members.models import DMember
 
 TAIPEI_TZ = ZoneInfo("Asia/Taipei")
@@ -325,3 +325,13 @@ class MeetingsViewSet(ModelViewSet):
         upcoming_meetings = update_upcoming_meetings()
         serializer = self.get_serializer(upcoming_meetings, many=True)
         return Response(serializer.data)
+
+
+class AbsentRequestsViewSet(ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [DjangoModelPermissions]
+
+    filterset_fields = ['member__discord_id', 'meeting__id', 'status', 'created_at', 'reviewer__discord_id']
+
+    queryset = DAbsentRequest.objects.all()
+    serializer_class = DAbsentRequestSerializer
