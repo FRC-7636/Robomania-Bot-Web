@@ -45,7 +45,10 @@ def login_view(request):
                 return render(
                     request,
                     "Auth/login.html",
-                    {"success": request.GET.get("success", None)},
+                    {
+                        "success": request.GET.get("success", None),
+                        "cb_url": getenv("DISCORD_LOGIN_CALLBACK_URL"),
+                    },
                 )
             return render(
                 request,
@@ -57,7 +60,9 @@ def login_view(request):
 def discord_login_view(request):
     code = request.GET.get("code", None)
     if code:
-        dc_auth_obj = DiscordAuth(getenv("DISCORD_CLIENT_ID"), getenv("DISCORD_CLIENT_SECRET"))
+        dc_auth_obj = DiscordAuth(
+            getenv("DISCORD_CLIENT_ID"), getenv("DISCORD_CLIENT_SECRET")
+        )
         dc_auth_obj.update_access_token(code)
         user_info = dc_auth_obj.get_user_info()
         # check if user is already exists
@@ -91,7 +96,9 @@ def logout_view(request):
 
 def register_view(request, user_info=None):
     if request.method == "POST":
-        if not DMember.objects.filter(discord_id=request.POST.get("discord_id")).exists():
+        if not DMember.objects.filter(
+            discord_id=request.POST.get("discord_id")
+        ).exists():
             DMember.objects.create_user(
                 discord_id=request.POST.get("discord_id"),
                 real_name=request.POST.get("real_name"),
@@ -99,7 +106,10 @@ def register_view(request, user_info=None):
                 avatar=request.POST.get("avatar_url"),
                 password=request.POST.get("password"),
             )
-        elif DMember.objects.get(discord_id=request.POST.get("discord_id")).password is None:
+        elif (
+            DMember.objects.get(discord_id=request.POST.get("discord_id")).password
+            is None
+        ):
             member_obj = DMember.objects.get(discord_id=request.POST.get("discord_id"))
             member_obj.real_name = request.POST.get("real_name")
             member_obj.email_address = request.POST.get("email_address")
@@ -148,8 +158,12 @@ def password_change_view(request):
 def sync_avatar_view(request):
     code = request.GET.get("code", None)
     if code:
-        dc_auth_obj = DiscordAuth(getenv("DISCORD_CLIENT_ID"), getenv("DISCORD_CLIENT_SECRET"))
-        dc_auth_obj.update_access_token(code, redirect_uri_suffix="/accounts/sync_avatar/", scope="identify")
+        dc_auth_obj = DiscordAuth(
+            getenv("DISCORD_CLIENT_ID"), getenv("DISCORD_CLIENT_SECRET")
+        )
+        dc_auth_obj.update_access_token(
+            code, redirect_uri_suffix="/accounts/sync_avatar/", scope="identify"
+        )
         user_info = dc_auth_obj.get_user_info()
         if str(request.user.discord_id) == user_info["id"]:
             request.user.avatar = (
