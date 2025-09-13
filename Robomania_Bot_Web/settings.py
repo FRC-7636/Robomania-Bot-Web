@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "daphne",
     # My apps
     "Members.apps.MembersConfig",
     "Meetings.apps.MeetingsConfig",
@@ -82,10 +83,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Robomania_Bot_Web.wsgi.application'
 
+ASGI_APPLICATION = "Robomania_Bot_Web.asgi.application"
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
+
+CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
 
 # Database

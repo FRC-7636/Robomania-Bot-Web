@@ -10,6 +10,7 @@ urlpatterns = [
     path("<int:meeting_id>/delete/", views.delete, name="meeting_delete"),
     path("<int:meeting_id>/submit_absent_request/", views.submit_absent_request, name="meeting_submit_absent"),
     path("<int:meeting_id>/review_absent_requests/", views.review_absent_requests_page, name="meeting_review_absents"),
+    path("tws/", views.test_ws, name="websocket_test"),
     path(
         "<int:meeting_id>/review_absent_requests_api/",
         views.review_absent_requests_api,

@@ -12,6 +12,9 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
 from .models import DMeeting, DAbsentRequest
 from .serializers import DMeetingSerializer, DAbsentRequestSerializer
 from Members.models import DMember
@@ -159,6 +162,12 @@ def create(request):
         )
         # save meeting
         meeting.save()
+        # send websocket notification
+        channel = get_channel_layer()
+        async_to_sync(channel.group_send)(
+            "meeting_updates",
+            {"type": "meeting.create", "meeting": DMeetingSerializer(meeting).data},
+        )
         # redirect to meeting info page
         return redirect("meeting_info", meeting_id=meeting.pk)
     else:  # GET
@@ -203,6 +212,12 @@ def edit(request, meeting_id):
         meeting.can_absent = request.POST.get("can-absent", "False").lower() == "true"
         # save changes
         meeting.save()
+        # send websocket notification
+        channel = get_channel_layer()
+        async_to_sync(channel.group_send)(
+            "meeting_updates",
+            {"type": "meeting.edit", "meeting": DMeetingSerializer(meeting).data},
+        )
         return redirect("meeting_info", meeting_id=meeting_id)
     else:  # GET
         # generate member choices for host selector
@@ -240,6 +255,13 @@ def delete(request, meeting_id):
     if request.method == "DELETE":
         # delete meeting
         meeting.delete()
+        # send websocket notification
+        # send websocket notification
+        channel = get_channel_layer()
+        async_to_sync(channel.group_send)(
+            "meeting_updates",
+            {"type": "meeting.delete", "meeting": DMeetingSerializer(meeting).data},
+        )
         return HttpResponse(status=204)
     else:
         return HttpResponse("Method not allowed", status=405)
@@ -309,6 +331,14 @@ def review_absent_requests_api(request, meeting_id):
             absent_request.save()
         return HttpResponse(status=200)
     return HttpResponse("Method not allowed", status=405)
+
+
+def test_ws(request):
+    channel = get_channel_layer()
+    async_to_sync(channel.group_send)(
+        "meeting_updates", {"type": "test.message", "text": "This is a test message."}
+    )
+    return HttpResponse("Done", status=200)
 
 
 class MeetingsViewSet(ModelViewSet):
