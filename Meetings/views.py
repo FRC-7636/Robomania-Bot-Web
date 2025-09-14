@@ -253,14 +253,15 @@ def edit(request, meeting_id):
 def delete(request, meeting_id):
     meeting = get_object_or_404(DMeeting, pk=meeting_id)
     if request.method == "DELETE":
+        # save meeting data before deletion to save pk
+        meeting_data = DMeetingSerializer(meeting).data
         # delete meeting
         meeting.delete()
-        # send websocket notification
         # send websocket notification
         channel = get_channel_layer()
         async_to_sync(channel.group_send)(
             "meeting_updates",
-            {"type": "meeting.delete", "meeting": DMeetingSerializer(meeting).data},
+            {"type": "meeting.delete", "meeting": meeting_data},
         )
         return HttpResponse(status=204)
     else:
