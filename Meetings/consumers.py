@@ -10,10 +10,9 @@ class DiscordBotMeetingConsumer(AsyncJsonWebsocketConsumer):
         self.room_name = "meeting_updates"
         self.room_group_name = "meeting_updates"
 
-        logging.info("WebSocket connection attempting to connect")
+        logging.info(f"WebSocket connection attempting to connect to {self.room_group_name}")
 
         headers = dict(self.scope['headers'])
-        print(headers)
         token = headers.get(b"authorization", b"Token None").decode("utf-8").split(" ")[1]  # noqa
         valid_token = await sync_to_async(Token.objects.filter(key=token).exists)()
         if not valid_token:
