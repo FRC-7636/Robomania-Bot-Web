@@ -1,6 +1,6 @@
 # coding=utf-8
 from rest_framework import serializers
-from .models import DMember
+from .models import DMember, WarningHistory
 
 
 class DMemberSerializer(serializers.ModelSerializer):
@@ -21,3 +21,9 @@ class DMemberSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation["id"] = pk
         return representation
+
+
+class WarningHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WarningHistory
+        fields = "__all__"
