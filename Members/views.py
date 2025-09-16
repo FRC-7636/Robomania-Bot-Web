@@ -11,9 +11,14 @@ from logging import warning
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.decorators import action
+from rest_framework.response import Response
+
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 from .models import DMember, WarningHistory
-from .serializers import DMemberSerializer
+from .serializers import DMemberSerializer, WarningHistorySerializer
 
 
 TEAM_RULES = {"negative": [], "positive": []}
@@ -147,6 +152,15 @@ def edit_warning_points(request, member_id):
             auto_warn_history.save()
             member.warning_points = 0.0
             member.save()
+        # send websocket notification after autocorrection
+        channel = get_channel_layer()
+        async_to_sync(channel.group_send)(
+            "member_updates",
+            {
+                "type": "member.add_warning_points",
+                "warning_detail": WarningHistorySerializer(warn_history).data,
+            },
+        )
         return redirect("member_info", member_id=member_id)
     else:
         reload_team_rules()
