@@ -162,3 +162,9 @@ class MembersViewSet(ModelViewSet):
 
     queryset = DMember.objects.all()
     serializer_class = DMemberSerializer
+
+    @action(methods=["GET"], detail=False)
+    def bad_guys(self, request):
+        bad_guys = DMember.objects.filter(warning_points__gt=0).order_by("-warning_points")
+        serializer = self.get_serializer(bad_guys, many=True)
+        return Response(serializer.data)
