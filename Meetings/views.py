@@ -330,6 +330,13 @@ def review_absent_requests_api(request, meeting_id):
             absent_request.status = review_result["status"]
             absent_request.reviewer_comment = review_result["comment"]
             absent_request.save()
+            # send websocket notification
+            channel = get_channel_layer()
+            async_to_sync(channel.group_send)(
+                "meeting_updates",
+                {"type": "meeting.review_absent_request",
+                 "absent_request": DAbsentRequestSerializer(absent_request).data},
+            )
         return HttpResponse(status=200)
     return HttpResponse("Method not allowed", status=405)
 
