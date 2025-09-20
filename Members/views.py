@@ -129,7 +129,8 @@ def edit(request, member_id):
 def edit_warning_points(request, member_id):
     member = get_object_or_404(DMember, discord_id=member_id)
     if request.method == "POST":
-        pprint(request.POST.dict())
+        if abs(float(request.POST["points"])) > 5:
+            return HttpResponseBadRequest("單次增減點數不可超過 5 點。")
         warn_history = WarningHistory(
             member=member,
             operator=request.user,
