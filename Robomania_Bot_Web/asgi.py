@@ -15,11 +15,12 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 from channels.security.websocket import AllowedHostsOriginValidator
 
+# Set setting modules before importing routing
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Robomania_Bot_Web.settings')
+
 import Meetings.routing
 import Members.routing
 
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Robomania_Bot_Web.settings')
 
 django_asgi_app = get_asgi_application()
 
