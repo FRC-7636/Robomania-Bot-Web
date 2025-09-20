@@ -103,8 +103,8 @@ def index(request, meeting_id):
             "can_send_absent_request": reason_not_absent == "",
             "reason_not_absent": reason_not_absent,
             "can_edit": (
-                request.user.has_perm("Meetings.change_DMeeting")
-                and request.user.has_perm("Meetings.delete_DMeeting")
+                request.user.has_perm("Meetings.change_dmeeting")
+                and request.user.has_perm("Meetings.delete_dmeeting")
             ),
         },
     )
@@ -128,13 +128,13 @@ def list_view(request):
         "Meetings/list.html",
         {
             "meetings": meetings,
-            "can_create": request.user.has_perm("Meetings.add_DMeeting"),
+            "can_create": request.user.has_perm("Meetings.add_dmeeting"),
         },
     )
 
 
 @login_required
-@permission_required("Meetings.add_DMeeting", raise_exception=True)
+@permission_required("Meetings.add_dmeeting", raise_exception=True)
 def create(request):
     if request.method == "POST":
         # validate form data
@@ -187,7 +187,7 @@ def create(request):
 
 @login_required
 @permission_required(
-    ["Meetings.change_DMeeting", "Meetings.delete_DMeeting"], raise_exception=True
+    ["Meetings.change_dmeeting", "Meetings.delete_dmeeting"], raise_exception=True
 )
 def edit(request, meeting_id):
     meeting = get_object_or_404(DMeeting, pk=meeting_id)
@@ -248,7 +248,7 @@ def edit(request, meeting_id):
 
 @login_required
 @permission_required(
-    ["Meetings.change_DMeeting", "Meetings.delete_DMeeting"], raise_exception=True
+    ["Meetings.change_dmeeting", "Meetings.delete_dmeeting"], raise_exception=True
 )
 def delete(request, meeting_id):
     meeting = get_object_or_404(DMeeting, pk=meeting_id)
@@ -301,7 +301,7 @@ def submit_absent_request(request, meeting_id):
 
 
 @login_required
-@permission_required("Meetings.change_DAbsentRequest", raise_exception=True)
+@permission_required("Meetings.change_dabsentrequest", raise_exception=True)
 def review_absent_requests_page(request, meeting_id):
     meeting = get_object_or_404(DMeeting, pk=meeting_id)
     absent_requests = meeting.absent_requests.all()
@@ -319,7 +319,7 @@ def review_absent_requests_page(request, meeting_id):
 
 
 @login_required
-@permission_required("Meetings.change_DAbsentRequest", raise_exception=True)
+@permission_required("Meetings.change_dabsentrequest", raise_exception=True)
 def review_absent_requests_api(request, meeting_id):
     meeting = get_object_or_404(DMeeting, pk=meeting_id)
     if request.method == "POST":
