@@ -27,7 +27,7 @@ SECRET_KEY = getenv("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = getenv("IS_DEBUG", "True").lower() == "true"
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["https://frc7636.dpdns.org", "127.0.0.1", "localhost"]
 
 
 # Application definition
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "Auth.apps.AuthConfig",
     "Panel.apps.PanelConfig",
     "Uploader.apps.UploaderConfig",
+    "Announcements.apps.AnnouncementsConfig",
     # DRF
     "rest_framework",
     "rest_framework.authtoken",
