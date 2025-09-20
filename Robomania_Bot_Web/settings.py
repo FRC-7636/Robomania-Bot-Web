@@ -27,7 +27,7 @@ SECRET_KEY = getenv("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = getenv("IS_DEBUG", "True").lower() == "true"
 
-ALLOWED_HOSTS = ["frc7636.dpdns.org", "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "frc7636.dpdns.org"]
 CSRF_TRUSTED_ORIGINS = ["https://frc7636.dpdns.org", "http://127.0.0.1", "localhost"]
 
 
