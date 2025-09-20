@@ -59,10 +59,10 @@ def info(request, member_id):
         "member": member,
         "warning_history": member.warning_history.all(),
         "is_self": member.discord_id == request.user.discord_id,
-        "can_edit": request.user.has_perm("Members.change_DMember")
+        "can_edit": request.user.has_perm("Members.change_dmember")
         or member.discord_id == request.user.discord_id,
         "can_edit_warning_points": request.user.has_perms(
-            ["Members.change_DMember", "Members.add_WarningHistory"]
+            ["Members.change_dmember", "Members.add_warninghistory"]
         ),
     }
     return render(request, "Members/index.html", data)
@@ -87,14 +87,14 @@ def list_members(request):
 @login_required
 def edit(request, member_id):
     if (
-        request.user.has_perm("Members.change_DMember")
+        request.user.has_perm("Members.change_dmember")
         or request.user.discord_id == member_id
     ):
         member = get_object_or_404(DMember, discord_id=member_id)
         if request.method == "POST":
             member.real_name = request.POST["real_name"]
             member.email_address = request.POST["email_address"]
-            if request.user.has_perm("Members.change_DMember"):
+            if request.user.has_perm("Members.change_dmember"):
                 try:
                     edited_groups = loads(request.POST["groups"])
                 except JSONDecodeError as je:
@@ -115,7 +115,7 @@ def edit(request, member_id):
                 "member": member,
                 "all_groups": groups,
                 "joined_groups": joined_groups,
-                "can_edit_groups": request.user.has_perm("Members.change_DMember"),
+                "can_edit_groups": request.user.has_perm("Members.change_dmember"),
             }
             return render(request, "Members/edit.html", data)
     else:
@@ -124,7 +124,7 @@ def edit(request, member_id):
 
 @login_required
 @permission_required(
-    ["Members.change_DMember", "Members.add_WarningHistory"], raise_exception=True
+    ["Members.change_dmember", "Members.add_warninghistory"], raise_exception=True
 )
 def edit_warning_points(request, member_id):
     member = get_object_or_404(DMember, discord_id=member_id)
