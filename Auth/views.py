@@ -9,6 +9,14 @@ from Members.models import DMember
 from .discord_auth import DiscordAuth
 
 
+def to_next_page(request):
+    next_url = request.session.get("next", None)
+    if next_url:
+        del request.session["next"]
+        return next_url
+    return "/"
+
+
 # Create your views here.
 def login_view(request):
     if request.method == "POST":
@@ -18,7 +26,7 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect("/")
+            return redirect(to_next_page(request))
         else:
             return render(
                 request,
@@ -29,8 +37,9 @@ def login_view(request):
                 },
             )
     else:  # GET
+        request.session["next"] = request.GET.get("next", None)
         if request.user.is_authenticated:
-            return redirect("/")
+            return redirect(to_next_page(request))
         else:
             if request.GET.get("error", None):
                 return render(
@@ -74,7 +83,7 @@ def discord_login_view(request):
             user = DMember.objects.get(discord_id=discord_id)
             # login the user
             login(request, user)
-            return redirect("/")
+            return redirect(to_next_page(request))
         else:
             guild_ids = dc_auth_obj.get_user_guild_ids()
             # 檢查是否已加入 FRC# 7636 的 Discord 伺服器

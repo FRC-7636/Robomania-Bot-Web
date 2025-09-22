@@ -50,7 +50,7 @@ def index(request):
 def download(request, uuid):
     user_file = get_object_or_404(UserFile, uuid=uuid)
     if user_file.require_login and not request.user.is_authenticated:
-        response = HttpResponse(status=404)
+        response = redirect(f"{reverse('login')}?next={request.path}")
     else:
         response = HttpResponse(content_type=user_file.mimetype)
         response["Content-Disposition"] = content_disposition_header(
