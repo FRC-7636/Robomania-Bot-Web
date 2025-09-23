@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/Announcements/edit.css' %}">
+    <script src="{% static 'js/Announcements/edit.js' %}"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+    <title>
+        {% if announcement %}
+            編輯公告 #{{ announcement.pk }}
+        {% else %}
+            新增公告
+        {% endif %}
+    </title>
+{% endblock %}
+
+{% block main_content %}
+    <div class="soft-container" id="announcement-edit-container">
+        <h1 style="margin: 0.3em 0;">
+            {% if announcement %}
+                編輯公告 #{{ announcement.pk }}
+            {% else %}
+                新增公告
+            {% endif %}
+        </h1>
+        <form id="announcement-form" name="announcement-form" method="POST">
+            <input type="hidden" id="announcement-id" name="announcement-id" value="{{ announcement.pk }}">
+            {% csrf_token %}
+            <div class="round-container content-editor-container" id="announcement-content-editor-container">
+                <div class="panel-title" id="announcement-content-title">
+                    <md-icon>markdown</md-icon>
+                    <span class="panel-title-text">內容編輯</span>
+                </div>
+                <div class="content-editor-form">
+                    <md-filled-text-field name="title" label="公告標題" value="{{ announcement.title }}"
+                                          style="margin-top: 0.5em;" max-length="255"
+                                          required></md-filled-text-field>
+                    <label for="md-editor" hidden></label>
+                    <textarea name="content" id="md-editor"></textarea>
+                    <script>
+                        const easyMDE = new EasyMDE({
+                            element: document.getElementById("md-editor"),
+                            forceSync: true,
+                            autosave: {
+                                enabled: true,
+                                uniqueId: "announcement-content-editor",
+                            },
+                        });
+                        {% autoescape off %}
+                            easyMDE.value(`{{ announcement_content }}`);
+                        {% endautoescape %}
+                    </script>
+                </div>
+            </div>
+            <div id="side-container">
+                <div class="round-container content-editor-container" id="announcement-info-editor-container">
+                    <div class="panel-title" id="announcement-info-title">
+                        <md-icon>info</md-icon>
+                        <span class="panel-title-text">基本資訊</span>
+                    </div>
+                    <div class="content-editor-form">
+                        <div style="display: flex; align-items: center;">
+                            <label style="display: flex; align-items: center; margin-top: 0.5em;">
+                                釘選：
+                                <md-switch icons {% if announcement.is_pinned %}selected{% endif %} id="is-pinned-switch"></md-switch>
+                            </label>
+                            </div>
+                        <md-filled-text-field name="pin_until_text" id="pin-until-text" label="釘選期限 (使用下方工具選擇)"
+                                              value="{{ announcement.pin_until|date:"Y/m/d H:i" }}" readonly>
+                        </md-filled-text-field>
+                        <label id="pin-until-selector-group">
+                            選擇釘選期限：
+                            <input type="datetime-local" name="pin_until" id="pin-until-selector" style="color: black;"
+                                   value="{{ announcement.pin_until|date:"Y-m-d\TH:i" }}" required>
+                        </label>
+                    </div>
+                </div>
+                <input type="hidden" name="is_pinned" id="is-pinned" value="{% if announcement.is_pinned %}true{% else %}false{% endif %}">
+                <input type="hidden" name="submit-type" id="submit-type" value="save">
+                <md-filled-button type="button" class="submit-button" id="save-button">
+                    <div style="display: flex; align-items: center; height: min-content;">
+                        <span class="material-symbols-outlined button-icon">
+                            save
+                        </span>儲存公告
+                    </div>
+                </md-filled-button>
+                <md-filled-button type="button" class="submit-button" id="announce-button" {% if published %}disabled{% endif %}>
+                    <div style="display: flex; align-items: center; height: min-content;">
+                        <span class="material-symbols-outlined button-icon">
+                            publish
+                        </span>儲存並發布公告
+                    </div>
+                </md-filled-button>
+                <md-filled-button type="button" class="submit-button" id="announce-with-dc-button" {% if synced_to_dc %}disabled{% endif %}>
+                    <div style="display: flex; align-items: center; height: min-content;">
+                        <span class="material-symbols-outlined button-icon">
+                            publish
+                        </span>儲存並發布公告 (同步至 Discord)
+                    </div>
+                </md-filled-button>
+                {% if announcement %}
+                <md-filled-tonal-button type="button" id="delete-button"
+                                        style="--md-filled-tonal-button-container-color: #ff3333">
+                    <div style="display: flex; align-items: center; height: min-content;">
+                        <span class="material-symbols-outlined button-icon">
+                            delete
+                        </span>刪除公告
+                    </div>
+                </md-filled-tonal-button>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+{% endblock %}

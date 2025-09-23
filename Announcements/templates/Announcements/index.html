@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/Announcements/index.css' %}">
+    <title>公告「{{ announcement.title }}」的資訊</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js" defer></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let converter = new showdown.Converter(
+                {
+                    simplifiedAutoLink: true,
+                    excludeTrailingPunctuationFromURLs: true,
+                    strikethrough: true,
+                    simpleLineBreaks: true,
+                    ghCodeBlocks: true,
+                    tasklists: true,
+                }
+            );
+            // Convert the Markdown description to HTML
+            {% autoescape off %}
+            document.getElementById("announcement-content").innerHTML = converter.makeHtml(`{{ announcement_content }}`);
+            {% endautoescape %}
+        })
+    </script>
+    <!-- Highlight.js for code syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+{% endblock %}
+
+{% block main_content %}
+    <div class="soft-container" id="announcement-info-container">
+        <h1 style="margin: 0.3em 0;">公告「{{ announcement.title }}」的資訊</h1>
+        <div id="announcement-panel">
+            <div class="round-container panel" id="announcement-content-panel">
+                <div class="panel-title" id="announcement-content-title">
+                    <md-icon>article</md-icon>
+                    <span class="panel-title-text">公告內文</span>
+                </div>
+                <div id="announcement-content"></div>
+            </div>
+            <div id="panels-container">
+                <div class="round-container panel" id="announcement-info-panel">
+                    <div class="panel-title" id="announcement-info-title">
+                        <md-icon>info</md-icon>
+                        <span class="panel-title-text">資訊</span>
+                    </div>
+                    <div id="announcement-info-content">
+                        <div style="display: flex; align-items: center; height: min-content; margin-top: 1em;">
+                            <p style="margin: 0;"><strong>作者：</strong></p>
+                            <div class="member-indicator">
+                                <img src="{{ announcement.author.avatar }}" alt="作者的頭像" class="member-avatar">
+                                <span class="member-name">
+                                    {{ announcement.author.real_name }} ({{ announcement.author.discord_id }})
+                                </span>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; height: min-content; margin-top: 1em;">
+                            <p style="margin: 0;"><strong>已發布：</strong></p>
+                            {% if announcement.is_published %}
+                                <md-icon style="color: #60ed60;">check_circle</md-icon>
+                            {% else %}
+                                <md-icon style="color: #fd7474;">cancel</md-icon>
+                            {% endif %}
+                        </div>
+                        {% if announcement.is_published %}
+                            <p><strong>發布時間：</strong>{{ announcement.published_at|date:"Y/m/d H:i" }}</p>
+                        {% endif %}
+                        <div style="display: flex; align-items: center; height: min-content; margin-top: 1em;">
+                            <p style="margin: 0;"><strong>已置頂：</strong></p>
+                            {% if announcement.is_pinned %}
+                                <md-icon style="color: #60ed60;">check_circle</md-icon>
+                            {% else %}
+                                <md-icon style="color: #fd7474;">cancel</md-icon>
+                            {% endif %}
+                        </div>
+                        {% if announcement.is_pinned %}
+                            <p><strong>置頂期限：</strong>{{ announcement.pin_until|date:"Y/m/d H:i"|default:"(無期限)" }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="round-container panel" id="announcement-actions-panel">
+                    <div class="panel-title" id="announcement-actions-title" style="margin-bottom: 0.5em">
+                        <md-icon>action_key</md-icon>
+                        <span class="panel-title-text">操作</span>
+                    </div>
+                    <div id="announcement-actions-content">
+                        <md-filled-button href="./edit/" {% if not can_edit %}disabled{% endif %}>
+                        <div style="display: flex; align-items: center; height: min-content;">
+                            <span class="material-symbols-outlined button-icon">
+                                edit</span>
+                            編輯 / 發布
+                        </div>
+                        </md-filled-button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

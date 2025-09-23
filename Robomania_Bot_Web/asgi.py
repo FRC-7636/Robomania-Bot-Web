@@ -17,19 +17,28 @@ from channels.auth import AuthMiddlewareStack
 from channels.security.websocket import AllowedHostsOriginValidator
 
 # Set setting modules before importing routing
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Robomania_Bot_Web.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Robomania_Bot_Web.settings")
 django.setup()
 
 import Meetings.routing
 import Members.routing
+import Announcements.routing
 
 
 django_asgi_app = get_asgi_application()
 
 
-application = ProtocolTypeRouter({
-    "http": django_asgi_app,
-    "websocket": AllowedHostsOriginValidator(AuthMiddlewareStack(URLRouter(
-        Meetings.routing.websocket_urlpatterns + Members.routing.websocket_urlpatterns
-    )))
-})
+application = ProtocolTypeRouter(
+    {
+        "http": django_asgi_app,
+        "websocket": AllowedHostsOriginValidator(
+            AuthMiddlewareStack(
+                URLRouter(
+                    Meetings.routing.websocket_urlpatterns
+                    + Members.routing.websocket_urlpatterns
+                    + Announcements.routing.websocket_urlpatterns
+                )
+            )
+        ),
+    }
+)

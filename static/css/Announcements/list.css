@@ -1,0 +1,97 @@
+#announcements-list {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.25);
+    margin-top: 0.5em;
+}
+
+#announcements-list-content {
+    background-color: darkgray;
+}
+
+.announcement-item {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.vertical-spacer {
+    margin: 0 7px 0 9px;
+    width: 2px;
+    border-left: 1px solid black;
+    height: -webkit-fill-available;
+}
+
+.announcement-item-text {
+    color: black;
+    text-align: center;
+}
+
+.announcement-item-text strong {
+    color: black;
+}
+
+.list-head {
+    cursor: pointer;
+    transition: background-color 0.1s ease-in-out;
+}
+
+.list-head:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.announcement-id {
+    flex: 1;
+}
+
+.announcement-title {
+    flex: 3;
+}
+
+.announcement-author {
+    flex: 2;
+}
+
+.announcement-created-at {
+    flex: 2;
+}
+
+.announcement-published-at {
+    flex: 2;
+}
+
+.announcement-pin-until {
+    flex: 2;
+}
+
+.mixed-field {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.member-indicator {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    overflow: hidden;
+}
+
+.member-indicator .member-avatar {
+    width: 1.5em;
+    height: 1.5em;
+    border-radius: 50%;
+}
+
+.member-indicator .member-name {
+    color: black;
+    margin-left: 0.2em;
+    text-align: start;
+}
+
+.symbol-green {color: #3eff3e !important;}
+
+.symbol-yellow {color: #ffff5d !important;}
+
+.symbol-red {color: #ff4c4c !important;}

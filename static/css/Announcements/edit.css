@@ -1,0 +1,47 @@
+.round-container {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+#announcement-form {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5em;
+    width: 100%;
+    margin-top: 0.5em;
+}
+
+.content-editor-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+#side-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+#announcement-content-editor-container {
+    flex: 2;
+}
+
+.content-editor-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5em;
+}
+
+.EasyMDEContainer {
+    width: 100%;
+}
+
+.EasyMDEContainer * {
+    color: black;
+}
+
+.CodeMirror {
+    background: #e6e0e9 !important;
+}

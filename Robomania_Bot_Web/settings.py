@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     "Auth.apps.AuthConfig",
     "Panel.apps.PanelConfig",
     "Uploader.apps.UploaderConfig",
-    # "Announcements.apps.AnnouncementsConfig",
+    "Announcements.apps.AnnouncementsConfig",
     # DRF
     "rest_framework",
     "rest_framework.authtoken",

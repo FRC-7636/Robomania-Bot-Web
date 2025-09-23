@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/Announcements/list.css' %}">
+    <script src="{% static 'js/Announcements/list.js' %}"></script>
+    <title>公告列表</title>
+{% endblock %}
+
+{% block main_content %}
+    <div class="soft-container" id="announcement-list-container">
+        <div style="display: flex; align-items:center; justify-content: space-between; width: 100%;">
+            <h1 style="margin: 0.3em 0;">公告列表</h1>
+            <md-filled-button href="{% url "announcement_new" %}" style="height: fit-content;" {% if not can_create %} disabled {% endif %}>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 0.3em;">
+                    <span class="material-symbols-outlined">add_ad</span>
+                    <span>新增公告</span>
+                </div>
+            </md-filled-button>
+        </div>
+        <div class="round-container" id="announcements-list">
+            <div class="round-container inner-container announcements-list-div" id="announcements-list-content">
+                <md-list style="width: 100%;">
+                    <md-list-item>
+                        <div class="announcement-item">
+                            <span class="announcement-item-text announcement-id list-head" id="pk-head-click"><strong
+                                    id="pk-head">#</strong></span>
+                            <div class="vertical-spacer"></div>
+                            <span class="announcement-item-text announcement-title list-head"><strong
+                                    id="title-head">標題</strong></span>
+                            <div class="vertical-spacer"></div>
+                            <span class="announcement-item-text announcement-author list-head"><strong
+                                    id="author-head">作者</strong></span>
+                            <div class="vertical-spacer"></div>
+                            <span class="announcement-item-text announcement-created-at list-head" id="created_at-head-click"><strong
+                                    id="created_at-head">創建時間</strong></span>
+                            <div class="vertical-spacer"></div>
+                            <span class="announcement-item-text announcement-published-at list-head" id="published_at-head-click"><strong
+                                    id="published_at-head">發布狀態</strong></span>
+                            <div class="vertical-spacer"></div>
+                            <span class="announcement-item-text announcement-pin-until list-head" id="pin_until-head-click"><strong
+                                    id="pin_until-head">釘選狀態</strong></span>
+                        </div>
+                    </md-list-item>
+                    <div class="divider"></div>
+                    {% for announcement in pinned_announcements %}
+                        <md-list-item class="pinned-item" type="link" href="{% url "announcement_info" announcement.pk %}">
+                            <div class="announcement-item">
+                                <span class="announcement-item-text announcement-id">{{ announcement.pk }}</span>
+                                <div class="vertical-spacer"></div>
+                                <span class="announcement-item-text announcement-title">{{ announcement.title }}</span>
+                                <div class="vertical-spacer"></div>
+                                <div class="member-indicator announcement-item-text announcement-author">
+                                    <img class="member-avatar" src="{{ announcement.author.avatar }}"
+                                         alt="{{ announcement.author.real_name }} 的頭像">
+                                    <span class="member-name">{{ announcement.author.real_name }} ({{ announcement.author.discord_id }})</span>
+                                </div>
+                                <div class="vertical-spacer"></div>
+                                <span class="announcement-item-text announcement-created-at">{{ announcement.created_at|date:"Y/m/d H:i" }}</span>
+                                <div class="vertical-spacer"></div>
+                                <div class="announcement-item-text announcement-published-at mixed-field">
+                                    {% if announcement.published_at %}
+                                        <span class="material-symbols-outlined symbol-green" title="已發布">check_circle</span>
+                                        <span style="font-size: smaller; color: black;">於 {{ announcement.published_at|date:"Y/m/d H:i" }}</span>
+                                    {% else %}
+                                        <span class="material-symbols-outlined symbol-red" title="未發布">cancel</span>
+                                    {% endif %}
+                                </div>
+                                <div class="vertical-spacer"></div>
+                                <div class="announcement-item-text announcement-pin-until mixed-field">
+                                    {% if announcement.is_pinned %}
+                                    <span class="material-symbols-outlined symbol-green" title="已釘選">check_circle</span>
+                                        <span style="font-size: smaller; color: black;">至 {{ announcement.pin_until|date:"Y/m/d H:i" }}</span>
+                                    {% else %}
+                                        <span class="material-symbols-outlined symbol-red" title="未釘選">cancel</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </md-list-item>
+                        <div class="divider"></div>
+                    {% endfor %}
+                    {% for announcement in other_announcements %}
+                        <md-list-item type="link" href="{% url "announcement_info" announcement.pk %}">
+                            <div class="announcement-item">
+                                <span class="announcement-item-text announcement-id">{{ announcement.pk }}</span>
+                                <div class="vertical-spacer"></div>
+                                <span class="announcement-item-text announcement-title">{{ announcement.title }}</span>
+                                <div class="vertical-spacer"></div>
+                                <div class="member-indicator announcement-item-text announcement-author">
+                                    <img class="member-avatar" src="{{ announcement.author.avatar }}"
+                                         alt="{{ announcement.author.real_name }} 的頭像">
+                                    <span class="member-name">{{ announcement.author.real_name }} ({{ announcement.author.discord_id }})</span>
+                                </div>
+                                <div class="vertical-spacer"></div>
+                                <span class="announcement-item-text announcement-created-at">{{ announcement.created_at|date:"Y/m/d H:i" }}</span>
+                                <div class="vertical-spacer"></div>
+                                <div class="announcement-item-text announcement-published-at mixed-field">
+                                    {% if announcement.published_at %}
+                                        <span class="material-symbols-outlined symbol-green" title="已發布">check_circle</span>
+                                        <span style="font-size: smaller; color: black;">於 {{ announcement.published_at|date:"Y/m/d H:i" }}</span>
+                                    {% else %}
+                                        <span class="material-symbols-outlined symbol-red" title="未發布">cancel</span>
+                                    {% endif %}
+                                </div>
+                                <div class="vertical-spacer"></div>
+                                <div class="announcement-item-text announcement-pin-until mixed-field">
+                                    {% if announcement.is_pinned %}
+                                    <span class="material-symbols-outlined symbol-green" title="已釘選">check_circle</span>
+                                        <span style="font-size: smaller; color: black;">至 {{ announcement.pin_until|date:"Y/m/d H:i" }}</span>
+                                    {% else %}
+                                        <span class="material-symbols-outlined symbol-red" title="未釘選">cancel</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </md-list-item>
+                        <div class="divider"></div>
+                    {% endfor %}
+                </md-list>
+            </div>
+        </div>
+    </div>
+{% endblock %}
