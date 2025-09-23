@@ -35,7 +35,7 @@
                     <md-chip-set id="dept-selector">
                         {% for group in all_groups.dept_groups %}
                             <md-filter-chip label="{{ group }}"
-                                            {% if group in joined_groups %}selected{% endif %}{% if not can_edit_groups %}disabled{% endif %}></md-filter-chip>
+                                            {% if group in joined_groups %}selected{% endif %}></md-filter-chip>
                         {% endfor %}
                     </md-chip-set>
                     <div class="divider"></div>
@@ -43,7 +43,7 @@
                     <md-chip-set id="identity-selector">
                         {% for group in all_groups.identity_groups %}
                             <md-filter-chip label="{{ group }}"
-                                            {% if group in joined_groups %}selected{% endif %}{% if not can_edit_groups %}disabled{% endif %}></md-filter-chip>
+                                            {% if group in joined_groups %}selected{% endif %}></md-filter-chip>
                         {% endfor %}
                     </md-chip-set>
                 </div>

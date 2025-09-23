@@ -59,8 +59,7 @@ def info(request, member_id):
         "member": member,
         "warning_history": member.warning_history.all(),
         "is_self": member.discord_id == request.user.discord_id,
-        "can_edit": request.user.has_perm("Members.change_dmember")
-        or member.discord_id == request.user.discord_id,
+        "can_edit": request.user.has_perm("Members.change_dmember"),
         "can_edit_warning_points": request.user.has_perms(
             ["Members.change_dmember", "Members.add_warninghistory"]
         ),
@@ -85,6 +84,7 @@ def list_members(request):
 
 
 @login_required
+@permission_required("Members.change_dmember")
 def edit(request, member_id):
     if (
         request.user.has_perm("Members.change_dmember")
@@ -120,6 +120,32 @@ def edit(request, member_id):
             return render(request, "Members/edit.html", data)
     else:
         return HttpResponseForbidden()
+    member = get_object_or_404(DMember, discord_id=member_id)
+    if request.method == "POST":
+        member.real_name = request.POST["real_name"]
+        member.email_address = request.POST["email_address"]
+        try:
+            edited_groups = loads(request.POST["groups"])
+        except JSONDecodeError as je:
+            return HttpResponseBadRequest(je.msg)
+        if isinstance(edited_groups, list):
+            member.groups.clear()
+            for group_name in edited_groups:
+                group = get_object_or_404(Group, name=group_name)
+                member.groups.add(group)
+        else:
+            return HttpResponseBadRequest("Invalid group data format.")
+        member.save()
+        return redirect("member_info", member_id=member_id)
+    else:
+        groups = sort_groups([group.name for group in Group.objects.all()])
+        joined_groups = [group.name for group in member.groups.all()]
+        data = {
+            "member": member,
+            "all_groups": groups,
+            "joined_groups": joined_groups,
+        }
+        return render(request, "Members/edit.html", data)
 
 
 @login_required
