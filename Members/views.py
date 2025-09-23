@@ -90,6 +90,7 @@ def edit(request, member_id):
     if request.method == "POST":
         member.real_name = request.POST["real_name"]
         member.email_address = request.POST["email_address"]
+        member.gen = int(request.POST["gen"])
         try:
             edited_groups = loads(request.POST["groups"])
         except JSONDecodeError as je:

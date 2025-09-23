@@ -24,6 +24,8 @@
                                           required></md-filled-text-field>
                     <md-filled-text-field label="Email" name="email_address" type="email"
                                           value="{{ member.email_address }}" required></md-filled-text-field>
+                    <md-filled-text-field label="屆別" name="gen" type="number" min="1" max="10"
+                                          value="{{ member.gen }}"></md-filled-text-field>
                 </div>
                 <div class="round-container" id="roles-editor">
                     <input type="hidden" name="groups" id="groups-input" value="{{ joined_groups }}">
