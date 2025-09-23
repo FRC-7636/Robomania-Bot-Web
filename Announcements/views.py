@@ -223,8 +223,14 @@ def list_view(request):
         "pin_until",
     ):
         return redirect(f"{reverse('announcement_list')}?order_by=pk")
+    if request.user.has_perm("Announcements.change_announcement"):
+        pinned_announcements = Announcement.objects.filter(is_pinned=True)
+        other_announcements = Announcement.objects.filter(is_pinned=False)
+    else:
+        pinned_announcements = Announcement.objects.filter(is_pinned=True, is_published=True)
+        other_announcements = Announcement.objects.filter(is_pinned=False, is_published=True)
     return render(request, 'Announcements/list.html', {
         "can_create": request.user.has_perm("Announcements.add_announcement"),
-        "pinned_announcements": Announcement.objects.filter(is_pinned=True).order_by(request.GET["order_by"]),
-        "other_announcements": Announcement.objects.filter(is_pinned=False).order_by(request.GET["order_by"]),
+        "pinned_announcements": pinned_announcements.order_by(request.GET["order_by"]),
+        "other_announcements": other_announcements.order_by(request.GET["order_by"]),
     })
