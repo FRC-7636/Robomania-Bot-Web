@@ -39,6 +39,16 @@ p {
     background-color: rgba(182, 159, 53, 0.6);
 }
 
+#announcement-title {
+    border-radius: 0.2em;
+    cursor: pointer;
+    transition: background-color 100ms ease-in-out;
+}
+
+#announcement-title:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
 #announcement-vertical-spacer {
     margin: 0 7px 0 9px;
     width: 2px;
@@ -48,11 +58,23 @@ p {
 
 #announcement-content {
     display: inline-block;
-    flex: 9;
+    border-radius: 0.2em;
+    cursor: pointer;
+    transition: opacity 500ms ease-in-out, background-color 100ms ease-in-out;
+}
+
+#announcement-content:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+#announcement-link {
+    text-decoration: none;
+    color: inherit;
     text-overflow: ellipsis;
     overflow: hidden;
     text-wrap: nowrap;
     white-space: nowrap;
+    display: flex;
 }
 
 #function-panels {

@@ -4,6 +4,38 @@
 {% block head %}
     <link rel="stylesheet" href="{% static 'css/Panel/index.css' %}">
     <script src="{% static 'js/Panel/index.js' %}"></script>
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function() {
+            {% autoescape off %}
+            const announcements = {{ pinned_announcements }}
+            {% endautoescape %}
+            console.log(announcements);
+
+            const annText = document.getElementById("announcement-content");
+            const annLink = document.getElementById("announcement-link");
+            // Initial announcement
+            annText.textContent = `【${announcements[0].title}】${announcements[0].content}`;
+            annLink.href = `{% url "announcement_info" 0 %}`.replace('/0/', `/${announcements[0].id}/`);
+            let i = 1;
+            if (announcements.length > 1) {
+                setInterval(() => {
+                    setTimeout(() => {
+                        annText.style.opacity = "0";
+                    }, 500)
+                    setTimeout(() => {
+                        annText.textContent = `【${announcements[i].title}】${announcements[i].content}`;
+                        annLink.href = `{% url "announcement_info" 0 %}`.replace('/0/', `/${announcements[i].id}/`);
+                        annText.style.opacity = "1";
+                        i = (i + 1) % announcements.length;
+                    }, 1000)
+                }, 10000);
+            } else if (announcements.length === 0) {
+                annLink.href = "#";
+                annText.textContent = "(目前沒有釘選中的公告)";
+            }
+        });
+    </script>
     <title>首頁</title>
 {% endblock %}
 
@@ -12,16 +44,18 @@
         <h1 style="margin: 0.3em 0;">你好，{{ request.user.real_name }}</h1>
         <div class="round-container" id="member-panel">
             <div class="round-container inner-container" id="announcement">
+                <a href="{% url "announcement_list" %}" style="text-decoration: none; color: inherit;">
                 <div class="panel-title" id="announcement-title">
                     <span class="material-symbols-outlined"
                           style="font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 40; font-size: xx-large;"
                     >brand_awareness</span>
-                    <span style="font-size: 1.3em; font-weight: bold">公告</span>
+                    <span style="font-size: 1.3em; font-weight: bold; text-wrap: nowrap;">公告</span>
                 </div>
+                </a>
                 <div id="announcement-vertical-spacer"></div>
-                <span id="announcement-content">
-                    本網頁目前測試中，若發現問題，請聯絡開發者 Allen Wei。感謝你的協助！
-                </span>
+                <a id="announcement-link">
+                <span id="announcement-content"></span>
+                </a>
             </div>
             <div id="function-panels">
                 <div class="round-container inner-container panel" id="profile-panel">

@@ -10,6 +10,6 @@ requests>=2.32.4
 python-dotenv>=1.1.1
 pillow>=11.3.0
 tzdata>=2025.2
-gunicorn>=23.0.0
 magika>=0.6.2
 colorlog>=6.9.0
+markdown>=3.9
