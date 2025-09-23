@@ -21,6 +21,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="showdown" level="application" />
     <orderEntry type="library" name="easymde" level="application" />
+    <orderEntry type="library" name="highlight.js" level="application" />
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_CONFIGURATION" value="Django" />
@@ -32,6 +33,7 @@
         <option value="$MODULE_DIR$/Meetings/templates" />
         <option value="$MODULE_DIR$/Members/templates" />
         <option value="$MODULE_DIR$/Uploader/templates" />
+        <option value="$MODULE_DIR$/Announcements/templates" />
       </list>
     </option>
   </component>
