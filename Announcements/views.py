@@ -12,9 +12,12 @@ from rest_framework.response import Response
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
+import logging
 import datetime
 from zoneinfo import ZoneInfo
 from pprint import pprint
+from os import getenv
+import requests
 
 from .models import Announcement
 from .serializers import AnnouncementSerializer
@@ -40,6 +43,46 @@ def validate_announcement_data(data) -> tuple[bool, str]:
             pprint(e)
             return False, "pin_until"
     return True, ""
+
+
+def announce_to_discord(announcement: Announcement):
+    message = f"""\
+@everyone
+> 此公告由 Robomania Bot Web 同步發布至此。
+> 發布時間：<t:{int(announcement.published_at.timestamp())}:F>
+> [點此查看公告詳情](https://frc7636.dpdns.org/announcement/{announcement.pk}/)
+# {announcement.title}
+{announcement.content}
+"""
+    if len(message) > 2000:
+        message = message[:1997] + "..."
+    webhook_url = getenv("DISCORD_WEBHOOK_URL")
+    try:
+        result = requests.post(
+            webhook_url,
+            headers={"Content-Type": "application/json"},
+            json={
+                "avatar_url": "https://frc7636.dpdns.org/static/img/7636.webp",
+                "content": message
+            },
+        )
+        if not result.ok:
+            raise Exception(f"HTTP {result.status_code} ({result.text})")
+        logging.info(f"Announcement #{announcement.pk} sent to Discord webhook.")
+    except Exception as e:
+        logging.error(
+            f"Failed to send announcement #{announcement.pk} to Discord webhook: {e}"
+        )
+        # send websocket notification
+        channel = get_channel_layer()
+        async_to_sync(channel.group_send)(
+            "announcement_updates",
+            {
+                "type": "announcement.announce",
+                "announcement": AnnouncementSerializer(announcement).data,
+            },
+        )
+        logging.info(f"Announcement #{announcement.pk} sent via websocket as fallback.")
 
 
 # Create your views here.
@@ -87,15 +130,7 @@ def create_view(request):
             announcement.is_published = True
             announcement.published_at = datetime.datetime.now(TAIPEI_TZ)
             if submit_type == "announce-with-dc":
-                # send websocket notification
-                channel = get_channel_layer()
-                async_to_sync(channel.group_send)(
-                    "announcement_updates",
-                    {
-                        "type": "announcement.announce",
-                        "announcement": AnnouncementSerializer(announcement).data,
-                    },
-                )
+                announce_to_discord(announcement)
                 announcement.sync_to_discord = True
         announcement.save()
         if is_pinned:
@@ -165,17 +200,9 @@ def edit_view(request, announcement_id: int):
         if "announce" in submit_type and not announcement.is_published:
             announcement.is_published = True
             announcement.published_at = datetime.datetime.now(TAIPEI_TZ)
-            if submit_type == "announce-with-dc" and not announcement.sync_to_discord:
-                # send websocket notification
-                channel = get_channel_layer()
-                async_to_sync(channel.group_send)(
-                    "announcement_updates",
-                    {
-                        "type": "announcement.announce",
-                        "announcement": AnnouncementSerializer(announcement).data,
-                    },
-                )
-                announcement.sync_to_discord = True
+        if submit_type == "announce-with-dc" and not announcement.sync_to_discord:
+            announce_to_discord(announcement)
+            announcement.sync_to_discord = True
         announcement.save()
         return redirect("announcement_info", announcement_id=announcement.pk)
     else:
