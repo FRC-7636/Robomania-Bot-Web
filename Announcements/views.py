@@ -3,6 +3,12 @@ from django.http import HttpResponseBadRequest, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.contrib.auth.decorators import login_required, permission_required
 
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import DjangoModelPermissions
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.decorators import action
+from rest_framework.response import Response
+
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
@@ -25,7 +31,9 @@ def validate_announcement_data(data) -> tuple[bool, str]:
         if not data.get("pin_until"):
             return False, "pin_until"
         try:
-            pin_until = datetime.datetime.fromisoformat(data.get("pin_until")).astimezone(TAIPEI_TZ)
+            pin_until = datetime.datetime.fromisoformat(
+                data.get("pin_until")
+            ).astimezone(TAIPEI_TZ)
             if not pin_until > datetime.datetime.now(TAIPEI_TZ):
                 return False, "pin_until"
         except Exception as e:
@@ -116,8 +124,10 @@ def create_view(request):
 
 
 @login_required
-@permission_required(["Announcements.change_announcement", "Announcements.delete_announcement"],
-                     raise_exception=True)
+@permission_required(
+    ["Announcements.change_announcement", "Announcements.delete_announcement"],
+    raise_exception=True,
+)
 def edit_view(request, announcement_id: int):
     if request.method == "POST":
         is_valid, error_field = validate_announcement_data(request.POST)
@@ -194,8 +204,10 @@ def edit_view(request, announcement_id: int):
 
 
 @login_required
-@permission_required(["Announcements.change_announcement", "Announcements.delete_announcement"],
-                     raise_exception=True)
+@permission_required(
+    ["Announcements.change_announcement", "Announcements.delete_announcement"],
+    raise_exception=True,
+)
 def delete_view(request, announcement_id: int):
     announcement = get_object_or_404(Announcement, pk=announcement_id)
     if request.method == "DELETE":
@@ -227,10 +239,46 @@ def list_view(request):
         pinned_announcements = Announcement.objects.filter(is_pinned=True)
         other_announcements = Announcement.objects.filter(is_pinned=False)
     else:
-        pinned_announcements = Announcement.objects.filter(is_pinned=True, is_published=True)
-        other_announcements = Announcement.objects.filter(is_pinned=False, is_published=True)
-    return render(request, 'Announcements/list.html', {
-        "can_create": request.user.has_perm("Announcements.add_announcement"),
-        "pinned_announcements": pinned_announcements.order_by(request.GET["order_by"]),
-        "other_announcements": other_announcements.order_by(request.GET["order_by"]),
-    })
+        pinned_announcements = Announcement.objects.filter(
+            is_pinned=True, is_published=True
+        )
+        other_announcements = Announcement.objects.filter(
+            is_pinned=False, is_published=True
+        )
+    return render(
+        request,
+        "Announcements/list.html",
+        {
+            "can_create": request.user.has_perm("Announcements.add_announcement"),
+            "pinned_announcements": pinned_announcements.order_by(
+                request.GET["order_by"]
+            ),
+            "other_announcements": other_announcements.order_by(
+                request.GET["order_by"]
+            ),
+        },
+    )
+
+
+class AnnouncementsViewSet(ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [DjangoModelPermissions]
+
+    filterset_fields = [
+        "author__discord_id",
+        "created_at",
+        "is_published",
+        "published_at",
+        "sync_to_discord",
+        "is_pinned",
+        "pin_until",
+    ]
+
+    queryset = Announcement.objects.all()
+    serializer_class = AnnouncementSerializer
+
+    @action(["GET"], detail=False)
+    def pinned(self, request):
+        pinned_announcements = Announcement.objects.filter(is_pinned=True)
+        serializer = self.get_serializer(pinned_announcements, many=True)
+        return Response(serializer.data)

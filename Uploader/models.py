@@ -1,6 +1,7 @@
 # coding=utf-8
 from django.db import models
 from django.forms import ModelForm
+from django.contrib.auth.hashers import make_password
 from uuid import uuid4
 
 
