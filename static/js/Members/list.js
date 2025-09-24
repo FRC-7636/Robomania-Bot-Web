@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const orderByAbs = orderBy.replace("-", "");
     const upOrDown = orderBy.startsWith("-") ? "▲" : "▼";
 
-    if (["pk", "discord_id", "real_name", "warning_points", "email_address"].includes(orderByAbs)) {
+    if (["pk", "discord_id", "real_name", "warning_points", "email_address", "gen"].includes(orderByAbs)) {
         const headId = `${orderByAbs}-head`
         const headElement = document.getElementById(headId);
 
