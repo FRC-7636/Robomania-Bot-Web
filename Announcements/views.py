@@ -108,16 +108,6 @@ def create_view(request):
                     "announcement": AnnouncementSerializer(announcement).data,
                 },
             )
-        if "announce" in submit_type:
-            # send websocket notification
-            channel = get_channel_layer()
-            async_to_sync(channel.group_send)(
-                "announcement_updates",
-                {
-                    "type": "announcement.announce",
-                    "announcement": AnnouncementSerializer(announcement).data,
-                },
-            )
         return redirect("announcement_info", announcement_id=announcement.pk)
     else:
         return render(request, "Announcements/edit.html", {})
