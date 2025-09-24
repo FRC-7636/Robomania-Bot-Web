@@ -49,10 +49,10 @@ INSTALLED_APPS = [
     "Uploader.apps.UploaderConfig",
     "Announcements.apps.AnnouncementsConfig",
     # DRF
+    "drf_redesign",
     "rest_framework",
     "rest_framework.authtoken",
     "django_filters",
-    "drf_redesign",
 ]
 
 MIDDLEWARE = [
