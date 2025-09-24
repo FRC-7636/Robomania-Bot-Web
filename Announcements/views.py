@@ -125,6 +125,7 @@ def create_view(request):
             is_pinned=is_pinned,
             pin_until=pin_due_date,
         )
+        announcement.save()
         submit_type = request.POST.get("submit-type", "save")
         if "announce" in submit_type:
             announcement.is_published = True
