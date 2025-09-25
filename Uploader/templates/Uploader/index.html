@@ -67,6 +67,19 @@
                                 <span><strong>需要登入：</strong></span>
                                 <md-switch id="require-login-switch" icons></md-switch>
                             </div>
+                            <input id="require-password-input" type="hidden" name="require_password" value="false">
+                            <div style="display: flex; flex-direction: row; align-items: center;">
+                                <span><strong>需要密碼：</strong></span>
+                                <md-switch id="require-password-switch" icons></md-switch>
+                            </div>
+                            <div id="password-input-container" style="display: none;">
+                                <md-filled-text-field label="密碼" name="password" type="password" id="password-input"
+                                                      min-length="6" supporting-text="使用者下載檔案時，需輸入此密碼">
+                                </md-filled-text-field>
+                                <md-filled-text-field label="確認密碼" name="confirm-password" type="password"
+                                                      id="confirm-password-input" min-length="6">
+                                </md-filled-text-field>
+                            </div>
                         </div>
                     </div>
                 </div>

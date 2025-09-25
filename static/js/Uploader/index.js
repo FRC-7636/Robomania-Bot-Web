@@ -44,6 +44,8 @@ function bytesToHumanReadableSize(sizeInBytes) {
 document.addEventListener("DOMContentLoaded", function(event) {
     const dropZone = document.getElementById("file-dropzone")
     const fileInput = document.getElementById("file-input");
+    const passwordInput = document.getElementById("password-input");
+    const confirmPasswordInput = document.getElementById("confirm-password-input");
 
     dropZone.addEventListener("dragenter", function (e) {
         e.preventDefault();
@@ -101,6 +103,25 @@ document.addEventListener("DOMContentLoaded", function(event) {
         document.getElementById("require-login-input").value = e.target.selected;
     })
 
+    document.getElementById("require-password-switch").addEventListener("change", function (e) {
+        document.getElementById("require-password-input").value = e.target.selected;
+        if (e.target.selected) {
+            document.getElementById("password-input-container").style.display = "flex";
+            passwordInput.required = true;
+            confirmPasswordInput.required = true;
+        } else {
+            document.getElementById("password-input-container").style.display = "none";
+            passwordInput.required = false;
+            confirmPasswordInput.required = false;
+            passwordInput.value = "";
+            confirmPasswordInput.value = "";
+            passwordInput.error = false;
+            passwordInput.errorText = "";
+            confirmPasswordInput.error = false;
+            confirmPasswordInput.errorText = "";
+        }
+    })
+
     document.getElementById("upload-button").addEventListener("click", function () {
         const fileNameInput = document.getElementById("file-name-input");
         if (fileNameInput.value.length > 20) {
@@ -112,6 +133,22 @@ document.addEventListener("DOMContentLoaded", function(event) {
             document.getElementById("upload-form").requestSubmit();
         }
     })
+
+    function markPasswordMismatch() {
+        let password = passwordInput.value;
+        let confirmPassword = confirmPasswordInput.value;
+
+        if (password !== confirmPassword) {
+            confirmPasswordInput.error = true;
+            confirmPasswordInput.errorText = "密碼不吻合";
+        } else {
+            confirmPasswordInput.error = false;
+            confirmPasswordInput.errorText = "";
+        }
+    }
+
+    passwordInput.addEventListener("input", markPasswordMismatch);
+    confirmPasswordInput.addEventListener("input", markPasswordMismatch);
 
     const url = new URL(window.location.href);
     if (url.searchParams.has("success")) {

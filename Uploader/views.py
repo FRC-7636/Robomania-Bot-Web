@@ -4,6 +4,8 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.conf import settings
 from django.utils.http import content_disposition_header
+from django.contrib.auth.hashers import make_password, check_password
+
 from magika import Magika
 from uuid import uuid4
 from os import remove
@@ -28,6 +30,15 @@ def index(request):
             user_file.require_login = (
                 request.POST.get("require_login", "false") == "true"
             )
+            require_password = request.POST.get("require_password", "false") == "true"
+            if require_password:
+                user_file.require_password = True
+                password = request.POST.get("password", "")
+                if password == "":
+                    return redirect(f"{reverse('upload_index')}?error=請輸入密碼。")
+                if len(password) < 6:
+                    return redirect(f"{reverse('upload_index')}?error=密碼長度需至少 6 個字元。")
+                user_file.password = make_password(password)
             # get MIME type of the uploaded file
             file = request.FILES["file"]
             # save the file to a temporary location instead of reading it directly
@@ -51,6 +62,24 @@ def download(request, uuid):
     user_file = get_object_or_404(UserFile, uuid=uuid)
     if user_file.require_login and not request.user.is_authenticated:
         response = redirect(f"{reverse('login')}?next={request.path}")
+    elif user_file.require_password:
+        if request.method == "POST":
+            password = request.POST.get("password", "")
+            if check_password(password, user_file.password):
+                response = HttpResponse(content_type=user_file.mimetype)
+                response["Content-Disposition"] = content_disposition_header(
+                    as_attachment=user_file.mimetype == "application/octet-stream",
+                    filename=user_file.name,
+                )
+                response["X-Accel-Redirect"] = user_file.file.url
+            else:
+                return render(
+                    request,
+                    "Uploader/password.html",
+                    {"file_uuid": user_file.uuid, "error": "密碼錯誤，請重新輸入。"},
+                )
+        else:
+            return render(request, "Uploader/password.html", {"file_uuid": user_file.uuid})
     else:
         response = HttpResponse(content_type=user_file.mimetype)
         response["Content-Disposition"] = content_disposition_header(

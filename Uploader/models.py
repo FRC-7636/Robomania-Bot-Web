@@ -30,6 +30,8 @@ class UserFile(models.Model):
     uploader = models.ForeignKey("Members.DMember", verbose_name="上傳者", on_delete=models.CASCADE)
     uploaded_at = models.DateTimeField("上傳時間", auto_now_add=True)
     require_login = models.BooleanField("需登入才可存取", default=False)
+    require_password = models.BooleanField("需密碼才可存取", default=False)
+    password = models.CharField("密碼", max_length=128, blank=True, null=True)
 
 
 class UserFileForm(ModelForm):
