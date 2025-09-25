@@ -25,6 +25,8 @@
 .meeting-item-text {
     color: black;
     text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .meeting-item-text strong {

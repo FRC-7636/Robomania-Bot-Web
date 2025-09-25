@@ -41,6 +41,8 @@ md-list, md-list-item {
     display: flex;
     justify-content: center;
     color: black;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .request-item-text strong {
