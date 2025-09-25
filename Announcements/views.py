@@ -252,7 +252,7 @@ def list_view(request):
         "published_at",
         "pin_until",
     ):
-        return redirect(f"{reverse('announcement_list')}?order_by=pk")
+        return redirect(f"{reverse('announcement_list')}?order_by=-published_at")
     if request.user.has_perm("Announcements.change_announcement"):
         pinned_announcements = Announcement.objects.filter(is_pinned=True)
         other_announcements = Announcement.objects.filter(is_pinned=False)
