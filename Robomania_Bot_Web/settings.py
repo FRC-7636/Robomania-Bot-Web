@@ -200,7 +200,7 @@ STATIC_ROOT = BASE_DIR / "web_statics"
 # User uploads
 
 MEDIA_URL = "user_uploads_nginx/"
-MEDIA_ROOT = BASE_DIR / "user_uploads" if DEBUG else "/media/allen95wei/DATA/rwb_media"
+MEDIA_ROOT = BASE_DIR / "user_uploads"
 
 
 # Default primary key field type
