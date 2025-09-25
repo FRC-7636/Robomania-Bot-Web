@@ -87,10 +87,12 @@
                 <script>
                     const easyMDE = new EasyMDE({
                         element: document.getElementById("md-editor"),
+                        forceSync: true,
                         autosave: {
                             enabled: true,
                             uniqueId: "meeting-description-editor",
                         },
+                        spellChecker: false,
                     });
                     {% autoescape off %}
                     easyMDE.value(`{{ meeting_description }}`);
