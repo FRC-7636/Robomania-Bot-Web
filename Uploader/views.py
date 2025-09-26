@@ -1,6 +1,6 @@
 # coding=utf-8
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.conf import settings
 from django.utils.http import content_disposition_header
@@ -60,6 +60,13 @@ def index(request):
 
 def download(request, uuid):
     user_file = get_object_or_404(UserFile, uuid=uuid)
+    if request.method == "DELETE":
+        if request.user.has_perm("Uploader.delete_userfile"):
+            user_file.file.delete(save=False)
+            user_file.delete()
+            return HttpResponse(status=204)
+        else:
+            return HttpResponseForbidden()
     if user_file.require_login and not request.user.is_authenticated:
         response = redirect(f"{reverse('login')}?next={request.path}")
     elif user_file.require_password:
