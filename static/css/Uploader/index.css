@@ -126,11 +126,23 @@
 }
 
 #result-text {
-    display: inline-block;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    text-wrap: nowrap;
-    white-space: nowrap;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+#copy-link {
+    cursor: pointer;
+    background: none;
+    border: none;
+    height: 24px;
+    margin-left: 0.25em;
+    transition: all 100ms ease-in-out;
+}
+
+#copy-link:hover {
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 #password-input-container {

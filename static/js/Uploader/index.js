@@ -155,8 +155,15 @@ document.addEventListener("DOMContentLoaded", function(event) {
         const fileUUID = url.searchParams.get("success");
         document.getElementById("result-icon").textContent = "cloud_done"
         document.getElementById("result-container").classList.add("result-success");
-        document.getElementById("result-text").innerHTML = `檔案上傳成功！你的檔案連結為 
-<a href="/user_uploads/uploader/${fileUUID}" target="_blank">${fileUUID}</a>`;
+        document.getElementById("result-text").innerHTML = `檔案上傳成功！你的檔案連結為&nbsp;
+<a href="/user_uploads/uploader/${fileUUID}" target="_blank">${fileUUID}</a>
+<button id="copy-link"><span class="material-symbols-outlined" id="copy-link-icon">content_copy</span></button>`;
+        document.getElementById("copy-link").addEventListener("click",  (e) => {
+            navigator.clipboard.writeText(`${window.location.origin}/user_uploads/uploader/${fileUUID}`)
+                .then(() => {
+                    document.getElementById("copy-link-icon").textContent = "check";
+                });
+        })
     } else if (url.searchParams.has("error")) {
         const errorMessage = url.searchParams.get("error");
         document.getElementById("result-icon").textContent = "cloud_alert"
