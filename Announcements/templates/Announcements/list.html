@@ -11,7 +11,8 @@
     <div class="soft-container" id="announcement-list-container">
         <div style="display: flex; align-items:center; justify-content: space-between; width: 100%;">
             <h1 style="margin: 0.3em 0;">公告列表</h1>
-            <md-filled-button href="{% url "announcement_new" %}" style="height: fit-content;" {% if not can_create %} disabled {% endif %}>
+            <md-filled-button href="{% url "announcement_new" %}" style="height: fit-content;" {% if not can_create %}
+                              disabled {% endif %}>
                 <div style="display: flex; align-items: center; justify-content: center; gap: 0.3em;">
                     <span class="material-symbols-outlined">add_ad</span>
                     <span>新增公告</span>
@@ -32,19 +33,23 @@
                             <span class="announcement-item-text announcement-author list-head"><strong
                                     id="author-head">作者</strong></span>
                             <div class="vertical-spacer"></div>
-                            <span class="announcement-item-text announcement-created-at list-head" id="created_at-head-click"><strong
+                            <span class="announcement-item-text announcement-created-at list-head"
+                                  id="created_at-head-click"><strong
                                     id="created_at-head">創建時間</strong></span>
                             <div class="vertical-spacer"></div>
-                            <span class="announcement-item-text announcement-published-at list-head" id="published_at-head-click"><strong
+                            <span class="announcement-item-text announcement-published-at list-head"
+                                  id="published_at-head-click"><strong
                                     id="published_at-head">發布狀態</strong></span>
                             <div class="vertical-spacer"></div>
-                            <span class="announcement-item-text announcement-pin-until list-head" id="pin_until-head-click"><strong
+                            <span class="announcement-item-text announcement-pin-until list-head"
+                                  id="pin_until-head-click"><strong
                                     id="pin_until-head">釘選狀態</strong></span>
                         </div>
                     </md-list-item>
                     <div class="divider"></div>
                     {% for announcement in pinned_announcements %}
-                        <md-list-item class="pinned-item" type="link" href="{% url "announcement_info" announcement.pk %}">
+                        <md-list-item class="pinned-item" type="link"
+                                      href="{% url "announcement_info" announcement.pk %}">
                             <div class="announcement-item">
                                 <span class="announcement-item-text announcement-id">{{ announcement.pk }}</span>
                                 <div class="vertical-spacer"></div>
@@ -60,7 +65,15 @@
                                 <div class="vertical-spacer"></div>
                                 <div class="announcement-item-text announcement-published-at mixed-field">
                                     {% if announcement.published_at %}
-                                        <span class="material-symbols-outlined symbol-green" title="已發布">check_circle</span>
+                                        <div class="publish-icons">
+                                            <span class="material-symbols-outlined symbol-green" title="已發布">check_circle</span>
+                                            {% if announcement.sync_to_discord %}
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                                                     fill="currentColor" class="bi bi-discord" viewBox="0 0 16 16">
+                                                    <path d="M13.545 2.907a13.2 13.2 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.2 12.2 0 0 0-3.658 0 8 8 0 0 0-.412-.833.05.05 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.04.04 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032q.003.022.021.037a13.3 13.3 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019q.463-.63.818-1.329a.05.05 0 0 0-.01-.059l-.018-.011a9 9 0 0 1-1.248-.595.05.05 0 0 1-.02-.066l.015-.019q.127-.095.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007q.121.1.248.195a.05.05 0 0 1-.004.085 8 8 0 0 1-1.249.594.05.05 0 0 0-.03.03.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.2 13.2 0 0 0 4.001-2.02.05.05 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.03.03 0 0 0-.02-.019m-8.198 7.307c-.789 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612"></path>
+                                                </svg>
+                                            {% endif %}
+                                        </div>
                                         <span style="font-size: smaller; color: black;">於 {{ announcement.published_at|date:"Y/m/d H:i" }}</span>
                                     {% else %}
                                         <span class="material-symbols-outlined symbol-red" title="未發布">cancel</span>
@@ -69,7 +82,8 @@
                                 <div class="vertical-spacer"></div>
                                 <div class="announcement-item-text announcement-pin-until mixed-field">
                                     {% if announcement.is_pinned %}
-                                    <span class="material-symbols-outlined symbol-green" title="已釘選">check_circle</span>
+                                        <span class="material-symbols-outlined symbol-green"
+                                              title="已釘選">check_circle</span>
                                         <span style="font-size: smaller; color: black;">至 {{ announcement.pin_until|date:"Y/m/d H:i" }}</span>
                                     {% else %}
                                         <span class="material-symbols-outlined symbol-red" title="未釘選">cancel</span>
@@ -96,7 +110,8 @@
                                 <div class="vertical-spacer"></div>
                                 <div class="announcement-item-text announcement-published-at mixed-field">
                                     {% if announcement.published_at %}
-                                        <span class="material-symbols-outlined symbol-green" title="已發布">check_circle</span>
+                                        <span class="material-symbols-outlined symbol-green"
+                                              title="已發布">check_circle</span>
                                         <span style="font-size: smaller; color: black;">於 {{ announcement.published_at|date:"Y/m/d H:i" }}</span>
                                     {% else %}
                                         <span class="material-symbols-outlined symbol-red" title="未發布">cancel</span>
@@ -105,7 +120,8 @@
                                 <div class="vertical-spacer"></div>
                                 <div class="announcement-item-text announcement-pin-until mixed-field">
                                     {% if announcement.is_pinned %}
-                                    <span class="material-symbols-outlined symbol-green" title="已釘選">check_circle</span>
+                                        <span class="material-symbols-outlined symbol-green"
+                                              title="已釘選">check_circle</span>
                                         <span style="font-size: smaller; color: black;">至 {{ announcement.pin_until|date:"Y/m/d H:i" }}</span>
                                     {% else %}
                                         <span class="material-symbols-outlined symbol-red" title="未釘選">cancel</span>
