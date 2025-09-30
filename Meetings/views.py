@@ -293,6 +293,13 @@ def submit_absent_request(request, meeting_id):
             member=request.user, meeting=meeting, reason=reason
         )
         absent_request.save()
+        # send websocket notification
+        channel = get_channel_layer()
+        async_to_sync(channel.group_send)(
+            "meeting_updates",
+            {"type": "meeting.new_absent_request",
+             "absent_request": DAbsentRequestSerializer(absent_request).data},
+        )
         return redirect("meeting_info", meeting_id=meeting_id)
     else:
         return render(

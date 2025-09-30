@@ -49,5 +49,8 @@ class DiscordBotMeetingConsumer(AsyncJsonWebsocketConsumer):
     async def meeting_delete(self, event: dict):
         await self.send_json(event)
 
+    async def meeting_new_absent_request(self, event: dict):
+        await self.send_json(event)
+
     async def meeting_review_absent_request(self, event: dict):
         await self.send_json(event)
