@@ -90,6 +90,11 @@
     border-radius: 3px;
 }
 
+#meeting-description table, th, td {
+  border: 1px solid white;
+  border-collapse: collapse;
+}
+
 .member-indicator {
     display: flex;
     flex-direction: row;
