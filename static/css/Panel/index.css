@@ -29,7 +29,7 @@ p {
 #member-panel {
     width: -webkit-fill-available;
     margin-top: 0.5em;
-    background-color: rgba(255, 255, 255, 0.25); /* Light background for contrast */
+    background-color: rgba(255, 255, 255, 0.2); /* Light background for contrast */
 }
 
 #announcement {
@@ -228,7 +228,7 @@ p {
 
 .service-panel {
     flex: 1;
-    background-color: rgba(255, 255, 255, 0.25);
+    background-color: rgba(255, 255, 255, 0.2);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
