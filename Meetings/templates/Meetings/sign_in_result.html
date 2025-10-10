@@ -3,6 +3,9 @@
 
 {% block head %}
     <link rel="stylesheet" href="{% static 'css/Meetings/sign_in_result.css' %}">
+    <script>
+        window.history.pushState("", "會議 #{{ meeting.pk }} 簽到", "/sign_in/");
+    </script>
     <title>會議 #{{ meeting.pk }} 簽到</title>
 {% endblock %}
 
