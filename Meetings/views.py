@@ -1,6 +1,6 @@
 # coding=utf-8
 from django.contrib.auth.decorators import login_required, permission_required
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 import datetime
 from zoneinfo import ZoneInfo
@@ -15,7 +15,7 @@ from rest_framework.response import Response
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
-from .models import DMeeting, DAbsentRequest
+from .models import DMeeting, DAbsentRequest, MeetingSignIn, SingInRecord
 from .serializers import DMeetingSerializer, DAbsentRequestSerializer
 from Members.models import DMember
 
@@ -89,6 +89,24 @@ def index(request, meeting_id):
             "reviewer": absent_request.reviewer,
             "reviewer_comment": absent_request.reviewer_comment,
         }
+    sign_in_records = SingInRecord.objects.filter(
+        sign_in_method__meeting=meeting
+    ).order_by("-signed_in_at")
+    condensed_sign_in_records = []
+    for record in sign_in_records:
+        condensed_sign_in_records.append(
+            {
+                "member": {
+                    "discord_id": record.member.discord_id,
+                    "real_name": record.member.real_name,
+                    "avatar": record.member.avatar,
+                },
+                "signed_in_at": record.signed_in_at.astimezone(TAIPEI_TZ).strftime(
+                    "%Y/%m/%d %H:%M:%S"
+                ),
+                "sign_in_uuid": str(record.sign_in_method.uuid),
+            }
+        )
     return render(
         request,
         "Meetings/index.html",
@@ -99,6 +117,7 @@ def index(request, meeting_id):
                 if meeting.description is not None
                 else ""
             ),
+            "records": condensed_sign_in_records,
             "absent_request": condensed_absent_request,
             "can_send_absent_request": reason_not_absent == "",
             "reason_not_absent": reason_not_absent,
@@ -106,6 +125,8 @@ def index(request, meeting_id):
                 request.user.has_perm("Meetings.change_dmeeting")
                 and request.user.has_perm("Meetings.delete_dmeeting")
             ),
+            "can_sign_in": request.user.has_perm("Meetings.add_meetingsignin")
+            and not (meeting.end_time and meeting.end_time < now),
         },
     )
 
@@ -269,6 +290,111 @@ def delete(request, meeting_id):
 
 
 @login_required
+def sign_in_view(request, meeting_id, sign_in_uuid):
+    meeting = get_object_or_404(DMeeting, pk=meeting_id)
+    sign_in = get_object_or_404(MeetingSignIn, uuid=sign_in_uuid)
+    record = None
+    error = None
+    now = datetime.datetime.now(tz=TAIPEI_TZ)
+    if SingInRecord.objects.filter(member=request.user).exists():
+        error = "你已簽到過這場會議。"
+    elif sign_in.started_at > now:
+        error = "此簽到連結尚未開放。"
+    elif sign_in.ended_at and sign_in.ended_at < now:
+        error = "此簽到連結已失效。"
+    else:
+        record = SingInRecord(member=request.user, sign_in_method=sign_in)
+        record.save()
+        # send websocket notification
+        channel = get_channel_layer()
+        async_to_sync(channel.group_send)(
+            f"meeting_signin_{sign_in_uuid}",
+            {
+                "type": "signin.new_record",
+                "record": {
+                    "member": {
+                        "discord_id": record.member.discord_id,
+                        "real_name": record.member.real_name,
+                        "avatar": record.member.avatar,
+                    },
+                    "signed_in_at": record.signed_in_at.astimezone(TAIPEI_TZ).strftime(
+                        "%Y/%m/%d %H:%M:%S"
+                    ),
+                },
+            },
+        )
+    return render(
+        request,
+        "Meetings/sign_in_result.html",
+        {"meeting": meeting, "record": record, "error": error},
+    )
+
+
+@login_required
+@permission_required(["Meetings.add_meetingsignin", "Meetings.change_meetingsignin"])
+def sign_in_create_view(request, meeting_id):
+    meeting = get_object_or_404(DMeeting, pk=meeting_id)
+    if meeting.end_time and meeting.end_time < datetime.datetime.now(tz=TAIPEI_TZ):
+        return HttpResponse("This meeting has already ended.", status=403)
+    if request.method == "POST":
+        # create new sign-in session
+        now = datetime.datetime.now(tz=TAIPEI_TZ)
+        start_time = datetime.datetime.fromisoformat(
+            request.POST.get("started_at")
+        ).astimezone(TAIPEI_TZ)
+        if start_time < now:
+            return HttpResponseBadRequest("Start time cannot be in the past.")
+        if meeting.end_time and start_time > meeting.end_time:
+            return HttpResponseBadRequest(
+                "Start time cannot be after meeting end time."
+            )
+        sign_in = MeetingSignIn(
+            creator=request.user,
+            meeting=meeting,
+            started_at=datetime.datetime.fromisoformat(request.POST.get("started_at")),
+            ended_at=(
+                datetime.datetime.fromisoformat(request.POST.get("started_at"))
+                + datetime.timedelta(
+                    minutes=int(
+                        request.POST.get("duration", "15")
+                        if request.POST.get("duration", "15") != ""
+                        else "15"
+                    )
+                )
+            ),
+        )
+        sign_in.save()
+        return redirect(
+            "meeting_signin_scan", meeting_id=meeting_id, sign_in_uuid=sign_in.uuid
+        )
+    else:  # GET
+        return render(request, "Meetings/sign_in_create.html", {"meeting": meeting})
+
+
+@login_required
+@permission_required(["Meetings.add_meetingsignin", "Meetings.change_meetingsignin"])
+def sign_in_scan_view(request, meeting_id, sign_in_uuid):
+    meeting = get_object_or_404(DMeeting, pk=meeting_id)
+    sign_in = get_object_or_404(MeetingSignIn, uuid=sign_in_uuid)
+    if sign_in.ended_at and sign_in.ended_at < datetime.datetime.now(tz=TAIPEI_TZ):
+        return HttpResponse("This sign-in session has already ended.", status=403)
+    signed_in_record_count = SingInRecord.objects.filter(sign_in_method=sign_in).count()
+    signed_in_records = SingInRecord.objects.filter(sign_in_method=sign_in).order_by(
+        "-signed_in_at"
+    )
+    return render(
+        request,
+        "Meetings/sign_in_scan.html",
+        {
+            "meeting": meeting,
+            "sign_in": sign_in,
+            "signed_in_count": signed_in_record_count,
+            "records": signed_in_records,
+        },
+    )
+
+
+@login_required
 def submit_absent_request(request, meeting_id):
     meeting = get_object_or_404(DMeeting, pk=meeting_id)
     now = datetime.datetime.now(tz=TAIPEI_TZ)
@@ -297,8 +423,10 @@ def submit_absent_request(request, meeting_id):
         channel = get_channel_layer()
         async_to_sync(channel.group_send)(
             "meeting_updates",
-            {"type": "meeting.new_absent_request",
-             "absent_request": DAbsentRequestSerializer(absent_request).data},
+            {
+                "type": "meeting.new_absent_request",
+                "absent_request": DAbsentRequestSerializer(absent_request).data,
+            },
         )
         return redirect("meeting_info", meeting_id=meeting_id)
     else:
@@ -341,8 +469,10 @@ def review_absent_requests_api(request, meeting_id):
             channel = get_channel_layer()
             async_to_sync(channel.group_send)(
                 "meeting_updates",
-                {"type": "meeting.review_absent_request",
-                 "absent_request": DAbsentRequestSerializer(absent_request).data},
+                {
+                    "type": "meeting.review_absent_request",
+                    "absent_request": DAbsentRequestSerializer(absent_request).data,
+                },
             )
         return HttpResponse(status=200)
     return HttpResponse("Method not allowed", status=405)
@@ -360,7 +490,7 @@ class MeetingsViewSet(ModelViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [DjangoModelPermissions]
 
-    filterset_fields = ['host__discord_id', 'start_time', 'end_time', 'can_absent']
+    filterset_fields = ["host__discord_id", "start_time", "end_time", "can_absent"]
 
     queryset = DMeeting.objects.all()
     serializer_class = DMeetingSerializer
@@ -376,7 +506,13 @@ class AbsentRequestsViewSet(ModelViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [DjangoModelPermissions]
 
-    filterset_fields = ['member__discord_id', 'meeting__id', 'status', 'created_at', 'reviewer__discord_id']
+    filterset_fields = [
+        "member__discord_id",
+        "meeting__id",
+        "status",
+        "created_at",
+        "reviewer__discord_id",
+    ]
 
     queryset = DAbsentRequest.objects.all()
     serializer_class = DAbsentRequestSerializer

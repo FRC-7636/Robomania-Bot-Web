@@ -6,6 +6,10 @@
     gap: 0.5em;
 }
 
+.round-container {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
 #meeting-info-panel {
     flex: 2;
     background-color: rgba(255, 255, 255, 0.25); /* Light background for contrast */
@@ -27,7 +31,6 @@
     flex-direction: column;
     align-items: flex-start;
     justify-items: center;
-    background-color: rgba(255, 255, 255, 0.25); /* Light background for contrast */
 }
 
 #meeting-actions-content {
@@ -109,4 +112,52 @@
 
 .member-indicator .member-name {
     margin-left: 0.2em;
+}
+
+#record-list-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 0.5em;
+    width: 100%;
+}
+
+#record-list-content {
+    width: 100%;
+    margin-top: 0.25em;
+    background-color: darkgray;
+}
+
+.record-item {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.vertical-spacer {
+    margin: 0 7px 0 9px;
+    width: 2px;
+    border-left: 1px solid black;
+    height: -webkit-fill-available;
+}
+
+.record-item-text, .record-item-text strong {
+    color: black;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.record-member {
+    flex: 2;
+    justify-content: center;
+}
+
+.record-method {
+    flex: 1;
+}
+
+.record-signed-at {
+    flex: 2;
 }

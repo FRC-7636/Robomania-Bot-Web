@@ -1,6 +1,8 @@
 # coding=utf-8
 from django.db import models
 
+from uuid import uuid4
+
 
 # Create your models here.
 class DMeeting(models.Model):
@@ -21,7 +23,6 @@ class DMeeting(models.Model):
     can_absent = models.BooleanField("允許請假", default=True)
     description = models.TextField("說明", blank=True, null=True)
     location = models.CharField("地點")
-    participants = models.ManyToManyField('Members.DMember', verbose_name="參與者", related_name="meetings", blank=True)
 
 
 class DAbsentRequest(models.Model):
@@ -50,3 +51,33 @@ class DAbsentRequest(models.Model):
     reviewer = models.ForeignKey('Members.DMember', verbose_name="審核人", related_name="reviewed_requests",
                                  on_delete=models.SET_NULL, null=True, blank=True, default=None)
     reviewer_comment = models.TextField("審核意見", blank=True, null=True)
+
+
+class MeetingSignIn(models.Model):
+    class Meta:
+        verbose_name = "會議簽到"
+        verbose_name_plural = "會議簽到"
+
+    def __str__(self):
+        return f"{self.uuid} - {self.meeting}"
+
+    creator = models.ForeignKey('Members.DMember', verbose_name="創建者", related_name="created_sign_ins",
+                                on_delete=models.SET_NULL, null=True)
+    meeting = models.ForeignKey(DMeeting, verbose_name="會議", related_name="sign_ins", on_delete=models.CASCADE)
+    uuid = models.UUIDField("ID", unique=True, default=uuid4)
+    started_at = models.DateTimeField("開放時間")
+    ended_at = models.DateTimeField("關閉時間", blank=True, null=True)
+
+
+class SingInRecord(models.Model):
+    class Meta:
+        verbose_name = "簽到記錄"
+        verbose_name_plural = "簽到記錄"
+
+    def __str__(self):
+        return f"{self.member} - {self.sign_in_method.uuid}"
+
+    member = models.ForeignKey('Members.DMember', verbose_name="成員", on_delete=models.CASCADE)
+    sign_in_method = models.ForeignKey(MeetingSignIn, verbose_name="簽到中介", related_name="records",
+                                       on_delete=models.CASCADE, default=None)
+    signed_in_at = models.DateTimeField("簽到時間", auto_now_add=True)

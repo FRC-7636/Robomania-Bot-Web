@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/Meetings/sign_in_create.css' %}">
+    <script src="{% static 'js/Meetings/sign_in_create.js' %}"></script>
+    <title>建立會議 #{{ meeting.pk }} 的簽到階段</title>
+{% endblock %}
+
+{% block main_content %}
+    <div class="soft-container" id="meeting-sign-in-create-container">
+        <h1 style="margin: 0.3em 0;">建立會議 #{{ meeting.pk }} 的簽到階段</h1>
+        <form method="POST" name="sign-in-create-form" id="sign-in-create-form">
+            {% csrf_token %}
+            <div class="round-container" id="form-container">
+                <div class="panel-title" id="meeting-sign-in-title">
+                    <md-icon>date_range</md-icon>
+                    <span class="panel-title-text">基本資訊</span>
+                </div>
+                <div id="form-content">
+                    <md-filled-text-field label="開放時間 (使用下方工具選擇)" id="start-time-text" readonly>
+                    </md-filled-text-field>
+                    <label style="display: inline-flex;">選擇開放時間：
+                        <input type="datetime-local" id="start-time-selector" name="started_at"
+                               style="color: black;" required>
+                    </label>
+                    <md-filled-text-field label="時效" id="duration" name="duration" type="number" placeholder="15"
+                                          min="1" max="86400"
+                                          suffix-text="分鐘">
+                    </md-filled-text-field>
+                </div>
+            </div>
+            <md-filled-button type="button" id="submit-button">
+                <div style="display: flex; align-items: center; height: min-content;">
+                    <span class="material-symbols-outlined button-icon">
+                        add
+                    </span>建立簽到階段
+                </div>
+            </md-filled-button>
+        </form>
+    </div>
+{% endblock %}

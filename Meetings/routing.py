@@ -5,5 +5,6 @@ from . import consumers
 
 
 websocket_urlpatterns = [
+    path("ws/meeting/sign_in/<str:uuid>/", consumers.WebSignInConsumer.as_asgi()),
     path("ws/meeting/", consumers.DiscordBotMeetingConsumer.as_asgi()),
 ]

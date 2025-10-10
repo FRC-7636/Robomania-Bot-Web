@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/Meetings/sign_in_scan.css' %}">
+    <script src="{% static 'js/Meetings/sign_in_scan.js' %}"></script>
+    <!-- QRCode.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <title>會議 #{{ meeting.pk }} 簽到</title>
+{% endblock %}
+
+{% block main_content %}
+    <div class="soft-container" id="meeting-sign-in-scan-container">
+        <h1 style="margin: 0.3em 0;">會議 #{{ meeting.pk }} 簽到</h1>
+        <input id="sing-in-start-time" type="hidden" value="{{ sign_in.started_at|date:"c" }}">
+        <input id="sing-in-end-time" type="hidden" value="{{ sign_in.ended_at|date:"c" }}">
+        <div class="content-container">
+            <div class="round-container" id="meeting-info-panel">
+                <div class="panel-title">
+                    <span class="material-symbols-outlined panel-title-icon">event</span>
+                    <span class="panel-title-text">會議資訊</span>
+                </div>
+                <div id="meeting-info-content">
+                    <p><strong>名稱：</strong>{{ meeting.name }}</p>
+                    <div style="display: flex; align-items: center; height: min-content; margin-top: 1em;">
+                        <p style="margin: 0;"><strong>可請假：</strong></p>
+                        {% if meeting.can_absent %}
+                            <md-icon style="color: #60ed60;">check_circle</md-icon>
+                        {% else %}
+                            <md-icon style="color: #fd7474;">cancel</md-icon>
+                        {% endif %}
+                    </div>
+                    <div style="display: flex; align-items: center; height: min-content; margin-top: 1em;">
+                        <p style="margin: 0;"><strong>主持人：</strong></p>
+                        <div class="member-indicator">
+                            <img src="{{ meeting.host.avatar }}" alt="主持人頭像" class="member-avatar">
+                            <span class="member-name">
+                        {{ meeting.host.real_name }} ({{ meeting.host.discord_id }})
+                    </span>
+                        </div>
+                    </div>
+                    <p><strong>開始時間：</strong>{{ meeting.start_time|date:"Y/m/d H:i" }}</p>
+                    {% if meeting.end_time %}
+                        <p><strong>結束時間：</strong>{{ meeting.end_time|date:"Y/m/d H:i" }}</p>
+                    {% endif %}
+                    <p><strong>地點：</strong>{{ meeting.location }}</p>
+                    <div class="divider" style="border-color: white;"></div>
+                    <p><strong>開放簽到時間：</strong>{{ sign_in.started_at|date:"Y/m/d H:i" }}</p>
+                    <p><strong>關閉簽到時間：</strong>{{ sign_in.ended_at|date:"Y/m/d H:i" }}</p>
+                </div>
+            </div>
+            <div class="round-container" id="qrcode-panel">
+                <div class="panel-title">
+                    <span class="material-symbols-outlined panel-title-icon">qr_code</span>
+                    <span class="panel-title-text">QR Code</span>
+                </div>
+                <div id="qrcode-content">
+                    <span>掃描下方的 QR Code 以進行簽到。</span>
+                    <div id="qrcode"></div>
+                    <script>
+                        new QRCode(document.getElementById("qrcode"), {
+                            text: `${window.location.origin}{% url 'meeting_signin' meeting.pk sign_in.uuid %}`,
+                            correctLevel: QRCode.CorrectLevel.M,
+                        });
+                    </script>
+                    <span>{{ sign_in.uuid }}</span>
+                </div>
+            </div>
+            <div class="round-container" id="sign-in-info-panel">
+                <div class="panel-title">
+                    <span class="material-symbols-outlined panel-title-icon">analytics</span>
+                    <span class="panel-title-text">簽到狀態</span>
+                </div>
+                <div id="sign-in-info-content">
+                    <table style="width: 90%;">
+                        <thead>
+                        <tr>
+                            <th>已簽到人數</th>
+                            <th id="countdown-head">剩餘時間</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="table-content">
+                                <span id="signed-in-count">{{ signed_in_count }}</span>
+                                <span style="font-size: medium">人</span>
+                            </td>
+                            <td class="table-content" id="countdown-timer">(未知)</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="content-container">
+            <div class="round-container" id="record-list-container">
+                <div class="panel-title">
+                    <span class="material-symbols-outlined panel-title-icon">list</span>
+                    <span class="panel-title-text">簽到紀錄</span>
+                </div>
+                <div class="round-container" id="record-list-content">
+                    <md-list id="record-list" style="width: 100%;">
+                        <md-list-item>
+                            <div class="record-item">
+                                <span class="record-item-text record-member"><strong>成員</strong></span>
+                                <div class="vertical-spacer"></div>
+                                <span class="record-item-text record-signed-at"><strong>簽到時間</strong></span>
+                            </div>
+                        </md-list-item>
+                        <div class="divider"></div>
+                        {% for record in records %}
+                            <md-list-item>
+                                <div class="record-item">
+                                    <div class="record-member member-indicator">
+                                        <img src="{{ record.member.avatar }}" alt="{{ record.member.real_name }} 的頭像"
+                                             class="member-avatar">
+                                        <span class="member-name" style="color: black;">
+                                            {{ record.member.real_name }} ({{ record.member.discord_id }})
+                                        </span>
+                                    </div>
+                                    <div class="vertical-spacer"></div>
+                                    <span class="record-item-text record-signed-at">
+                                        {{ record.signed_in_at|date:"Y/m/d H:i:s" }}
+                                    </span>
+                                </div>
+                            </md-list-item>
+                            <div class="divider"></div>
+                        {% endfor %}
+                    </md-list>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

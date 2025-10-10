@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/Meetings/sign_in_result.css' %}">
+    <title>會議 #{{ meeting.pk }} 簽到</title>
+{% endblock %}
+
+{% block main_content %}
+    <div class="soft-container" id="meeting-sign-in-success-container">
+        <h1>簽到{% if error %}失敗{% else %}成功{% endif %}</h1>
+        {% if error %}
+        <div class="round-container" style="display: flex; align-items: center; gap: 0.25em; margin-bottom: 1em;">
+        <span class="material-symbols-outlined">error</span><span>{{ error }}</span>
+        </div>
+        {% endif %}
+        {% if record %}
+        <div class="round-container">
+            <p><strong>會議：</strong>#{{ meeting.pk }} - {{ meeting.name }}</p>
+            <p><strong>簽到時間：</strong>{{ record.signed_in_at|date:"Y/m/d H:i" }}</p>
+        </div>
+        {% endif %}
+        <md-filled-button type="button" href="{% url "meeting_info" meeting.pk %}" style="margin-top: 0.5em;">
+            <div style="display: flex; align-items: center; height: min-content;">
+                <span class="material-symbols-outlined button-icon">
+                    open_in_new</span>
+                前往會議
+            </div>
+        </md-filled-button>
+    </div>
+{% endblock %}
