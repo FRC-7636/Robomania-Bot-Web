@@ -296,7 +296,7 @@ def sign_in_view(request, meeting_id, sign_in_uuid):
     record = None
     error = None
     now = datetime.datetime.now(tz=TAIPEI_TZ)
-    if SingInRecord.objects.filter(member=request.user).exists():
+    if SingInRecord.objects.filter(sign_in_method__meeting=meeting, member=request.user).exists():
         error = "你已簽到過這場會議。"
     elif sign_in.started_at > now:
         error = "此簽到連結尚未開放。"
