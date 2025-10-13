@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from os import getenv  # noqa
+from random import randint
 
 from Members.models import DMember
 from .discord_auth import DiscordAuth
@@ -15,6 +16,22 @@ def to_next_page(request):
         del request.session["next"]
         return next_url
     return "/"
+
+
+def pick_avatar_from_aobuta() -> str:
+    base_url = "https://ao-buta.com/santa/special/icon_50/img/"
+    icon_amount = {
+        1: 6,
+        2: 9,
+        3: 6,
+        4: 6,
+        5: 6,
+        6: 6,
+        7: 6,
+    }
+    icon_char = randint(1, 7)
+    icon_num = randint(1, icon_amount[icon_char])
+    return base_url + f"icon_0{icon_char}_{icon_num}.jpg"
 
 
 # Create your views here.
@@ -91,7 +108,7 @@ def discord_login_view(request):
                 return register_view(request, user_info)
             else:
                 return redirect(
-                    "/accounts/login/?error=此 Discord 帳號尚未加入 FRC# 7636 的 Discord 伺服器。"
+                    "/accounts/login/?error=此 Discord 帳號尚未加入 FRC #7636 的 Discord 伺服器。"
                 )
     else:
         return redirect("/accounts/login/?error=Discord 授權失敗，請重新登入。")
@@ -131,11 +148,15 @@ def register_view(request, user_info=None):
     else:  # GET
         if not request.user.is_authenticated:
             if user_info is not None:
+                if user_info["avatar"] is None:
+                    avatar_url = pick_avatar_from_aobuta()
+                else:
+                    avatar_url = (f"https://cdn.discordapp.com/avatars/{user_info['id']}/{user_info['avatar']}.png"
+                                  "?size=256")
                 condensed_user_info = {
                     "discord_id": user_info["id"],
                     "email_address": user_info["email"],
-                    "avatar_url": f"https://cdn.discordapp.com/avatars/{user_info['id']}/{user_info['avatar']}.png"
-                    f"?size=256",
+                    "avatar_url": avatar_url,
                 }
                 return render(
                     request, "Auth/register.html", {"user_info": condensed_user_info}
