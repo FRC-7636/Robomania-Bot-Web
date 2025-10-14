@@ -22,6 +22,7 @@
     <orderEntry type="library" name="showdown" level="application" />
     <orderEntry type="library" name="easymde" level="application" />
     <orderEntry type="library" name="highlight.js" level="application" />
+    <orderEntry type="library" name="qrcodejs" level="application" />
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_CONFIGURATION" value="Django" />
