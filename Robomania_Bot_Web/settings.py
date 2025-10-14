@@ -30,6 +30,12 @@ DEBUG = getenv("IS_DEBUG", "True").lower() == "true"
 ALLOWED_HOSTS = ["*"]
 CSRF_TRUSTED_ORIGINS = ["https://frc7636.dpdns.org", "http://127.0.0.1", "http://localhost"]
 
+INTERNAL_IPS = [
+    "127.0.0.1",
+    "localhost",
+    "140.115.204.40"  # 中央宿網
+]
+
 
 # Application definition
 
@@ -53,9 +59,12 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "django_filters",
+    # django-debug-toolbar
+    "debug_toolbar",
 ]
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",

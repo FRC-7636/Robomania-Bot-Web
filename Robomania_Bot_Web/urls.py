@@ -19,7 +19,9 @@ from django.contrib import admin
 from django.urls import path, re_path, include
 from django.conf.urls.static import static
 from django.conf import settings
+
 from rest_framework import routers
+from debug_toolbar.toolbar import debug_toolbar_urls
 
 from Meetings.views import MeetingsViewSet, AbsentRequestsViewSet
 from Members.views import MembersViewSet
@@ -31,7 +33,7 @@ router.register(r"members", MembersViewSet)
 router.register(r"absent_requests", AbsentRequestsViewSet)
 router.register(r"announcements", AnnouncementsViewSet)
 
-urlpatterns = [
+urlpatterns = ([
     re_path(r'^$', include("Panel.urls")),
     path('admin/', admin.site.urls),
     path("member/", include("Members.urls")),
@@ -41,4 +43,5 @@ urlpatterns = [
     path("user_uploads/", include("Uploader.urls_user_uploads")),
     path("announcement/", include("Announcements.urls")),
     path("api/", include(router.urls)),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)) + debug_toolbar_urls()
+
