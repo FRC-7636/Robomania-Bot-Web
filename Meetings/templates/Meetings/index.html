@@ -3,6 +3,7 @@
 
 {% block head %}
     <link rel="stylesheet" href="{% static 'css/Meetings/index.css' %}">
+    <script src="{% static "js/Meetings/index.js" %}"></script>
     {% if meeting.description %}
         <!-- Inject description as HTML content -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js" defer></script>
@@ -147,6 +148,55 @@
                 </div>
             </div>
         </div>
+        {% if can_sign_in %}
+        <div class="round-container" id="sign-in-list-container">
+            <div id="sign-in-container-title">
+                <div class="panel-title">
+                    <span class="material-symbols-outlined panel-title-icon">select_window</span>
+                    <span class="panel-title-text">已建立的簽到階段</span>
+                </div>
+                <span class="material-symbols-outlined panel-title-icon" id="collapse-button">keyboard_arrow_down</span>
+            </div>
+            <div class="round-container" id="sign-in-list-content">
+                <md-list id="sign-in-list" style="width: 100%;">
+                    <md-list-item>
+                        <div class="list-item">
+                            <span class="item-text sign-in-uuid"><strong>UUID</strong></span>
+                            <div class="vertical-spacer"></div>
+                            <span class="item-text sign-in-creator"><strong>建立者</strong></span>
+                            <div class="vertical-spacer"></div>
+                            <span class="item-text sign-in-period"><strong>期限</strong></span>
+                        </div>
+                    </md-list-item>
+                    <div class="divider"></div>
+                    {% for sign_in in sign_ins %}
+                        <md-list-item href="{% url "meeting_signin_scan" meeting.pk sign_in.uuid %}" target="_blank">
+                            <div class="list-item">
+                                <span class="item-text sign-in-uuid">{{ sign_in.uuid }}</span>
+                                <div class="vertical-spacer"></div>
+                                <div class="sign-in-creator member-indicator">
+                                    <img src="{{ sign_in.creator.avatar }}" alt="{{ sign_in.creator.real_name }} 的頭像"
+                                         class="member-avatar">
+                                    <span class="member-name" style="color: black;">
+                                        {{ sign_in.creator.real_name }} ({{ sign_in.creator.discord_id }})
+                                    </span>
+                                </div>
+                                <div class="vertical-spacer"></div>
+                                <div class="sign-in-period time-container">
+                                    <span class="item-text">{{ sign_in.started_at }}</span>
+                                    <span class="item-text material-symbols-outlined" style="font-size: medium">arrow_downward</span>
+                                    <span class="item-text">{{ sign_in.ended_at }}</span>
+                                </div>
+                            </div>
+                        </md-list-item>
+                        <div class="divider"></div>
+                    {% empty %}
+                        <md-list-item>尚無簽到階段</md-list-item>
+                    {% endfor %}
+                </md-list>
+            </div>
+        </div>
+        {% endif %}
         <div class="round-container" id="record-list-container">
             <div class="panel-title">
                 <span class="material-symbols-outlined panel-title-icon">list</span>
@@ -155,18 +205,18 @@
             <div class="round-container" id="record-list-content">
                 <md-list id="record-list" style="width: 100%;">
                     <md-list-item>
-                        <div class="record-item">
-                            <span class="record-item-text record-member"><strong>成員</strong></span>
+                        <div class="list-item">
+                            <span class="item-text record-member"><strong>成員</strong></span>
                             <div class="vertical-spacer"></div>
-                            <span class="record-item-text record-method"><strong>簽到階段 ID</strong></span>
+                            <span class="item-text record-method"><strong>簽到階段 ID</strong></span>
                             <div class="vertical-spacer"></div>
-                            <span class="record-item-text record-signed-at"><strong>簽到時間</strong></span>
+                            <span class="item-text record-signed-at"><strong>簽到時間</strong></span>
                         </div>
                     </md-list-item>
                     <div class="divider"></div>
                     {% for record in records %}
                         <md-list-item>
-                            <div class="record-item">
+                            <div class="list-item">
                                 <div class="record-member member-indicator">
                                     <img src="{{ record.member.avatar }}" alt="{{ record.member.real_name }} 的頭像"
                                          class="member-avatar">
@@ -175,11 +225,11 @@
                                     </span>
                                 </div>
                                 <div class="vertical-spacer"></div>
-                                <span class="record-item-text record-method">
+                                <span class="item-text record-method">
                                     {{ record.sign_in_uuid|slice:"0:8" }}...
                                 </span>
                                 <div class="vertical-spacer"></div>
-                                <span class="record-item-text record-signed-at">
+                                <span class="item-text record-signed-at">
                                     {{ record.signed_in_at }}
                                 </span>
                             </div>

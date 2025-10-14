@@ -114,7 +114,7 @@
     margin-left: 0.2em;
 }
 
-#record-list-container {
+#record-list-container, #sign-in-list-container {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -122,13 +122,44 @@
     width: 100%;
 }
 
-#record-list-content {
+#sign-in-container-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+#collapse-button {
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 100ms ease-in-out, transform 300ms ease-in-out;
+}
+
+#collapse-button[expanded] {
+    transform: rotate(180deg);
+}
+
+#collapse-button:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+#sign-in-list-content {
+    transition: height 300ms ease-in-out;
+    overflow: hidden;
+    height: 0;
+}
+
+#sign-in-list-content[expanded] {
+    height: auto;
+}
+
+#record-list-content, #sign-in-list-content {
     width: 100%;
     margin-top: 0.25em;
     background-color: darkgray;
 }
 
-.record-item {
+.list-item {
     display: flex;
     width: 100%;
     align-items: center;
@@ -142,11 +173,30 @@
     height: -webkit-fill-available;
 }
 
-.record-item-text, .record-item-text strong {
+.item-text, .item-text strong {
     color: black;
     text-align: center;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.sign-in-uuid {
+    flex: 2;
+}
+
+.sign-in-creator {
+    flex: 1;
+    justify-content: center;
+}
+
+.sign-in-period {
+    flex: 1;
+}
+
+.time-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .record-member {

@@ -89,6 +89,27 @@ def index(request, meeting_id):
             "reviewer": absent_request.reviewer,
             "reviewer_comment": absent_request.reviewer_comment,
         }
+    can_sign_in = request.user.has_perm("Meetings.add_meetingsignin") and not (
+        meeting.end_time and meeting.end_time < now
+    )
+    if can_sign_in:
+        sign_ins = meeting.sign_ins.all()
+        condensed_sign_ins = []
+        for sign_in in sign_ins:
+            condensed_sign_ins.append(
+                {
+                    "creator": {
+                        "discord_id": sign_in.creator.discord_id,
+                        "real_name": sign_in.creator.real_name,
+                        "avatar": sign_in.creator.avatar,
+                    },
+                    "uuid": str(sign_in.uuid),
+                    "started_at": sign_in.started_at.astimezone(TAIPEI_TZ).strftime("%Y/%m/%d %H:%M:%S"),
+                    "ended_at": sign_in.ended_at.astimezone(TAIPEI_TZ).strftime("%Y/%m/%d %H:%M:%S")
+                }
+            )
+    else:
+        condensed_sign_ins = None
     sign_in_records = SingInRecord.objects.filter(
         sign_in_method__meeting=meeting
     ).order_by("-signed_in_at")
@@ -125,8 +146,8 @@ def index(request, meeting_id):
                 request.user.has_perm("Meetings.change_dmeeting")
                 and request.user.has_perm("Meetings.delete_dmeeting")
             ),
-            "can_sign_in": request.user.has_perm("Meetings.add_meetingsignin")
-            and not (meeting.end_time and meeting.end_time < now),
+            "can_sign_in": can_sign_in,
+            "sign_ins": condensed_sign_ins,
         },
     )
 
@@ -296,7 +317,9 @@ def sign_in_view(request, meeting_id, sign_in_uuid):
     record = None
     error = None
     now = datetime.datetime.now(tz=TAIPEI_TZ)
-    if SingInRecord.objects.filter(sign_in_method__meeting=meeting, member=request.user).exists():
+    if SingInRecord.objects.filter(
+        sign_in_method__meeting=meeting, member=request.user
+    ).exists():
         error = "你已簽到過這場會議。"
     elif sign_in.started_at > now:
         error = "此簽到連結尚未開放。"
