@@ -137,6 +137,13 @@
                             編輯會議
                         </div>
                     </md-filled-button>
+                    <md-filled-button href="./review_absent_requests" {% if not can_edit %} disabled {% endif %}>
+                        <div style="display: flex; align-items: center; height: min-content;">
+                            <span class="material-symbols-outlined button-icon">
+                                document_search</span>
+                            審核假單
+                        </div>
+                    </md-filled-button>
                     <md-filled-button href="{% url "meeting_signin_create" meeting.pk %}"
                             {% if not can_sign_in %} disabled {% endif %}>
                         <div style="display: flex; align-items: center; height: min-content;">
