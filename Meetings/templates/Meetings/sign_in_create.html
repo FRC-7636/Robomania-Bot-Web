@@ -1,9 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
+{% load compress %}
 
 {% block head %}
+    {% compress css %}
     <link rel="stylesheet" href="{% static 'css/Meetings/sign_in_create.css' %}">
+    {% endcompress %}
+    {% compress js %}
     <script src="{% static 'js/Meetings/sign_in_create.js' %}"></script>
+    {% endcompress %}
     <title>建立會議 #{{ meeting.pk }} 的簽到階段</title>
 {% endblock %}
 

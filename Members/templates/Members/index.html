@@ -1,9 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
+{% load compress %}
 
 {% block head %}
+    {% compress css %}
     <link rel="stylesheet" href="{% static 'css/Members/index.css' %}">
+    {% endcompress %}
+    {% compress js %}
     <script src="{% static 'js/Members/index.js' %}"></script>
+    {% endcompress %}
     <title>「{{ member.real_name }}」的資訊</title>
 {% endblock %}
 

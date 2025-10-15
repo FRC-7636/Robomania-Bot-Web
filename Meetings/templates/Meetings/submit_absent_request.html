@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
+{% load compress %}
 
 {% block head %}
+    {% compress css %}
     <link rel="stylesheet" href="{% static 'css/Meetings/submit_absent_request.css' %}">
-    {#    <link rel="stylesheet" href="{% static 'css/Meetings/index.css' %}">#}
+    {% endcompress %}
     <title>提交會議「{{ meeting.name }}」的假單</title>
 {% endblock %}
 

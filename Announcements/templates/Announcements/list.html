@@ -1,9 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
+{% load compress %}
 
 {% block head %}
+    {% compress css %}
     <link rel="stylesheet" href="{% static 'css/Announcements/list.css' %}">
+    {% endcompress %}
+    {% compress js %}
     <script src="{% static 'js/Announcements/list.js' %}"></script>
+    {% endcompress %}
     <title>公告列表</title>
 {% endblock %}
 

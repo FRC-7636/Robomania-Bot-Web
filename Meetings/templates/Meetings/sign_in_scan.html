@@ -1,9 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
+{% load compress %}
 
 {% block head %}
+    {% compress css %}
     <link rel="stylesheet" href="{% static 'css/Meetings/sign_in_scan.css' %}">
+    {% endcompress %}
+    {% compress js %}
     <script src="{% static 'js/Meetings/sign_in_scan.js' %}"></script>
+    {% endcompress %}
     <!-- QRCode.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <title>會議 #{{ meeting.pk }} 簽到</title>

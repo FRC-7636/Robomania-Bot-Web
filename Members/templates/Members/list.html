@@ -1,9 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
+{% load compress %}
 
 {% block head %}
-    <script src="{% static 'js/Members/list.js' %}"></script>
+    {% compress css %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/Members/list.css' %}">
+    {% endcompress %}
+    {% compress js %}
+    <script src="{% static 'js/Members/list.js' %}"></script>
+    {% endcompress %}
     <title>成員列表</title>
 {% endblock %}
 

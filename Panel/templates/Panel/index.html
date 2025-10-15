@@ -1,11 +1,15 @@
 {% extends "base.html" %}
 {% load static %}
+{% load compress %}
 
 {% block head %}
+    {% compress css %}
     <link rel="stylesheet" href="{% static 'css/Panel/index.css' %}">
+    {% endcompress %}
+    {% compress js %}
     <script src="{% static 'js/Panel/index.js' %}"></script>
+    {% endcompress %}
     <script>
-
         document.addEventListener("DOMContentLoaded", function() {
             {% autoescape off %}
             const announcements = {{ pinned_announcements }}

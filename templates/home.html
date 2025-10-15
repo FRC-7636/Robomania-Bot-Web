@@ -1,8 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
+{% load compress %}
 
 {% block head %}
+    {% compress css %}
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    {% endcompress %}
     <title>首頁</title>
 {% endblock %}
 

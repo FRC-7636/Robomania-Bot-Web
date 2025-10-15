@@ -1,9 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
+{% load compress %}
 
 {% block head %}
+    {% compress css %}
     <link rel="stylesheet" href="{% static 'css/Members/edit_warning_points.css' %}">
+    {% endcompress %}
+    {% compress js %}
     <script src="{% static 'js/Members/edit_warning_points.js' %}"></script>
+    {% endcompress %}
     <title>「{{ member.real_name }}」記/銷點</title>
 {% endblock %}
 

@@ -1,9 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
+{% load compress %}
 
 {% block head %}
+    {% compress css %}
     <link rel="stylesheet" href="{% static 'css/Meetings/review_absent_requests.css' %}">
+    {% endcompress %}
+    {% compress js %}
     <script src="{% static 'js/Meetings/review_absent_requests.js' %}"></script>
+    {% endcompress %}
     <title>審核會議「{{ meeting.name }}」的假單</title>
 {% endblock %}
 

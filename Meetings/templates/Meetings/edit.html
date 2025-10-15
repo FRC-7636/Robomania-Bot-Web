@@ -1,10 +1,15 @@
 {% extends "base.html" %}
 {% load static %}
+{% load compress %}
 
 {% block head %}
+    {% compress css %}
     <link rel="stylesheet" href="{% static 'css/Meetings/edit.css' %}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+    {% endcompress %}
+    {% compress js %}
     <script src="{% static 'js/Meetings/edit.js' %}"></script>
+    {% endcompress %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
     <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
     <title>
     {% if meeting %}

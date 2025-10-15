@@ -1,8 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
+{% load compress %}
 
 {% block head %}
+    {% compress css %}
     <link rel="stylesheet" href="{% static 'css/Auth/login.css' %}">
+    {% endcompress %}
     <title>登入</title>
 {% endblock %}
 

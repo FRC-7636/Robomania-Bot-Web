@@ -1,9 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
+{% load compress %}
 
 {% block head %}
+    {% compress css %}
     <link rel="stylesheet" href="{% static 'css/Auth/register.css' %}">
+    {% endcompress %}
+    {% compress js %}
     <script src="{% static 'js/Auth/register.js' %}"></script>
+    {% endcompress %}
     <title>註冊</title>
 {% endblock %}
 

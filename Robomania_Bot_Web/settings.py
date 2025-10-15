@@ -61,6 +61,8 @@ INSTALLED_APPS = [
     "django_filters",
     # django-debug-toolbar
     "debug_toolbar",
+    # django-compressor
+    "compressor",
 ]
 
 MIDDLEWARE = [
@@ -200,11 +202,23 @@ LOGGING = {
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = "static/"
+STATICFILES_FINDERS = [
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "compressor.finders.CompressorFinder",
+]
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 STATIC_ROOT = BASE_DIR / "web_statics"
-
+COMPRESS_ENABLED = True
+COMPRESS_OFFLINE = True
+COMPRESS_FILTERS = {
+    'css': ['compressor.filters.css_default.CssAbsoluteFilter', 'compressor.filters.cssmin.rCSSMinFilter'],
+    'js': ['compressor.filters.yuglify.YUglifyJSFilter']
+}
+COMPRESS_YUGLIFY_BINARY = "yuglify"
+COMPRESS_YUGLIFY_JS_ARGUMENTS = "--terminal --mangle --toplevel"
 
 # User uploads
 

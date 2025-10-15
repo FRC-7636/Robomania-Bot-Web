@@ -1,9 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
+{% load compress %}
 
 {% block head %}
+    {% compress css %}
     <link rel="stylesheet" href="{% static 'css/Meetings/index.css' %}">
+    {% endcompress %}
+    {% compress js %}
     <script src="{% static "js/Meetings/index.js" %}"></script>
+    {% endcompress %}
     {% if meeting.description %}
         <!-- Inject description as HTML content -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js" defer></script>

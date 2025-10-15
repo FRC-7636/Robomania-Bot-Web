@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
+{% load compress %}
 
 {% block head %}
+    {% compress css %}
     <link rel="stylesheet" href="{% static 'css/Announcements/index.css' %}">
-    <title>公告「{{ announcement.title }}」的資訊</title>
+    {% endcompress %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js" defer></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -27,6 +29,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
+    <title>公告「{{ announcement.title }}」的資訊</title>
 {% endblock %}
 
 {% block main_content %}

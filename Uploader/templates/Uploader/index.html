@@ -1,9 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
+{% load compress %}
 
 {% block head %}
+    {% compress css %}
     <link rel="stylesheet" href="{% static 'css/Uploader/index.css' %}">
+    {% endcompress %}
+    {% compress js %}
     <script src="{% static 'js/Uploader/index.js' %}"></script>
+    {% endcompress %}
     <title>上傳檔案</title>
 {% endblock %}
 

@@ -1,4 +1,5 @@
 {% load static %}
+{% load compress %}
 
 <!DOCTYPE html>
 <html lang="zh-Hant">
@@ -31,9 +32,13 @@
       document.adoptedStyleSheets.push(typescaleStyles.styleSheet);
     </script>
     <!-- My stuffs -->
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link rel="icon" href="{% static 'img/favicon.png' %}">
+    {% compress css %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% endcompress %}
+    {% compress js %}
     <script src="/static/js/base.js"></script>
+    {% endcompress %}
     {% block head %}{% endblock %}
     <title>Robomania Bot Web</title>
 </head>

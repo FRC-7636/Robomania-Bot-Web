@@ -1,9 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
+{% load compress %}
 
 {% block head %}
+    {% compress css %}
     <link rel="stylesheet" href="{% static 'css/Meetings/list.css' %}">
+    {% endcompress %}
+    {% compress js %}
     <script src="{% static 'js/Meetings/list.js' %}"></script>
+    {% endcompress %}
     <title>會議列表</title>
 {% endblock %}
 

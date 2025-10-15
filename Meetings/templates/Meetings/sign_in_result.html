@@ -1,8 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
+{% load compress %}
 
 {% block head %}
+    {% compress css %}
     <link rel="stylesheet" href="{% static 'css/Meetings/sign_in_result.css' %}">
+    {% endcompress %}
     <script>
         window.history.pushState("", "會議 #{{ meeting.pk }} 簽到", "/sign_in/");
     </script>
