@@ -145,12 +145,14 @@
 
 #sign-in-list-content {
     transition: height 300ms ease-in-out;
+    transition: max-height 300ms ease-in-out;
     overflow: hidden;
-    height: 0;
+    max-height: 0;
 }
 
 #sign-in-list-content[expanded] {
     height: auto;
+    max-height: 50vh;
 }
 
 #record-list-content, #sign-in-list-content {
