@@ -114,7 +114,7 @@
     margin-left: 0.2em;
 }
 
-#record-list-container, #sign-in-list-container {
+.list-container {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -122,40 +122,38 @@
     width: 100%;
 }
 
-#sign-in-container-title {
+.list-container-title {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
 }
 
-#collapse-button {
+.collapse-button {
     border-radius: 50%;
     cursor: pointer;
     transition: background-color 100ms ease-in-out, transform 300ms ease-in-out;
 }
 
-#collapse-button[expanded] {
+.collapse-button[expanded] {
     transform: rotate(180deg);
 }
 
-#collapse-button:hover {
+.collapse-button:hover {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
-#sign-in-list-content {
-    transition: height 300ms ease-in-out;
+#sign-in-list-content, #absent-request-list-content {
     transition: max-height 300ms ease-in-out;
     overflow: hidden;
     max-height: 0;
 }
 
-#sign-in-list-content[expanded] {
-    height: auto;
+#sign-in-list-content[expanded], #absent-request-list-content[expanded] {
     max-height: 50vh;
 }
 
-#record-list-content, #sign-in-list-content {
+.list-content {
     width: 100%;
     margin-top: 0.25em;
     background-color: darkgray;
@@ -180,6 +178,22 @@
     text-align: center;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.absent-request-member {
+    flex: 2;
+    justify-content: center;
+}
+
+.absent-request-reason {
+    flex: 3;
+}
+
+.absent-request-result {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .sign-in-uuid {

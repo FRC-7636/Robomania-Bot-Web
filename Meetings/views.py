@@ -89,6 +89,8 @@ def index(request, meeting_id):
             "reviewer": absent_request.reviewer,
             "reviewer_comment": absent_request.reviewer_comment,
         }
+    can_edit = request.user.has_perm("Meetings.change_dmeeting") and request.user.has_perm("Meetings.delete_dmeeting")
+    reviewed_absent_requests = meeting.absent_requests.exclude(status="pending")
     can_sign_in = request.user.has_perm("Meetings.add_meetingsignin") and not (
         meeting.end_time and meeting.end_time < now
     )
@@ -142,10 +144,8 @@ def index(request, meeting_id):
             "absent_request": condensed_absent_request,
             "can_send_absent_request": reason_not_absent == "",
             "reason_not_absent": reason_not_absent,
-            "can_edit": (
-                request.user.has_perm("Meetings.change_dmeeting")
-                and request.user.has_perm("Meetings.delete_dmeeting")
-            ),
+            "can_edit": can_edit,
+            "reviewed_absent_requests": reviewed_absent_requests,
             "can_sign_in": can_sign_in,
             "sign_ins": condensed_sign_ins,
         },

@@ -153,23 +153,82 @@
                             {% if not can_sign_in %} disabled {% endif %}>
                         <div style="display: flex; align-items: center; height: min-content;">
                             <span class="material-symbols-outlined button-icon">
-                                list_alt_add</span>
+                                splitscreen_add</span>
                             新增簽到階段
                         </div>
                     </md-filled-button>
                 </div>
             </div>
         </div>
-        {% if can_sign_in %}
-        <div class="round-container" id="sign-in-list-container">
-            <div id="sign-in-container-title">
+        {% if can_edit %}
+        <div class="round-container list-container">
+            <div class="list-container-title">
                 <div class="panel-title">
-                    <span class="material-symbols-outlined panel-title-icon">select_window</span>
+                    <span class="material-symbols-outlined panel-title-icon">search_check_2</span>
+                    <span class="panel-title-text">已審核的假單</span>
+                </div>
+                <span class="material-symbols-outlined panel-title-icon collapse-button"
+                      id="absent-request-collapse-button">
+                    keyboard_arrow_down</span>
+            </div>
+            <div class="round-container list-content" id="absent-request-list-content">
+                <md-list id="absent-request-list" style="width: 100%;">
+                    <md-list-item>
+                        <div class="list-item">
+                            <span class="item-text absent-request-member"><strong>成員</strong></span>
+                            <div class="vertical-spacer"></div>
+                            <span class="item-text absent-request-reason"><strong>事由</strong></span>
+                            <div class="vertical-spacer"></div>
+                            <span class="item-text absent-request-result"><strong>結果</strong></span>
+                        </div>
+                    </md-list-item>
+                    <div class="divider"></div>
+                    {% for absent_request in reviewed_absent_requests %}
+                        <md-list-item>
+                            <div class="list-item">
+                                <div class="absent-request-member member-indicator">
+                                    <img src="{{ absent_request.member.avatar }}"
+                                         alt="{{ absent_request.member.real_name }} 的頭像"
+                                         class="member-avatar">
+                                    <span class="member-name" style="color: black;">
+                                        {{ absent_request.member.real_name }} ({{ absent_request.member.discord_id }})
+                                    </span>
+                                </div>
+                                <div class="vertical-spacer"></div>
+                                <span class="item-text absent-request-reason">
+                                    {{ absent_request.reason }}
+                                </span>
+                                <div class="vertical-spacer"></div>
+                                <div class="absent-request-result">
+                                    {% if absent_request.status == "approved" %}
+                                        <span class="material-symbols-outlined" style="color: #3eff3e;">
+                                            check_circle</span>
+                                    {% elif absent_request.status == "rejected" %}
+                                        <span class="material-symbols-outlined" style="color: #ff4c4c;">
+                                            cancel</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </md-list-item>
+                        <div class="divider"></div>
+                    {% empty %}
+                        <md-list-item>尚無審核過的假單</md-list-item>
+                    {% endfor %}
+                </md-list>
+            </div>
+        </div>
+        {% endif %}
+        {% if can_sign_in %}
+        <div class="round-container list-container">
+            <div class="list-container-title">
+                <div class="panel-title">
+                    <span class="material-symbols-outlined panel-title-icon">splitscreen</span>
                     <span class="panel-title-text">已建立的簽到階段</span>
                 </div>
-                <span class="material-symbols-outlined panel-title-icon" id="collapse-button">keyboard_arrow_down</span>
+                <span class="material-symbols-outlined panel-title-icon collapse-button" id="sign-in-collapse-button">
+                    keyboard_arrow_down</span>
             </div>
-            <div class="round-container" id="sign-in-list-content">
+            <div class="round-container list-content" id="sign-in-list-content">
                 <md-list id="sign-in-list" style="width: 100%;">
                     <md-list-item>
                         <div class="list-item">
@@ -209,12 +268,12 @@
             </div>
         </div>
         {% endif %}
-        <div class="round-container" id="record-list-container">
+        <div class="round-container list-container">
             <div class="panel-title">
                 <span class="material-symbols-outlined panel-title-icon">list</span>
                 <span class="panel-title-text">簽到紀錄</span>
             </div>
-            <div class="round-container" id="record-list-content">
+            <div class="round-container list-content" id="record-list-content">
                 <md-list id="record-list" style="width: 100%;">
                     <md-list-item>
                         <div class="list-item">
