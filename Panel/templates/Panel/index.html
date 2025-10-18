@@ -115,18 +115,16 @@
                             </div>
                             <div class="meetings-list">
                                 <md-list id="upcoming-meetings-list">
-                                    {% if upcoming_meetings.count == 0 %}
+                                    {% for meeting in upcoming_meetings %}
+                                        <md-list-item type="link" target="_blank" href="{% url 'meeting_info' meeting.id %}">
+                                            <div class="meeting-text" slot="headline">{{ meeting.name }}</div>
+                                            <div class="meeting-text" slot="supporting-text">開始於 {{ meeting.start_time|date:"Y-m-d H:i" }}</div>
+                                            <md-icon class="meeting-text" slot="end">open_in_new</md-icon>
+                                        </md-list-item>
+                                        <div class="divider meeting-divider"></div>
+                                    {% empty %}
                                         <md-list-item>沒有即將在 2 週內開始的會議</md-list-item>
-                                    {% else %}
-                                        {% for meeting in upcoming_meetings %}
-                                            <md-list-item type="link" target="_blank" href="{% url 'meeting_info' meeting.id %}">
-                                                <div class="meeting-text" slot="headline">{{ meeting.name }}</div>
-                                                <div class="meeting-text" slot="supporting-text">開始於 {{ meeting.start_time|date:"Y-m-d H:i" }}</div>
-                                                <md-icon class="meeting-text" slot="end">open_in_new</md-icon>
-                                            </md-list-item>
-                                            <div class="divider meeting-divider"></div>
-                                        {% endfor %}
-                                    {% endif %}
+                                    {% endfor %}
                                 </md-list>
                             </div>
                         </div>
@@ -137,18 +135,16 @@
                             </div>
                             <div class="meetings-list">
                                 <md-list id="past-meetings-list">
-                                    {% if past_meetings.count == 0 %}
+                                    {% for meeting in past_meetings %}
+                                        <md-list-item type="link" target="_blank" href="{% url 'meeting_info' meeting.id %}">
+                                            <div class="meeting-text" slot="headline">{{ meeting.name }}</div>
+                                            <div class="meeting-text" slot="supporting-text">結束於 {{ meeting.end_time|date:"Y-m-d H:i" }}</div>
+                                            <md-icon class="meeting-text" slot="end">open_in_new</md-icon>
+                                        </md-list-item>
+                                        <div class="divider meeting-divider"></div>
+                                    {% empty %}
                                         <md-list-item>沒有在 2 週內結束的會議</md-list-item>
-                                    {% else %}
-                                        {% for meeting in past_meetings %}
-                                            <md-list-item type="link" target="_blank" href="{% url 'meeting_info' meeting.id %}">
-                                                <div class="meeting-text" slot="headline">{{ meeting.name }}</div>
-                                                <div class="meeting-text" slot="supporting-text">結束於 {{ meeting.end_time|date:"Y-m-d H:i" }}</div>
-                                                <md-icon class="meeting-text" slot="end">open_in_new</md-icon>
-                                            </md-list-item>
-                                            <div class="divider meeting-divider"></div>
-                                        {% endfor %}
-                                    {% endif %}
+                                    {% endfor %}
                                 </md-list>
                             </div>
                         </div>
@@ -189,35 +185,32 @@
                         </div>
                         <div id="warning-history-list-container">
                             <md-list id="warning-history-list">
-                                {% if recent_warn_history %}
-                                    {% for history in recent_warn_history %}
-                                        <md-list-item>
-                                            <div class="list-item-content">
-                                                <span class="{% if history.points > 0 %}pts-positive{% elif history.points < 0 %}pts-negative{% endif %} pts-indicator">
-                                                    {% if history.points > 0 %}+{% endif %}{{ history.points }}</span>
-                                                <div class="list-item-text">
-                                                    <span class="list-item-title">{{ history.reason }}</span>
-                                                    {% if history.notes %}
-                                                        <span class="list-item-note">{{ history.notes }}</span>
-                                                    {% endif %}
-                                                    <div class="member-indicator"><span>由&nbsp;</span>
-                                                        <img src="{{ history.operator.avatar }}"
-                                                             alt="{{ history.operator.real_name }} 的頭像" class="member-avatar">
-                                                        <span class="member-name">{{ history.operator.real_name }}</span>
-                                                        <span>&nbsp;操作</span>
-                                                    </div>
-                                                    <span class="list-item-subtitle">
-                                                        於 {{ history.time|date:"Y-m-d H:i" }}
-                                                    </span>
+                                {% for history in recent_warn_history %}
+                                    <md-list-item>
+                                        <div class="list-item-content">
+                                            <span class="{% if history.points > 0 %}pts-positive{% elif history.points < 0 %}pts-negative{% endif %} pts-indicator">
+                                                {% if history.points > 0 %}+{% endif %}{{ history.points }}</span>
+                                            <div class="list-item-text">
+                                                <span class="list-item-title">{{ history.reason }}</span>
+                                                {% if history.notes %}
+                                                    <span class="list-item-note">{{ history.notes }}</span>
+                                                {% endif %}
+                                                <div class="member-indicator"><span>由&nbsp;</span>
+                                                    <img src="{{ history.operator.avatar }}"
+                                                         alt="{{ history.operator.real_name }} 的頭像" class="member-avatar">
+                                                    <span class="member-name">{{ history.operator.real_name }}</span>
+                                                    <span>&nbsp;操作</span>
                                                 </div>
+                                                <span class="list-item-subtitle">
+                                                    於 {{ history.time|date:"Y-m-d H:i" }}
+                                                </span>
                                             </div>
-                                        </md-list-item>
-                                        <div class="divider meeting-divider"></div>
-                                    {% endfor %}
-                                {% else %}
-                                    <md-list-item>沒有任何記/銷點紀錄</md-list-item>
+                                        </div>
+                                    </md-list-item>
                                     <div class="divider meeting-divider"></div>
-                                {% endif %}
+                                {% empty %}
+                                    <md-list-item>沒有任何記/銷點紀錄</md-list-item>
+                                {% endfor %}
                             </md-list>
                         </div>
                     </div>
