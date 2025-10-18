@@ -143,20 +143,17 @@
     background-color: rgba(0, 0, 0, 0.1);
 }
 
-#sign-in-list-content, #absent-request-list-content {
+.list-content {
+    width: 100%;
+    margin-top: 0.25em;
+    background-color: darkgray;
     transition: max-height 300ms ease-in-out;
     overflow: hidden;
     max-height: 0;
 }
 
-#sign-in-list-content[expanded], #absent-request-list-content[expanded] {
+.list-content[expanded] {
     max-height: 50vh;
-}
-
-.list-content {
-    width: 100%;
-    margin-top: 0.25em;
-    background-color: darkgray;
 }
 
 .list-item {
