@@ -93,10 +93,12 @@ def edit(request, member_id):
         if request.POST["gen"].isdigit() and 1 <= int(request.POST["gen"]) <= 10:
             member.gen = int(request.POST["gen"])
         try:
+            edited_jobs = loads(request.POST["jobs"])
             edited_groups = loads(request.POST["groups"])
         except JSONDecodeError as je:
             return HttpResponseBadRequest(je.msg)
         if isinstance(edited_groups, list):
+            member.jobs = edited_jobs
             member.groups.clear()
             for group_name in edited_groups:
                 group = get_object_or_404(Group, name=group_name)

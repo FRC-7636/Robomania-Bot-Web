@@ -19,7 +19,7 @@
             <div id="member-editor-form-div">
                 <div class="round-container" id="info-editor">
                     <div class="panel-title">
-                        <span class="material-symbols-outlined">edit</span>
+                        <span class="material-symbols-outlined panel-title-icon">edit</span>
                         <span class="panel-title-text">基本資訊</span>
                     </div>
                     {% csrf_token %}
@@ -32,16 +32,35 @@
                     <md-filled-text-field label="屆別" name="gen" type="number" min="1" max="10"
                                           value="{{ member.gen }}"></md-filled-text-field>
                 </div>
+                <div class="round-container" id="jobs-editor">
+                    <input type="hidden" name="jobs" id="jobs-input" value="{{ member.jobs }}">
+                    <div class="panel-title">
+                        <span class="material-symbols-outlined panel-title-icon">person_play</span>
+                        <span class="panel-title-text">職務</span>
+                    </div>
+                    <div style="display:flex; flex-direction: row; align-items: center; gap: 0.5em; width: 100%;">
+                        <md-filled-text-field label="輸入職務名稱" id="job-input"></md-filled-text-field>
+                        <md-filled-icon-button type="button" id="add-job-button">
+                            <md-icon>add</md-icon>
+                        </md-filled-icon-button>
+                    </div>
+                    <span style="font-size: smaller; font-style: italic;">取消選取以移除職務</span>
+                    <md-chip-set id="job-list">
+                        {% for job in member.jobs %}
+                            <md-filter-chip class="job-chip" label="{{ job }}" selected></md-filter-chip>
+                        {% endfor %}
+                    </md-chip-set>
+                </div>
                 <div class="round-container" id="roles-editor">
                     <input type="hidden" name="groups" id="groups-input" value="{{ joined_groups }}">
                     <div class="panel-title">
-                        <span class="material-symbols-outlined">group</span>
+                        <span class="material-symbols-outlined panel-title-icon">group</span>
                         <span class="panel-title-text">管理組別資訊</span>
                     </div>
                     <span><strong>工作組別</strong></span>
                     <md-chip-set id="dept-selector">
                         {% for group in all_groups.dept_groups %}
-                            <md-filter-chip label="{{ group }}"
+                            <md-filter-chip class="dept-chip" label="{{ group }}"
                                             {% if group in joined_groups %}selected{% endif %}></md-filter-chip>
                         {% endfor %}
                     </md-chip-set>
@@ -55,7 +74,7 @@
                     </md-chip-set>
                 </div>
             </div>
-            <md-filled-button id="submit-button">
+            <md-filled-button type="button" id="submit-button">
                 <div style="display: flex; align-items: center; justify-content: center;">
                     <span class="material-symbols-outlined button-icon">check</span>
                     <span>儲存變更</span>
