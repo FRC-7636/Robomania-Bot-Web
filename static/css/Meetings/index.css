@@ -154,6 +154,7 @@
 
 .list-content[expanded] {
     max-height: 50vh;
+    overflow: auto;
 }
 
 .list-item {
