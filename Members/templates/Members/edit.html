@@ -68,7 +68,7 @@
                     <span><strong>身分組別</strong></span>
                     <md-chip-set id="identity-selector">
                         {% for group in all_groups.identity_groups %}
-                            <md-filter-chip label="{{ group }}"
+                            <md-filter-chip class="dept-chip" label="{{ group }}"
                                             {% if group in joined_groups %}selected{% endif %}></md-filter-chip>
                         {% endfor %}
                     </md-chip-set>

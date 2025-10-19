@@ -31,17 +31,17 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("submit-button").addEventListener("click", () => {
         const jobChips = document.getElementsByClassName("job-chip");
         let jobs = []
-        for (const chip of jobChips) {
-            if (chip.selected) {
-                jobs.push(chip.label)
+        for (const jChip of jobChips) {
+            if (jChip.selected) {
+                jobs.push(jChip.label)
             }
         }
         document.getElementById("jobs-input").value = JSON.stringify(jobs)
         const deptChips = document.getElementsByClassName("dept-chip");
         let groups = []
-        for (const chip of deptChips) {
-            if (chip.selected) {
-                groups.push(chip.label)
+        for (const dChip of deptChips) {
+            if (dChip.selected) {
+                groups.push(dChip.label)
             }
         }
         document.getElementById("groups-input").value = JSON.stringify(groups)
