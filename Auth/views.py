@@ -132,10 +132,7 @@ def register_view(request, user_info=None):
                 avatar=request.POST.get("avatar_url"),
                 password=request.POST.get("password"),
             )
-        elif (
-            DMember.objects.get(discord_id=request.POST.get("discord_id")).password
-            is None
-        ):
+        elif DMember.objects.get(discord_id=request.POST.get("discord_id")).password == "":
             member_obj = DMember.objects.get(discord_id=request.POST.get("discord_id"))
             member_obj.real_name = request.POST.get("real_name")
             member_obj.email_address = request.POST.get("email_address")
