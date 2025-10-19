@@ -1,6 +1,7 @@
 # coding=utf-8
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import make_password
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from os import getenv  # noqa
@@ -137,7 +138,7 @@ def register_view(request, user_info=None):
             member_obj.real_name = request.POST.get("real_name")
             member_obj.email_address = request.POST.get("email_address")
             member_obj.avatar = request.POST.get("avatar_url")
-            member_obj.password = request.POST.get("password")
+            member_obj.password = make_password(request.POST.get("password"))
             member_obj.save()
         return redirect(
             "/accounts/login/?success=註冊成功。你現在可以使用 Discord 登入，或使用密碼登入。"
