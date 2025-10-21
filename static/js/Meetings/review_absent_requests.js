@@ -16,13 +16,19 @@ document.addEventListener("DOMContentLoaded", () => {
             method: "POST",
             body: formData,
         })
-        .then(response => {
-            if (!response.ok) {
-                alert(`提交時發生錯誤，請稍後再試。\n錯誤訊息：${response.body.toString()}`);
+        .then((response) => response.json())
+        .then(data => {
+            console.log(data)
+            if (data.length === 0) {
+                alert("已成功提交假單審核結果。");
             } else {
-                alert("已成功提交請假審核結果。");
-                window.location.reload();
+                let conflictString = "下列成員的假單在提交時已由其他人審核，因此沒有生效：";
+                for (const conflict of data) {
+                    conflictString += `\n${conflict[0]} 已由 ${conflict[1]} 審核為 ${conflict[2]}`;
+                }
+                alert(conflictString);
             }
+            window.location.reload();
         });
     });
 

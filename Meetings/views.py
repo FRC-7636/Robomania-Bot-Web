@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 import datetime
 from zoneinfo import ZoneInfo
-from json import loads
+from json import loads, dumps
 
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import DjangoModelPermissions
@@ -482,22 +482,30 @@ def review_absent_requests_api(request, meeting_id):
     meeting = get_object_or_404(DMeeting, pk=meeting_id)
     if request.method == "POST":
         edit_requests = loads(request.POST.get("edited_requests", "{}"))
+        review_conflicts = []
         for request_id, review_result in edit_requests.items():
             absent_request = meeting.absent_requests.get(pk=int(request_id))
-            absent_request.reviewer = request.user
-            absent_request.status = review_result["status"]
-            absent_request.reviewer_comment = review_result["comment"]
-            absent_request.save()
-            # send websocket notification
-            channel = get_channel_layer()
-            async_to_sync(channel.group_send)(
-                "meeting_updates",
-                {
-                    "type": "meeting.review_absent_request",
-                    "absent_request": DAbsentRequestSerializer(absent_request).data,
-                },
-            )
-        return HttpResponse(status=200)
+            if absent_request.status == "pending":
+                absent_request.reviewer = request.user
+                absent_request.status = review_result["status"]
+                absent_request.reviewer_comment = review_result["comment"]
+                absent_request.save()
+                # send websocket notification
+                channel = get_channel_layer()
+                async_to_sync(channel.group_send)(
+                    "meeting_updates",
+                    {
+                        "type": "meeting.review_absent_request",
+                        "absent_request": DAbsentRequestSerializer(absent_request).data,
+                    },
+                )
+            else:
+                review_conflicts.append((
+                    absent_request.member.real_name,
+                    absent_request.reviewer.real_name,
+                    absent_request.get_status_display()
+                ))
+        return HttpResponse(dumps(review_conflicts), status=200)
     return HttpResponse("Method not allowed", status=405)
 
 
