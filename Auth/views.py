@@ -84,7 +84,8 @@ def discord_login_view(request):
     code = request.GET.get("code", None)
     if code:
         dc_auth_obj = DiscordAuth(
-            getenv("DISCORD_CLIENT_ID"), getenv("DISCORD_CLIENT_SECRET"), f"{request.scheme}://{request.get_host()}"
+            getenv("DISCORD_CLIENT_ID"), getenv("DISCORD_CLIENT_SECRET"),
+            f"{'http' if request.get_host() == '127.0.0.1' else 'https'}://{request.get_host()}"
         )
         dc_auth_obj.update_access_token(code)
         user_info = dc_auth_obj.get_user_info()
@@ -183,7 +184,8 @@ def sync_avatar_view(request):
     code = request.GET.get("code", None)
     if code:
         dc_auth_obj = DiscordAuth(
-            getenv("DISCORD_CLIENT_ID"), getenv("DISCORD_CLIENT_SECRET"), f"{request.scheme}://{request.get_host()}"
+            getenv("DISCORD_CLIENT_ID"), getenv("DISCORD_CLIENT_SECRET"),
+            f"{'http' if request.get_host() == '127.0.0.1' else 'https'}://{request.get_host()}"
         )
         dc_auth_obj.update_access_token(
             code, redirect_uri_suffix="/accounts/sync_avatar/", scope="identify"
@@ -200,5 +202,6 @@ def sync_avatar_view(request):
     else:
         return redirect(
             f"https://discord.com/oauth2/authorize?client_id=1402621019432157266&response_type=code&prompt=none"
-            f"&redirect_uri={request.scheme}%3A%2F%2F{request.get_host()}%2Faccounts%2Fsync_avatar%2F&scope=identify"
+            f"&redirect_uri={'http' if request.get_host() == '127.0.0.1' else 'https'}%3A%2F%2F{request.get_host()}"
+            f"%2Faccounts%2Fsync_avatar%2F&scope=identify"
         )

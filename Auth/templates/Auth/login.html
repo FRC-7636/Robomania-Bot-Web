@@ -4,7 +4,7 @@
 
 {% block head %}
     {% compress css %}
-    <link rel="stylesheet" href="{% static 'css/Auth/login.css' %}">
+        <link rel="stylesheet" href="{% static 'css/Auth/login.css' %}">
     {% endcompress %}
     <title>登入</title>
 {% endblock %}
@@ -25,7 +25,12 @@
             </div>
         {% endif %}
         <md-divider inset></md-divider>
-        <md-filled-button id="login-discord-btn" style="margin: 1.2em;" href="https://discord.com/oauth2/authorize?client_id=1402621019432157266&response_type=code&prompt=none&redirect_uri={{ request.scheme }}%3A%2F%2F{{ request.get_host }}%2Faccounts%2Flogin%2Fdiscord%2F&scope=identify+email+guilds">
+        <md-filled-button id="login-discord-btn" style="margin: 1.2em;"
+                {% if request.get_host == "127.0.0.1" %}
+                          href="https://discord.com/oauth2/authorize?client_id=1402621019432157266&response_type=code&prompt=none&redirect_uri=http%3A%2F%2F{{ request.get_host }}%2Faccounts%2Flogin%2Fdiscord%2F&scope=identify+email+guilds"
+                {% else %}
+                          href="https://discord.com/oauth2/authorize?client_id=1402621019432157266&response_type=code&prompt=none&redirect_uri=https%3A%2F%2F{{ request.get_host }}%2Faccounts%2Flogin%2Fdiscord%2F&scope=identify+email+guilds"
+                {% endif %}>
             <div style="display: flex; align-items: center; justify-content: center;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-discord"
                      viewBox="0 0 16 16">
@@ -38,8 +43,10 @@
         <form method="post">
             {% csrf_token %}
             <div id="login-form-div">
-                <md-filled-text-field class="login-input" style="margin-top: 1em;" label="Discord ID" type="text" pattern="^[0-9]+$" name="discord_id" required></md-filled-text-field>
-                <md-filled-text-field class="login-input" style="margin-bottom: 1em;" label="密碼" type="password" name="password" required></md-filled-text-field>
+                <md-filled-text-field class="login-input" style="margin-top: 1em;" label="Discord ID" type="text"
+                                      pattern="^[0-9]+$" name="discord_id" required></md-filled-text-field>
+                <md-filled-text-field class="login-input" style="margin-bottom: 1em;" label="密碼" type="password"
+                                      name="password" required></md-filled-text-field>
                 <md-filled-button style="margin-bottom: 1em;">
                     <div style="display: flex; align-items: center; justify-content: center;">
                         <span class="material-symbols-outlined">login</span>
