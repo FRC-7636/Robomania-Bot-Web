@@ -51,7 +51,6 @@ def login_view(request):
                 "Auth/login.html",
                 {
                     "error": "提供的 Discord ID 或密碼不正確。",
-                    "cb_url": getenv("DISCORD_LOGIN_CALLBACK_URL"),
                 },
             )
     else:  # GET
@@ -65,7 +64,6 @@ def login_view(request):
                     "Auth/login.html",
                     {
                         "error": request.GET.get("error", None),
-                        "cb_url": getenv("DISCORD_LOGIN_CALLBACK_URL"),
                     },
                 )
             elif request.GET.get("success", None):
@@ -74,13 +72,11 @@ def login_view(request):
                     "Auth/login.html",
                     {
                         "success": request.GET.get("success", None),
-                        "cb_url": getenv("DISCORD_LOGIN_CALLBACK_URL"),
                     },
                 )
             return render(
                 request,
                 "Auth/login.html",
-                {"cb_url": getenv("DISCORD_LOGIN_CALLBACK_URL")},
             )
 
 
@@ -88,7 +84,7 @@ def discord_login_view(request):
     code = request.GET.get("code", None)
     if code:
         dc_auth_obj = DiscordAuth(
-            getenv("DISCORD_CLIENT_ID"), getenv("DISCORD_CLIENT_SECRET")
+            getenv("DISCORD_CLIENT_ID"), getenv("DISCORD_CLIENT_SECRET"), f"{request.scheme}://{request.get_host()}"
         )
         dc_auth_obj.update_access_token(code)
         user_info = dc_auth_obj.get_user_info()
@@ -187,7 +183,7 @@ def sync_avatar_view(request):
     code = request.GET.get("code", None)
     if code:
         dc_auth_obj = DiscordAuth(
-            getenv("DISCORD_CLIENT_ID"), getenv("DISCORD_CLIENT_SECRET")
+            getenv("DISCORD_CLIENT_ID"), getenv("DISCORD_CLIENT_SECRET"), f"{request.scheme}://{request.get_host()}"
         )
         dc_auth_obj.update_access_token(
             code, redirect_uri_suffix="/accounts/sync_avatar/", scope="identify"
@@ -204,5 +200,5 @@ def sync_avatar_view(request):
     else:
         return redirect(
             f"https://discord.com/oauth2/authorize?client_id=1402621019432157266&response_type=code&prompt=none"
-            f"&redirect_uri={getenv("DISCORD_LOGIN_CALLBACK_URL")}%2Faccounts%2Fsync_avatar%2F&scope=identify"
+            f"&redirect_uri={request.scheme}%3A%2F%2F{request.get_host()}%2Faccounts%2Fsync_avatar%2F&scope=identify"
         )
