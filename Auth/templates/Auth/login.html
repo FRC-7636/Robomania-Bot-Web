@@ -6,6 +6,9 @@
     {% compress css %}
         <link rel="stylesheet" href="{% static 'css/Auth/login.css' %}">
     {% endcompress %}
+    {% compress js %}
+        <script src="{% static 'js/Auth/login.js' %}"></script>
+    {% endcompress %}
     <title>登入</title>
 {% endblock %}
 
@@ -40,20 +43,28 @@
             </div>
         </md-filled-button>
         <span style="font-size: 1.75em; font-weight: 400">或</span>
-        <form method="post">
-            {% csrf_token %}
-            <div id="login-form-div">
-                <md-filled-text-field class="login-input" style="margin-top: 1em;" label="Discord ID" type="text"
-                                      pattern="^[0-9]+$" name="discord_id" required></md-filled-text-field>
-                <md-filled-text-field class="login-input" style="margin-bottom: 1em;" label="密碼" type="password"
-                                      name="password" required></md-filled-text-field>
-                <md-filled-button style="margin-bottom: 1em;">
-                    <div style="display: flex; align-items: center; justify-content: center;">
-                        <span class="material-symbols-outlined">login</span>
-                        &nbsp;登入
-                    </div>
-                </md-filled-button>
+        <div class="round-container" id="backup-login-panel">
+            <div id="backup-login-title" class="panel-title">
+                <span class="panel-title-text">使用備援登入方式</span>
+                <span class="material-symbols-outlined panel-title-icon collapse-button"
+                      id="backup-login-collapse-button">
+                keyboard_arrow_down</span>
             </div>
-        </form>
+            <form method="post" id="login-form">
+                {% csrf_token %}
+                <div id="login-form-div">
+                    <md-filled-text-field class="login-input" label="Discord ID" type="text"
+                                          pattern="^[0-9]+$" name="discord_id" required></md-filled-text-field>
+                    <md-filled-text-field class="login-input" label="密碼" type="password"
+                                          name="password" required></md-filled-text-field>
+                    <md-filled-button style="margin-bottom: 0.25em">
+                        <div style="display: flex; align-items: center; justify-content: center;">
+                            <span class="material-symbols-outlined">login</span>
+                            &nbsp;登入
+                        </div>
+                    </md-filled-button>
+                </div>
+            </form>
+        </div>
     </div>
 {% endblock %}
