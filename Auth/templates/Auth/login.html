@@ -29,7 +29,7 @@
         {% endif %}
         <md-divider inset></md-divider>
         <md-filled-button id="login-discord-btn" style="margin: 1.2em;"
-                {% if request.get_host == "127.0.0.1" %}
+                {% if "127.0.0.1" in request.get_host  %}
                           href="https://discord.com/oauth2/authorize?client_id=1402621019432157266&response_type=code&prompt=none&redirect_uri=http%3A%2F%2F{{ request.get_host }}%2Faccounts%2Flogin%2Fdiscord%2F&scope=identify+email+guilds"
                 {% else %}
                           href="https://discord.com/oauth2/authorize?client_id=1402621019432157266&response_type=code&prompt=none&redirect_uri=https%3A%2F%2F{{ request.get_host }}%2Faccounts%2Flogin%2Fdiscord%2F&scope=identify+email+guilds"
