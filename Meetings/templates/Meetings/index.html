@@ -69,8 +69,7 @@
                     {% if meeting.end_time %}
                         <p><strong>結束時間：</strong>{{ meeting.end_time|date:"Y/m/d H:i" }}</p>
                     {% endif %}
-                    <p style="display: inline-flex; margin-top: 0;"><strong>地點：</strong></p>
-                    {% autoescape off %}{{ meeting.location|to_dc_format:CHANNELS }}{% endautoescape %}
+                    <p style="display: inline-flex; margin-top: 0;"><strong>地點：</strong></p>{% autoescape off %}{{ meeting.location|to_dc_format:CHANNELS }}{% endautoescape %}
                     {% if absent_request %}
                         <div class="divider" style="border-color: white"></div>
                         <div style="display: flex; align-items: center; margin: 1em 0;">
