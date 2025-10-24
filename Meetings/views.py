@@ -31,13 +31,13 @@ CHANNELS = {}
 def update_roles(**kwargs):
     global ROLES
     ROLES = kwargs.get("roles", [])
-    logging.debug(ROLES)
+    logging.info(ROLES)
 
 
 def update_channels(**kwargs):
     global CHANNELS
     CHANNELS = kwargs.get("channels", {})
-    logging.debug(CHANNELS)
+    logging.info(CHANNELS)
 
 
 role_update_signal.connect(update_roles)
