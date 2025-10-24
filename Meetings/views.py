@@ -7,6 +7,7 @@ import datetime
 from zoneinfo import ZoneInfo
 from json import loads, dumps
 from pprint import pprint
+import logging
 
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import DjangoModelPermissions
@@ -30,13 +31,13 @@ CHANNELS = {}
 def update_roles(**kwargs):
     global ROLES
     ROLES = kwargs.get("roles", [])
-    pprint(ROLES)
+    logging.debug(ROLES)
 
 
 def update_channels(**kwargs):
     global CHANNELS
     CHANNELS = kwargs.get("channels", {})
-    pprint(CHANNELS)
+    logging.debug(CHANNELS)
 
 
 role_update_signal.connect(update_roles)
