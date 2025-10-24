@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect, reverse, get_object_or_404
 import datetime
 from zoneinfo import ZoneInfo
 from json import loads, dumps
+from pprint import pprint
 
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import DjangoModelPermissions
@@ -29,11 +30,13 @@ CHANNELS = {}
 def update_roles(**kwargs):
     global ROLES
     ROLES = kwargs.get("roles", [])
+    pprint(ROLES)
 
 
 def update_channels(**kwargs):
     global CHANNELS
     CHANNELS = kwargs.get("channels", {})
+    pprint(CHANNELS)
 
 
 role_update_signal.connect(update_roles)
