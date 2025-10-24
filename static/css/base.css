@@ -12,6 +12,7 @@ md-icon {
     --md-sys-color-secondary: rgb(30, 66, 166);
     --md-sys-color-error: rgb(218, 18, 18);
     --md-list-container-color: rgba(0, 0, 0, 0);
+    --md-filter-chip-selected-container-color: rgb(167, 195, 238);
 }
 
 html {
@@ -38,6 +39,10 @@ header {
 
 header.collapsed {
     margin-top: -100%;
+}
+
+md-filter-chip {
+    background-color: rgba(255, 255, 255, 0.3);
 }
 
 .logo {
