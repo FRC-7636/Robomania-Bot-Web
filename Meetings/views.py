@@ -16,7 +16,7 @@ from rest_framework.response import Response
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
-from .models import DMeeting, DAbsentRequest, MeetingSignIn, SingInRecord
+from .models import DMeeting, DMeetingForm, DAbsentRequest, MeetingSignIn, SingInRecord
 from .serializers import DMeetingSerializer, DAbsentRequestSerializer
 from .consumers import role_update_signal, channel_update_signal
 from Members.models import DMember
@@ -36,39 +36,46 @@ def update_channels(**kwargs):
     CHANNELS = kwargs.get("channels", {})
 
 
-def validate_meeting_data(data):
-    if not data.get("name"):
-        return False, "name"
-    if not data.get("host"):
-        return False, "host"
-    else:
-        host_id = int(data["host"])
-        if not DMember.objects.filter(discord_id=host_id).exists():
-            return False, "host"
-    if not data.get("start-time"):
-        return False, "start-time (missing)"
-    try:
-        start_time = datetime.datetime.fromisoformat(data["start-time"]).astimezone(
-            TAIPEI_TZ
-        )
-    except ValueError:
-        return False, "start-time (incorrect format)"
-    if data.get("end-time"):
-        try:
-            end_time = datetime.datetime.fromisoformat(data["end-time"]).astimezone(
-                TAIPEI_TZ
-            )
-        except ValueError:
-            return False, "end-time"
-        if end_time < start_time:
-            return False, "end-time"
-    if not data.get("location"):
-        return False, "location"
-    if not data.get("can-absent"):
-        return False, "can-absent"
-    return True, ""
 role_update_signal.connect(update_roles)
 channel_update_signal.connect(update_channels)
+
+
+# Deprecated, use ModelForm validation instead
+# def validate_meeting_data(data):
+#     if not data.get("name"):
+#         return False, "name"
+#     if not data.get("host"):
+#         return False, "host"
+#     else:
+#         host_id = int(data["host"])
+#         if not DMember.objects.filter(discord_id=host_id).exists():
+#             return False, "host"
+#     if not data.get("start-time"):
+#         return False, "start-time (missing)"
+#     try:
+#         start_time = datetime.datetime.fromisoformat(data["start-time"]).astimezone(
+#             TAIPEI_TZ
+#         )
+#         if start_time + datetime.timedelta(minutes=int(data.get("discord_notify_time", "5"))) < datetime.datetime.now(
+#             tz=TAIPEI_TZ
+#         ):
+#             return False, "discord-notify-time"
+#     except ValueError:
+#         return False, "start-time (incorrect format)"
+#     if data.get("end-time"):
+#         try:
+#             end_time = datetime.datetime.fromisoformat(data["end-time"]).astimezone(
+#                 TAIPEI_TZ
+#             )
+#         except ValueError:
+#             return False, "end-time"
+#         if end_time < start_time:
+#             return False, "end-time"
+#     if not data.get("location"):
+#         return False, "location"
+#     if not data.get("can-absent"):
+#         return False, "can-absent"
+#     return True, ""
 
 
 def update_upcoming_meetings():
@@ -201,31 +208,24 @@ def list_view(request):
 @permission_required("Meetings.add_dmeeting", raise_exception=True)
 def create(request):
     if request.method == "POST":
-        # validate form data
-        is_valid, error_field = validate_meeting_data(request.POST)
-        if not is_valid:
-            return HttpResponse(f"Invalid data for field: {error_field}", status=400)
-        # create new meeting
-        meeting = DMeeting(
-            name=request.POST.get("name", ""),
-            description=request.POST.get("description", ""),
-            host=DMember.objects.get(discord_id=int(request.POST.get("host", ""))),
-            start_time=datetime.datetime.fromisoformat(
-                request.POST.get("start-time")
-            ).astimezone(TAIPEI_TZ),
-            end_time=(
-                datetime.datetime.fromisoformat(
-                    request.POST.get("end-time")
-                ).astimezone(TAIPEI_TZ)
-                if request.POST.get("end-time", None)
-                else None
-            ),
-            location=request.POST.get("location", ""),
-            can_absent=request.POST.get("can-absent", "False").lower() == "true",
-            creator=request.user,
-        )
-        # save meeting
-        meeting.save()
+        # use ModelForm to create meeting
+        meeting = DMeetingForm(request.POST)
+        # save meeting if form is valid
+        if meeting.is_valid():
+            # convert ModelForm to Model before saving
+            meeting = meeting.save(commit=False)
+            meeting.host = DMember.objects.get(discord_id=request.POST.get("host", ""))
+            meeting.creator = request.user
+            meeting.discord_notify_time = datetime.timedelta(
+                minutes=int(
+                    request.POST.get("discord_notify_time", "5")
+                    if request.POST.get("discord_notify_time", "5") != ""
+                    else "5"
+                )
+            )
+            meeting.save()
+        else:
+            return HttpResponse(f"Invalid form data: {meeting.errors}", status=400)
         # send websocket notification
         channel = get_channel_layer()
         async_to_sync(channel.group_send)(
@@ -256,26 +256,23 @@ def create(request):
 def edit(request, meeting_id):
     meeting = get_object_or_404(DMeeting, pk=meeting_id)
     if request.method == "POST":
-        # update meeting
-        is_valid, error_field = validate_meeting_data(request.POST)
-        if not is_valid:
-            return HttpResponse(f"Invalid data for field: {error_field}", status=400)
-        meeting.name = request.POST.get("name", "")
-        meeting.description = request.POST.get("description", "")
-        meeting.host = DMember.objects.get(discord_id=int(request.POST.get("host", "")))
-        meeting.start_time = datetime.datetime.fromisoformat(
-            request.POST.get("start-time")
-        ).astimezone(TAIPEI_TZ)
-        if request.POST.get("end-time", None):
-            meeting.end_time = datetime.datetime.fromisoformat(
-                request.POST.get("end-time")
-            ).astimezone(TAIPEI_TZ)
+        # use ModelForm to update meeting
+        meeting = DMeetingForm(request.POST, instance=meeting)
+        # save meeting if form is valid
+        if meeting.is_valid():
+            meeting = meeting.save(commit=False)
+            meeting.host = DMember.objects.get(discord_id=request.POST.get("host", ""))
+            meeting.creator = request.user
+            meeting.discord_notify_time = datetime.timedelta(
+                minutes=int(
+                    request.POST.get("discord_notify_time", "5")
+                    if request.POST.get("discord_notify_time", "5") != ""
+                    else "5"
+                )
+            )
+            meeting.save()
         else:
-            meeting.end_time = None
-        meeting.location = request.POST.get("location", "")
-        meeting.can_absent = request.POST.get("can-absent", "False").lower() == "true"
-        # save changes
-        meeting.save()
+            return HttpResponse(f"Invalid form data: {meeting.errors}", status=400)
         # send websocket notification
         channel = get_channel_layer()
         async_to_sync(channel.group_send)(
