@@ -1,8 +1,12 @@
 # coding=utf-8
+from django.dispatch import Signal
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from rest_framework.authtoken.models import Token
 from asgiref.sync import sync_to_async
 import logging
+
+
+role_update_signal, channel_update_signal = Signal(), Signal()
 
 
 class DiscordBotMeetingConsumer(AsyncJsonWebsocketConsumer):
@@ -16,8 +20,8 @@ class DiscordBotMeetingConsumer(AsyncJsonWebsocketConsumer):
 
         headers = dict(self.scope["headers"])
         token = (
-            headers.get(b"authorization", b"Token None").decode("utf-8").split(" ")[1]
-        )  # noqa
+            headers.get(b"authorization", b"Token None").decode("utf-8").split(" ")[1]  # noqa
+        )
         valid_token = await sync_to_async(Token.objects.filter(key=token).exists)()
         if not valid_token and not self.scope["user"].has_perm(
             ["Meetings.add_meetingsignin", "Meetings.change_meetingsignin"]
@@ -34,6 +38,8 @@ class DiscordBotMeetingConsumer(AsyncJsonWebsocketConsumer):
             logging.info(f"WebSocket connection accepted: User {real_name}")
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
             await self.accept()
+            # Request initial roles and channels data
+            await self.send_json({"type": "meeting.request_initial_data"})
 
     async def disconnect(self, close_code):
         logging.info(
@@ -43,6 +49,10 @@ class DiscordBotMeetingConsumer(AsyncJsonWebsocketConsumer):
 
     async def receive_json(self, content, **kwargs):
         logging.info(f"WebSocket message received: {content}")
+        if content.get("type") == "roles_update":
+            await role_update_signal.asend(self.__class__, roles=content.get("roles", []))
+        elif content.get("type") == "channels_update":
+            await channel_update_signal.asend(self.__class__, channels=content.get("channels", []))
 
     # handlers
 

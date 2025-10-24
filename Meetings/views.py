@@ -2,6 +2,7 @@
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect, reverse, get_object_or_404
+
 import datetime
 from zoneinfo import ZoneInfo
 from json import loads, dumps
@@ -17,9 +18,22 @@ from asgiref.sync import async_to_sync
 
 from .models import DMeeting, DAbsentRequest, MeetingSignIn, SingInRecord
 from .serializers import DMeetingSerializer, DAbsentRequestSerializer
+from .consumers import role_update_signal, channel_update_signal
 from Members.models import DMember
 
 TAIPEI_TZ = ZoneInfo("Asia/Taipei")
+ROLES = []
+CHANNELS = {}
+
+
+def update_roles(**kwargs):
+    global ROLES
+    ROLES = kwargs.get("roles", [])
+
+
+def update_channels(**kwargs):
+    global CHANNELS
+    CHANNELS = kwargs.get("channels", {})
 
 
 def validate_meeting_data(data):
@@ -53,6 +67,8 @@ def validate_meeting_data(data):
     if not data.get("can-absent"):
         return False, "can-absent"
     return True, ""
+role_update_signal.connect(update_roles)
+channel_update_signal.connect(update_channels)
 
 
 def update_upcoming_meetings():
@@ -89,7 +105,9 @@ def index(request, meeting_id):
             "reviewer": absent_request.reviewer,
             "reviewer_comment": absent_request.reviewer_comment,
         }
-    can_edit = request.user.has_perm("Meetings.change_dmeeting") and request.user.has_perm("Meetings.delete_dmeeting")
+    can_edit = request.user.has_perm(
+        "Meetings.change_dmeeting"
+    ) and request.user.has_perm("Meetings.delete_dmeeting")
     reviewed_absent_requests = meeting.absent_requests.exclude(status="pending")
     can_sign_in = request.user.has_perm("Meetings.add_meetingsignin") and not (
         meeting.end_time and meeting.end_time < now
@@ -106,8 +124,12 @@ def index(request, meeting_id):
                         "avatar": sign_in.creator.avatar,
                     },
                     "uuid": str(sign_in.uuid),
-                    "started_at": sign_in.started_at.astimezone(TAIPEI_TZ).strftime("%Y/%m/%d %H:%M:%S"),
-                    "ended_at": sign_in.ended_at.astimezone(TAIPEI_TZ).strftime("%Y/%m/%d %H:%M:%S")
+                    "started_at": sign_in.started_at.astimezone(TAIPEI_TZ).strftime(
+                        "%Y/%m/%d %H:%M:%S"
+                    ),
+                    "ended_at": sign_in.ended_at.astimezone(TAIPEI_TZ).strftime(
+                        "%Y/%m/%d %H:%M:%S"
+                    ),
                 }
             )
     else:
@@ -500,11 +522,13 @@ def review_absent_requests_api(request, meeting_id):
                     },
                 )
             else:
-                review_conflicts.append((
-                    absent_request.member.real_name,
-                    absent_request.reviewer.real_name,
-                    absent_request.get_status_display()
-                ))
+                review_conflicts.append(
+                    (
+                        absent_request.member.real_name,
+                        absent_request.reviewer.real_name,
+                        absent_request.get_status_display(),
+                    )
+                )
         return HttpResponse(dumps(review_conflicts), status=200)
     return HttpResponse("Method not allowed", status=405)
 
