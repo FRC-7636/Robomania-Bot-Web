@@ -22,9 +22,26 @@ function checkTime() {
     }
 }
 
+function checkNotifyTime() {
+    const notifyTimeInput = document.getElementById("discord-notify-time-input");
+    const inputValue = notifyTimeInput.value;
+    const startTime = new Date(document.getElementById("start-time-selector").value).getTime();
+    if (inputValue === "" || isNaN(inputValue) || parseInt(inputValue) < 0) {
+        notifyTimeInput.error = true;
+        notifyTimeInput.errorText = "請輸入有效的正整數。";
+    } else if (Date.now() + parseInt(inputValue) * 60000 > startTime) {
+        notifyTimeInput.error = true;
+        notifyTimeInput.errorText = "通知時間必須早於會議開始時間。";
+    } else {
+        notifyTimeInput.error = false;
+        notifyTimeInput.errorText = "";
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("start-time-selector").addEventListener("change", function (event) {
         checkTime();
+        checkNotifyTime();
         const startTimeText = document.getElementById("start-time-text");
         if (event.target.value === "") {
             startTimeText.value = "";
@@ -63,8 +80,59 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("can-absent-bool").value = event.target.selected;
     })
 
+    document.getElementById("location-input").addEventListener("input", function (event) {
+        const dcSelect = document.getElementById(`select-${event.target.value}`);
+        const selector = document.getElementById("discord-vc-autofill");
+        if (dcSelect) {
+            selector.select(event.target.value);
+        } else {
+            selector.value = "";
+        }
+    })
+
+    document.getElementById("discord-vc-autofill").addEventListener("change", (event) => {
+        console.log(event.target.value)
+        document.getElementById("location-input").value = event.target.value;
+    })
+
+    document.getElementById("everyone-role").addEventListener("click", (event) => {
+        const normalRoles = document.getElementsByClassName("normal-role");
+        if (event.target.selected) {
+            Array.from(normalRoles).forEach((element) => {
+                element.disabled = true;
+            });
+        } else {
+            Array.from(normalRoles).forEach((element) => {
+                element.disabled = false;
+            });
+        }
+    })
+
+    document.getElementById("discord-notify-time-input").addEventListener("change", checkNotifyTime)
+
     document.getElementById("submit-button").addEventListener("click", function () {
-        document.getElementById("meeting-form").submit();
+        checkNotifyTime()
+        // Serialize role selections
+        const rolesInput = document.getElementById("discord-mentions-input");
+        let rolesString;
+        if (document.getElementById("everyone-role").selected) {
+            rolesString = "[\"@everyone\"]";
+        } else {
+            const selectedRoles = [];
+            const normalRoles = document.getElementsByClassName("normal-role");
+            Array.from(normalRoles).forEach((element) => {
+                if (element.selected) {
+                    selectedRoles.push(element.getAttribute("role-id"));
+                }
+            });
+            rolesString = JSON.stringify(selectedRoles);
+        }
+        // @everyone if none selected
+        if (rolesString === "[]") {
+            rolesString = "[\"@everyone\"]";
+        }
+        rolesInput.value = rolesString;
+        document.getElementById("meeting-form").requestSubmit();
     })
 
     try {

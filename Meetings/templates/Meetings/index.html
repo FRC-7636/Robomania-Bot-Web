@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load compress %}
+{% load to_dc_format %}
 
 {% block head %}
     {% compress css %}
@@ -68,9 +69,10 @@
                     {% if meeting.end_time %}
                         <p><strong>結束時間：</strong>{{ meeting.end_time|date:"Y/m/d H:i" }}</p>
                     {% endif %}
-                    <p><strong>地點：</strong>{{ meeting.location }}</p>
+                    <p style="display: inline-flex; margin-top: 0;"><strong>地點：</strong></p>
+                    {% autoescape off %}{{ meeting.location|to_dc_format:CHANNELS }}{% endautoescape %}
                     {% if absent_request %}
-                        <md-divider inset-end></md-divider>
+                        <div class="divider" style="border-color: white"></div>
                         <div style="display: flex; align-items: center; margin: 1em 0;">
                         <span><strong>假單狀態：</strong></span>
                         {% if absent_request.status == "pending" %}

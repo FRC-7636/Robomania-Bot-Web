@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
 {% load compress %}
+{% load timedelta_minutes %}
+{% load to_dc_val %}
 
 {% block head %}
     {% compress css %}
@@ -34,13 +36,12 @@
             <div style="display: flex; flex-direction: row; gap: 0.5em; flex: 1;">
                 {% csrf_token %}
                 <div class="round-container" id="meeting-editor">
-                    <div class="panel-title" id="meeting-info-title">
-                        <md-icon>edit</md-icon>
+                    <div class="panel-title">
+                        <span class="material-symbols-outlined panel-title-icon">edit</span>
                         <span class="panel-title-text">基本資訊</span>
                     </div>
-                    <div id="meeting-editor-form">
+                    <div class="editor-form" id="meeting-editor-form">
                         <md-filled-text-field name="name" label="會議名稱" value="{{ meeting.name }}"
-                                              style="margin-top: 0.5em;"
                                               required></md-filled-text-field>
                         <md-filled-select name="host" label="主持人" required>
                             {% for member in member_list %}
@@ -54,7 +55,7 @@
                                 </md-select-option>
                             {% endfor %}
                         </md-filled-select>
-                        <input type="hidden" name="can-absent" id="can-absent-bool" value="{{ meeting.can_absent|default:'false' }}">
+                        <input type="hidden" name="can_absent" id="can-absent-bool" value="{{ meeting.can_absent|default:'false' }}">
                         <div style="display: flex; align-items: center;">
                         <label style="display: flex; align-items: center;">
                             可請假：
@@ -67,7 +68,7 @@
                         </md-filled-text-field>
                         <label>
                             選擇開始時間：
-                            <input type="datetime-local" name="start-time" id="start-time-selector" style="color: black;"
+                            <input type="datetime-local" name="start_time" id="start-time-selector" style="color: black;"
                                    value="{{ meeting.start_time|date:"Y-m-d\TH:i" }}" required>
                         </label>
                         <md-filled-text-field name="end-time-text" id="end-time-text"
@@ -76,34 +77,77 @@
                         </md-filled-text-field>
                         <label>
                             選擇結束時間：
-                            <input type="datetime-local" name="end-time" id="end-time-selector" style="color: black;"
+                            <input type="datetime-local" name="end_time" id="end-time-selector" style="color: black;"
                                    value="{{ meeting.end_time|date:"Y-m-d\TH:i" }}">
                         </label>
-                        <md-filled-text-field name="location" label="地點" value="{{ meeting.location }}" required></md-filled-text-field>
+                        <md-filled-text-field name="location" label="地點" id="location-input"
+                                              value="{{ meeting.location }}" required></md-filled-text-field>
+                        <md-filled-select label="自動填入 Discord 語音頻道" id="discord-vc-autofill">
+                        {% for category, channels_list in channels.items %}
+                            {% for channel in channels_list %}
+                                <md-select-option value="{{ channel.id|to_dc_val }}" id="select-{{ channel.id|to_dc_val }}"
+                                {% if meeting.location == channel.id|to_dc_val %} selected {% endif %}>
+                                    {{ category }}/{{ channel.name }} (ID: {{ channel.id }})
+                                </md-select-option>
+                            {% endfor %}
+                        {% endfor %}
+                        </md-filled-select>
+                    </div>
+                </div>
+                <div class="round-container" id="discord-notify-editor">
+                    <div class="panel-title">
+                        <span class="material-symbols-outlined panel-title-icon">notification_settings</span>
+                        <span class="panel-title-text">Discord 通知設定</span>
+                    </div>
+                    <div class="editor-form">
+                        <md-filled-text-field name="discord_notify_time" label="提前通知時間" id="discord-notify-time-input"
+                                              type="number" value="{{ meeting.discord_notify_time|timedelta_minutes }}"
+                                              suffix-text="分鐘" required>
+                        </md-filled-text-field>
+                        <div class="divider" style="border-color: white"></div>
+                        <span><strong>提及身分組</strong></span>
+                        <input type="hidden" name="discord_mentions" value="{{ meeting.discord_mentions }}"
+                               id="discord-mentions-input">
+                        <md-chip-set>
+                            <md-filter-chip id="everyone-role" label="@everyone"
+                                            {% if "@everyone" in meeting.discord_mentions or not meeting %} selected {% endif %}>
+                            </md-filter-chip>
+                        </md-chip-set>
+                        <md-chip-set id="roles-selector">
+                            {% for role in roles %}
+                                <md-filter-chip id="role-{{ role.id }}" label="{{ role.name }}" class="normal-role"
+                                                role-id="{{ role.id }}"
+                                                {% if role.id|stringformat:"i" in meeting.discord_mentions %} selected {% endif %}
+                                                {% if "@everyone" in meeting.discord_mentions or not meeting %} disabled {% endif %}
+                                                style="background-color: {{ role.color }}1a;
+                                                       --md-filter-chip-selected-container-color: {{ role.color }}66;">
+                                </md-filter-chip>
+                            {% endfor %}
+                        </md-chip-set>
                     </div>
                 </div>
                 <div class="round-container" id="meeting-description-editor">
-                <div class="panel-title" id="meeting-info-title">
-                    <md-icon>markdown</md-icon>
-                    <span class="panel-title-text">說明編輯器</span>
+                    <div class="panel-title">
+                        <span class="material-symbols-outlined panel-title-icon">markdown</span>
+                        <span class="panel-title-text">說明編輯器</span>
+                    </div>
+                    <label for="md-editor" hidden></label>
+                    <textarea name="description" id="md-editor"></textarea>
+                    <script>
+                        const easyMDE = new EasyMDE({
+                            element: document.getElementById("md-editor"),
+                            forceSync: true,
+                            autosave: {
+                                enabled: true,
+                                uniqueId: "meeting-description-editor",
+                            },
+                            spellChecker: false,
+                        });
+                        {% autoescape off %}
+                        easyMDE.value(`{{ meeting_description }}`);
+                        {% endautoescape %}
+                    </script>
                 </div>
-                <label for="md-editor" hidden></label>
-                <textarea name="description" id="md-editor"></textarea>
-                <script>
-                    const easyMDE = new EasyMDE({
-                        element: document.getElementById("md-editor"),
-                        forceSync: true,
-                        autosave: {
-                            enabled: true,
-                            uniqueId: "meeting-description-editor",
-                        },
-                        spellChecker: false,
-                    });
-                    {% autoescape off %}
-                    easyMDE.value(`{{ meeting_description }}`);
-                    {% endautoescape %}
-                </script>
-            </div>
             </div>
             <div id="button-container">
             <md-filled-button type="button" id="submit-button" style="flex: 3;">

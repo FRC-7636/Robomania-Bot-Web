@@ -177,6 +177,7 @@ def index(request, meeting_id):
             "reviewed_absent_requests": reviewed_absent_requests,
             "can_sign_in": can_sign_in,
             "sign_ins": condensed_sign_ins,
+            "CHANNELS": CHANNELS,
         },
     )
 
@@ -246,7 +247,11 @@ def create(request):
                     "avatar": member.avatar,
                 }
             )
-        return render(request, "Meetings/edit.html", {"member_list": member_choices})
+        return render(
+            request,
+            "Meetings/edit.html",
+            {"member_list": member_choices, "roles": ROLES, "channels": CHANNELS},
+        )
 
 
 @login_required
@@ -303,6 +308,8 @@ def edit(request, meeting_id):
                     else ""
                 ),
                 "member_list": member_choices,
+                "roles": ROLES,
+                "channels": CHANNELS,
             },
         )
 
