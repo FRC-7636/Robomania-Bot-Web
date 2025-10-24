@@ -29,9 +29,9 @@ function checkNotifyTime() {
     if (inputValue === "" || isNaN(inputValue) || parseInt(inputValue) < 0) {
         notifyTimeInput.error = true;
         notifyTimeInput.errorText = "請輸入有效的正整數。";
-    } else if (Date.now() + parseInt(inputValue) * 60000 > startTime) {
+    } else if (startTime + parseInt(inputValue) * 60000 < Date.now()) {
         notifyTimeInput.error = true;
-        notifyTimeInput.errorText = "通知時間必須早於會議開始時間。";
+        notifyTimeInput.errorText = "通知時間必須為未來時間。";
     } else {
         notifyTimeInput.error = false;
         notifyTimeInput.errorText = "";
