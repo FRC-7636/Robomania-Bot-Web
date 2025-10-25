@@ -38,8 +38,6 @@ class DiscordBotMeetingConsumer(AsyncJsonWebsocketConsumer):
             logging.info(f"WebSocket connection accepted: User {real_name}")
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
             await self.accept()
-            # Request initial roles and channels data
-            await self.send_json({"type": "meeting.request_initial_data"})
 
     async def disconnect(self, close_code):
         logging.info(

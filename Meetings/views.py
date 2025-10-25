@@ -40,8 +40,15 @@ def update_channels(**kwargs):
     logging.info(CHANNELS)
 
 
+# TODO: 伺服器初次啟動時，此處似乎不會接收到訊號，導致 ROLES 和 CHANNELS 皆為空值
 role_update_signal.connect(update_roles)
 channel_update_signal.connect(update_channels)
+
+channel = get_channel_layer()
+async_to_sync(channel.group_send)(
+    "meeting_updates",
+    {"type": "meeting.request_initial_data"},
+)
 
 
 # Deprecated, use ModelForm validation instead
