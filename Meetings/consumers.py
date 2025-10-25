@@ -1,5 +1,6 @@
 # coding=utf-8
 from django.dispatch import Signal
+from django.conf import settings
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from rest_framework.authtoken.models import Token
 from asgiref.sync import sync_to_async
@@ -50,11 +51,11 @@ class DiscordBotMeetingConsumer(AsyncJsonWebsocketConsumer):
         logging.info(f"WebSocket message received: {content}")
         if content.get("type") == "roles_update":
             await role_update_signal.asend(self.__class__, roles=content.get("roles", []))
-            with open("roles.json", "w") as f:
+            with open(settings.BASE_DIR / "roles.json", "w") as f:
                 dump(content.get("roles", []), f, indent=4)
         elif content.get("type") == "channels_update":
             await channel_update_signal.asend(self.__class__, channels=content.get("channels", []))
-            with open("channels.json", "w") as f:
+            with open(settings.BASE_DIR / "channels.json", "w") as f:
                 dump(content.get("channels", []), f, indent=4)
 
     # handlers

@@ -2,6 +2,7 @@
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect, reverse, get_object_or_404
+from django.conf import settings
 
 import datetime
 from zoneinfo import ZoneInfo
@@ -86,14 +87,14 @@ def check_roles_and_channels():
     if not ROLES:
         logging.warning("ROLES is empty, loading from files.")
         try:
-            with open("roles.json", "r") as f:
+            with open(settings.BASE_DIR / "roles.json", "r") as f:
                 ROLES = json.load(f)
         except FileNotFoundError:
             logging.error("roles.json not found.")
     if not CHANNELS:
         logging.warning("CHANNELS is empty, loading from files.")
         try:
-            with open("channels.json", "r") as f:
+            with open(settings.BASE_DIR / "channels.json", "r") as f:
                 CHANNELS = json.load(f)
         except FileNotFoundError:
             logging.error("channels.json not found.")
