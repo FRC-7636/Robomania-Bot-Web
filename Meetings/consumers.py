@@ -4,6 +4,7 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from rest_framework.authtoken.models import Token
 from asgiref.sync import sync_to_async
 import logging
+from json import dump
 
 
 role_update_signal, channel_update_signal = Signal(), Signal()
@@ -49,8 +50,12 @@ class DiscordBotMeetingConsumer(AsyncJsonWebsocketConsumer):
         logging.info(f"WebSocket message received: {content}")
         if content.get("type") == "roles_update":
             await role_update_signal.asend(self.__class__, roles=content.get("roles", []))
+            with open("roles.json", "w") as f:
+                dump(content.get("roles", []), f, indent=4)
         elif content.get("type") == "channels_update":
             await channel_update_signal.asend(self.__class__, channels=content.get("channels", []))
+            with open("channels.json", "w") as f:
+                dump(content.get("channels", []), f, indent=4)
 
     # handlers
 

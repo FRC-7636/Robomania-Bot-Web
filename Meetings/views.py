@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect, reverse, get_object_or_404
 
 import datetime
 from zoneinfo import ZoneInfo
-from json import loads, dumps
+import json
 from pprint import pprint
 import logging
 
@@ -44,12 +44,6 @@ def update_channels(**kwargs):
 role_update_signal.connect(update_roles)
 channel_update_signal.connect(update_channels)
 
-channel = get_channel_layer()
-channel.group_send(
-    "meeting_updates",
-    {"type": "meeting.request_initial_data"},
-)
-
 
 # Deprecated, use ModelForm validation instead
 # def validate_meeting_data(data):
@@ -87,6 +81,24 @@ channel.group_send(
 #     if not data.get("can-absent"):
 #         return False, "can-absent"
 #     return True, ""
+
+
+def check_roles_and_channels():
+    global ROLES, CHANNELS
+    if not ROLES:
+        logging.warning("ROLES is empty, loading from files.")
+        try:
+            with open("roles.json", "r") as f:
+                ROLES = json.load(f)
+        except FileNotFoundError:
+            logging.error("roles.json not found.")
+    if not CHANNELS:
+        logging.warning("CHANNELS is empty, loading from files.")
+        try:
+            with open("channels.json", "r") as f:
+                CHANNELS = json.load(f)
+        except FileNotFoundError:
+            logging.error("channels.json not found.")
 
 
 def update_upcoming_meetings():
@@ -518,7 +530,7 @@ def review_absent_requests_page(request, meeting_id):
 def review_absent_requests_api(request, meeting_id):
     meeting = get_object_or_404(DMeeting, pk=meeting_id)
     if request.method == "POST":
-        edit_requests = loads(request.POST.get("edited_requests", "{}"))
+        edit_requests = json.loads(request.POST.get("edited_requests", "{}"))
         review_conflicts = []
         for request_id, review_result in edit_requests.items():
             absent_request = meeting.absent_requests.get(pk=int(request_id))
@@ -544,7 +556,7 @@ def review_absent_requests_api(request, meeting_id):
                         absent_request.get_status_display(),
                     )
                 )
-        return HttpResponse(dumps(review_conflicts), status=200)
+        return HttpResponse(json.dumps(review_conflicts), status=200)
     return HttpResponse("Method not allowed", status=405)
 
 
