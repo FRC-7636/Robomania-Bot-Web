@@ -20,8 +20,9 @@ def to_dc_format(location: str, channel_dict: dict) -> str:
                     <a href="{link}" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
                     Discord - {channel_name}
                     </a>
+                    &nbsp;
                     <a href="{backup_link}" target="_blank" rel="noopener noreferrer" style="font-style: italic;">
-                     (於瀏覽器開啟)
+                    (於瀏覽器開啟)
                     </a>
                     </div>
                     """
