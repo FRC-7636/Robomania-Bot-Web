@@ -45,7 +45,7 @@ role_update_signal.connect(update_roles)
 channel_update_signal.connect(update_channels)
 
 channel = get_channel_layer()
-async_to_sync(channel.group_send)(
+channel.group_send(
     "meeting_updates",
     {"type": "meeting.request_initial_data"},
 )
