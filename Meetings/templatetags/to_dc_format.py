@@ -22,7 +22,7 @@ def to_dc_format(location: str, channel_dict: dict) -> str:
                     </a>
                     <a href="{backup_link}" target="_blank" rel="noopener noreferrer" style="font-style: italic;">
                      (於瀏覽器開啟)
-                    <a/>
+                    </a>
                     </div>
                     """
     return location
