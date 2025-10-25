@@ -31,13 +31,11 @@ CHANNELS = {}
 def update_roles(**kwargs):
     global ROLES
     ROLES = kwargs.get("roles", [])
-    logging.info(ROLES)
 
 
 def update_channels(**kwargs):
     global CHANNELS
     CHANNELS = kwargs.get("channels", {})
-    logging.info(CHANNELS)
 
 
 # TODO: 伺服器初次啟動時，此處似乎不會接收到訊號，導致 ROLES 和 CHANNELS 皆為空值
@@ -182,6 +180,7 @@ def index(request, meeting_id):
                 "sign_in_uuid": str(record.sign_in_method.uuid),
             }
         )
+    check_roles_and_channels()
     return render(
         request,
         "Meetings/index.html",
@@ -270,6 +269,7 @@ def create(request):
                     "avatar": member.avatar,
                 }
             )
+        check_roles_and_channels()
         return render(
             request,
             "Meetings/edit.html",
@@ -320,6 +320,7 @@ def edit(request, meeting_id):
                     "avatar": member.avatar,
                 }
             )
+        check_roles_and_channels()
         return render(
             request,
             "Meetings/edit.html",
