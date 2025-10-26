@@ -88,6 +88,12 @@ def discord_login_view(request):
             f"{'http' if '127.0.0.1' in request.get_host() else 'https'}://{request.get_host()}"
         )
         dc_auth_obj.update_access_token(code)
+        # check if user is in the FRC #7636 server
+        guild_ids = dc_auth_obj.get_user_guild_ids()
+        if 1114203090950836284 not in guild_ids:
+            return redirect(
+                "/accounts/login/?error=此 Discord 帳號尚未加入 FRC #7636 的 Discord 伺服器。"
+            )
         user_info = dc_auth_obj.get_user_info()
         # check if user is already exists
         discord_id = user_info["id"]
@@ -100,14 +106,7 @@ def discord_login_view(request):
             login(request, user)
             return redirect(to_next_page(request))
         else:
-            guild_ids = dc_auth_obj.get_user_guild_ids()
-            # 檢查是否已加入 FRC# 7636 的 Discord 伺服器
-            if 1114203090950836284 in guild_ids:
-                return register_view(request, user_info)
-            else:
-                return redirect(
-                    "/accounts/login/?error=此 Discord 帳號尚未加入 FRC #7636 的 Discord 伺服器。"
-                )
+            return register_view(request, user_info)
     else:
         return redirect("/accounts/login/?error=Discord 授權失敗，請重新登入。")
 
