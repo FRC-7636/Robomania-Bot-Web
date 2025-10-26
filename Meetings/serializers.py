@@ -9,6 +9,11 @@ class DMeetingSerializer(serializers.ModelSerializer):
         model = DMeeting
         fields = "__all__"
 
+    def to_representation(self, instance: DMeeting):
+        representation = super().to_representation(instance)
+        representation["discord_notify_time"] = instance.discord_notify_time.seconds
+        return representation
+
 
 class DAbsentRequestSerializer(serializers.ModelSerializer):
     class Meta:
