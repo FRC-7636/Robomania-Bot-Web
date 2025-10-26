@@ -87,6 +87,18 @@
     flex: 2;
 }
 
+.discord-vc-channel {
+    display: inline-flex;
+    background-color: #2b4095;
+    padding: 0.15em 0.4em;
+    border-radius: 0.5em;
+    transition: background-color 100ms ease-in-out;
+}
+
+.discord-vc-channel:hover {
+    background-color: #3146ac;
+}
+
 .meeting-can-absent {
     flex: 1;
     display: flex;

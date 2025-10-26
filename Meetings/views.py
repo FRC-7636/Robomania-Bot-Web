@@ -218,12 +218,14 @@ def list_view(request):
     ):
         return redirect(f"{reverse('meeting_list')}?order_by=pk")
     meetings = meetings.order_by(request.GET["order_by"])
+    check_roles_and_channels()
     return render(
         request,
         "Meetings/list.html",
         {
             "meetings": meetings,
             "can_create": request.user.has_perm("Meetings.add_dmeeting"),
+            "channels": CHANNELS,
         },
     )
 

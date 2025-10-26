@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load compress %}
+{% load to_dc_format %}
 
 {% block head %}
     {% compress css %}
@@ -75,7 +76,9 @@
                                 </span>
                                 </div>
                                 <div class="vertical-spacer"></div>
-                                <span class="meeting-item-text meeting-location">{{ meeting.location }}</span>
+                                <span class="meeting-item-text meeting-location">
+                                    {% autoescape off %}{{ meeting.location|to_dc_format:channels }}{% endautoescape %}
+                                </span>
                                 <div class="vertical-spacer"></div>
                                 <span class="meeting-item-text meeting-can-absent">
                                 {% if meeting.can_absent %}
