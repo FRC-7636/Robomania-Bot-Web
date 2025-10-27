@@ -138,10 +138,11 @@ def index(request, meeting_id):
         "Meetings.change_dmeeting"
     ) and request.user.has_perm("Meetings.delete_dmeeting")
     reviewed_absent_requests = meeting.absent_requests.exclude(status="pending")
-    can_sign_in = request.user.has_perm("Meetings.add_meetingsignin") and not (
+    can_create_sign_in = request.user.has_perm("Meetings.add_meetingsignin") and not (
         meeting.end_time and meeting.end_time < now
     )
-    if can_sign_in:
+    can_view_sign_in = request.user.has_perm("Meetings.view_meetingsignin")
+    if can_view_sign_in:
         sign_ins = meeting.sign_ins.all()
         condensed_sign_ins = []
         for sign_in in sign_ins:
@@ -198,7 +199,8 @@ def index(request, meeting_id):
             "reason_not_absent": reason_not_absent,
             "can_edit": can_edit,
             "reviewed_absent_requests": reviewed_absent_requests,
-            "can_sign_in": can_sign_in,
+            "can_create_sign_in": can_create_sign_in,
+            "can_view_sign_in": can_view_sign_in,
             "sign_ins": condensed_sign_ins,
             "CHANNELS": CHANNELS,
         },
