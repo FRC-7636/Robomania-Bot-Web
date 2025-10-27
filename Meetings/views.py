@@ -7,7 +7,6 @@ from django.conf import settings
 import datetime
 from zoneinfo import ZoneInfo
 import json
-from pprint import pprint
 import logging
 
 from rest_framework.authentication import TokenAuthentication
@@ -39,7 +38,6 @@ def update_channels(**kwargs):
     CHANNELS = kwargs.get("channels", {})
 
 
-# TODO: 伺服器初次啟動時，此處似乎不會接收到訊號，導致 ROLES 和 CHANNELS 皆為空值
 role_update_signal.connect(update_roles)
 channel_update_signal.connect(update_channels)
 
