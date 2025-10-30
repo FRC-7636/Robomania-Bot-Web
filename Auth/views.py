@@ -34,7 +34,7 @@ def to_next_page(request):
     return "/"
 
 
-def login_procedure(request, user):
+def login_procedure(request, user, method):
     login(request, user)
     x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
     if x_forwarded_for:
@@ -50,6 +50,7 @@ def login_procedure(request, user):
             "type": "auth.new_login",
             "ip": ip,
             "user_agent": user_agent,
+            "method": method,
         },
     )
     return redirect(to_next_page(request))
@@ -79,7 +80,7 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            return login_procedure(request, user)
+            return login_procedure(request, user, "Discord ID & 密碼")
         else:
             return render(
                 request,
@@ -138,7 +139,7 @@ def discord_login_view(request):
         ):
             user = DMember.objects.get(discord_id=discord_id)
             # login the user
-            return login_procedure(request, user)
+            return login_procedure(request, user, "Discord OAuth2")
         else:
             return register_view(request, user_info)
     else:
@@ -161,7 +162,7 @@ def code_login_view(request):
                 )
             user = login_code_obj.member
             login_code_obj.delete()  # Delete the code after use
-            return login_procedure(request, user)
+            return login_procedure(request, user, f"登入代碼 ({code})")
         else:
             return redirect(
                 "/accounts/login/?error=提供的登入代碼不正確，請重新輸入。"
