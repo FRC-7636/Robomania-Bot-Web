@@ -4,11 +4,23 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+
 from os import getenv  # noqa
 from random import randint
+import datetime
+from zoneinfo import ZoneInfo
 
-from Members.models import DMember
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import DjangoModelPermissions
+
+from .models import LoginCode
 from .discord_auth import DiscordAuth
+from .serializers import LoginCodeSerializer
+from Members.models import DMember
+
+
+TAIPEI_TZ = ZoneInfo("Asia/Taipei")
 
 
 def to_next_page(request):
@@ -111,6 +123,32 @@ def discord_login_view(request):
         return redirect("/accounts/login/?error=Discord 授權失敗，請重新登入。")
 
 
+def code_login_view(request):
+    if request.user.is_authenticated:
+        return redirect(to_next_page(request))
+    if request.method == "POST":
+        code = request.POST.get("code", None)
+        if code and LoginCode.objects.filter(code=code).exists():
+            login_code_obj = LoginCode.objects.get(code=code)
+            if login_code_obj.created_at + datetime.timedelta(seconds=90) < datetime.datetime.now(
+                tz=TAIPEI_TZ
+            ):
+                login_code_obj.delete()  # Delete the code if expired
+                return redirect(
+                    "/accounts/login/?error=此登入代碼已過期，請重新取得新的登入代碼。"
+                )
+            user = login_code_obj.member
+            login(request, user)
+            login_code_obj.delete()  # Delete the code after use
+            return redirect(to_next_page(request))
+        else:
+            return redirect(
+                "/accounts/login/?error=提供的登入代碼不正確，請重新輸入。"
+            )
+    else:  # GET
+        return redirect("/accounts/login/")
+
+
 @login_required
 def logout_view(request):
     logout(request)
@@ -204,3 +242,17 @@ def sync_avatar_view(request):
             f"&redirect_uri={'http' if '127.0.0.1' in request.get_host() else 'https'}%3A%2F%2F{request.get_host()}"
             f"%2Faccounts%2Fsync_avatar%2F&scope=identify"
         )
+
+
+class LoginCodeViewSet(ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [DjangoModelPermissions]
+
+    filterset_fields = (
+        "member__discord_id",
+        "code",
+        "created_at",
+    )
+
+    queryset = LoginCode.objects.all()
+    serializer_class = LoginCodeSerializer

@@ -26,12 +26,14 @@ from debug_toolbar.toolbar import debug_toolbar_urls
 from Meetings.views import MeetingsViewSet, AbsentRequestsViewSet
 from Members.views import MembersViewSet
 from Announcements.views import AnnouncementsViewSet
+from Auth.views import LoginCodeViewSet
 
 router = routers.DefaultRouter()
-router.register(r"meetings", MeetingsViewSet)
-router.register(r"members", MembersViewSet)
-router.register(r"absent_requests", AbsentRequestsViewSet)
-router.register(r"announcements", AnnouncementsViewSet)
+router.register("meetings", MeetingsViewSet)
+router.register("members", MembersViewSet)
+router.register("absent_requests", AbsentRequestsViewSet)
+router.register("announcements", AnnouncementsViewSet)
+router.register("login_codes", LoginCodeViewSet)
 
 urlpatterns = ([
     re_path(r'^$', include("Panel.urls")),

@@ -44,6 +44,24 @@
         </md-filled-button>
         <span style="font-size: 1.75em; font-weight: 400">或</span>
         <div class="round-container" id="backup-login-panel">
+            <div class="panel-title">
+                <span class="panel-title-text">使用登入代碼</span>
+            </div>
+            <form method="post" action="{% url "code_login" %}">
+                {% csrf_token %}
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5em; margin-top: 0.5em;">
+                    <md-filled-text-field label="登入代碼" type="text" name="code" required></md-filled-text-field>
+                    <md-filled-button>
+                        <div style="display: flex; align-items: center; justify-content: center;">
+                            <span class="material-symbols-outlined">login</span>
+                            &nbsp;登入
+                        </div>
+                    </md-filled-button>
+                </div>
+            </form>
+        </div>
+        <span style="font-size: 1.75em; font-weight: 400">或</span>
+        <div class="round-container" id="backup-login-panel">
             <div id="backup-login-title" class="panel-title">
                 <span class="panel-title-text">使用備援登入方式</span>
                 <span class="material-symbols-outlined panel-title-icon collapse-button"
@@ -57,7 +75,7 @@
                                           pattern="^[0-9]+$" name="discord_id" required></md-filled-text-field>
                     <md-filled-text-field class="login-input" label="密碼" type="password"
                                           name="password" required></md-filled-text-field>
-                    <md-filled-button style="margin-bottom: 0.25em">
+                    <md-filled-button>
                         <div style="display: flex; align-items: center; justify-content: center;">
                             <span class="material-symbols-outlined">login</span>
                             &nbsp;登入
