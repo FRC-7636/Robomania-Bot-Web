@@ -14,6 +14,9 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import DjangoModelPermissions
 
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
 from .models import LoginCode
 from .discord_auth import DiscordAuth
 from .serializers import LoginCodeSerializer
@@ -29,6 +32,27 @@ def to_next_page(request):
         del request.session["next"]
         return next_url
     return "/"
+
+
+def login_procedure(request, user):
+    login(request, user)
+    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(",")[-1].strip()
+    else:
+        ip = request.META.get("REMOTE_ADDR", "(未知)")
+    user_agent = request.META.get("HTTP_USER_AGENT", "(未知)")
+    # send websocket notification
+    channel = get_channel_layer()
+    async_to_sync(channel.group_send)(
+        "auth_notify",
+        {
+            "type": "auth.new_login",
+            "ip": ip,
+            "user_agent": user_agent,
+        },
+    )
+    return redirect(to_next_page(request))
 
 
 def pick_avatar_from_aobuta() -> str:
@@ -55,8 +79,7 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            login(request, user)
-            return redirect(to_next_page(request))
+            return login_procedure(request, user)
         else:
             return render(
                 request,
@@ -115,8 +138,7 @@ def discord_login_view(request):
         ):
             user = DMember.objects.get(discord_id=discord_id)
             # login the user
-            login(request, user)
-            return redirect(to_next_page(request))
+            return login_procedure(request, user)
         else:
             return register_view(request, user_info)
     else:
@@ -138,9 +160,8 @@ def code_login_view(request):
                     "/accounts/login/?error=此登入代碼已過期，請重新取得新的登入代碼。"
                 )
             user = login_code_obj.member
-            login(request, user)
             login_code_obj.delete()  # Delete the code after use
-            return redirect(to_next_page(request))
+            return login_procedure(request, user)
         else:
             return redirect(
                 "/accounts/login/?error=提供的登入代碼不正確，請重新輸入。"

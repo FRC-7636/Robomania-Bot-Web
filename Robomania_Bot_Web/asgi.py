@@ -23,6 +23,7 @@ django.setup()
 import Meetings.routing
 import Members.routing
 import Announcements.routing
+import Auth.routing
 
 
 django_asgi_app = get_asgi_application()
@@ -37,6 +38,7 @@ application = ProtocolTypeRouter(
                     Meetings.routing.websocket_urlpatterns
                     + Members.routing.websocket_urlpatterns
                     + Announcements.routing.websocket_urlpatterns
+                    + Auth.routing.websocket_urlpatterns
                 )
             )
         ),
