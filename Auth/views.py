@@ -48,6 +48,7 @@ def login_procedure(request, user, method):
         "auth_notify",
         {
             "type": "auth.new_login",
+            "member_discord_id": user.discord_id,
             "ip": ip,
             "user_agent": user_agent,
             "method": method,
