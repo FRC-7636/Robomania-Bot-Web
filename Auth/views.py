@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect
 
 from os import getenv  # noqa
 from random import randint
+import logging
 import datetime
 from zoneinfo import ZoneInfo
 
@@ -54,6 +55,7 @@ def login_procedure(request, user, method):
             "method": method,
         },
     )
+    logging.info(f"Member {user.discord_id} logged in via {method} from IP {ip} with UA {user_agent}.")
     return redirect(to_next_page(request))
 
 
