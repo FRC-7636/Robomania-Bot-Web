@@ -50,7 +50,7 @@ def announce_to_discord(announcement: Announcement):
 @everyone
 > 此公告由 Robomania Bot Web 同步發布至此。
 > 發布時間：<t:{int(announcement.published_at.timestamp())}:F>
-> [點此查看公告詳情](https://frc7636.dpdns.org/announcement/{announcement.pk}/)
+> [點此查看公告詳情](https://panel.team7636.com/announcement/{announcement.pk}/)
 # {announcement.title}
 {announcement.content}
 """
@@ -62,7 +62,6 @@ def announce_to_discord(announcement: Announcement):
             webhook_url,
             headers={"Content-Type": "application/json"},
             json={
-                "avatar_url": "https://frc7636.dpdns.org/static/img/7636.webp",
                 "content": message
             },
         )
