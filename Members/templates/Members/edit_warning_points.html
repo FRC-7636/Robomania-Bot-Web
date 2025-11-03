@@ -25,8 +25,15 @@
                 <div class="profile-info"
                      style="display: flex; flex-direction: column; height: -webkit-fill-available;">
                     <p><strong>真實姓名：</strong>{{ member.real_name }}</p>
-                    <p><strong>目前點數：</strong>{{ member.warning_points }} 點</p>
-                    <p><strong>操作後點數：</strong>{{ member.warning_points }} 點</p>
+                    <p><strong>目前點數：</strong>
+                        <span id="before-points">{{ member.warning_points }}</span>&nbsp;點
+                    </p>
+                    <p><strong>操作後點數：</strong>
+                        <span id="after-points">{{ member.warning_points }}</span>&nbsp;點
+                        <span id="fix-hint" style="font-size: smaller; font-style: italic; display: none">
+                            (系統自動補足點數至 0)
+                        </span>
+                    </p>
                 </div>
             </div>
             <div class="round-container" id="team-rules">

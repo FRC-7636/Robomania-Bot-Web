@@ -1,3 +1,19 @@
+function updatePoints() {
+    const beforePoints = parseFloat(document.getElementById("before-points").innerText);
+    const changePoints = parseFloat(document.getElementById("points-input").value) || 0.0;
+    const fixHint = document.getElementById("fix-hint");
+    let afterPoints = 0.0;
+
+    if (beforePoints + changePoints >= 0) {
+        afterPoints = beforePoints + changePoints;
+        fixHint.style.display = "none";
+    } else {
+        fixHint.style.display = "contents";
+    }
+
+    document.getElementById("after-points").innerText = afterPoints.toFixed(1);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("submit-button").addEventListener("click", () => {
         const pointsInput = document.getElementById("points-input");
@@ -30,5 +46,8 @@ document.addEventListener("DOMContentLoaded", () => {
             pointsInput.readOnly = true;
             notesInput.required = false;
         }
+        updatePoints();
     })
+
+    document.getElementById("points-input").addEventListener("change", updatePoints);
 })
