@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
         annText.textContent = "(目前沒有釘選中的公告)";
     } else {
         annText.textContent = `【${announcements[0].title}】${announcements[0].content}`;
-        annLink.href = `{% url "announcement_info" 0 %}`.replace('/0/', `/${announcements[0].id}/`);
+        annLink.href = `/announcement/0/`.replace('/0/', `/${announcements[0].id}/`);
         let i = 1;
         if (announcements.length > 1) {
             setInterval(() => {
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }, 500)
                 setTimeout(() => {
                     annText.textContent = `【${announcements[i].title}】${announcements[i].content}`;
-                    annLink.href = `{% url "announcement_info" 0 %}`.replace('/0/', `/${announcements[i].id}/`);
+                    annLink.href = `/announcement/0/`.replace('/0/', `/${announcements[i].id}/`);
                     annText.style.opacity = "1";
                     i = (i + 1) % announcements.length;
                 }, 1000)
