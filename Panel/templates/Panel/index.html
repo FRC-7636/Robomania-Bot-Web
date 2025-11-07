@@ -76,6 +76,28 @@
                         <span class="panel-title-text">近期會議</span>
                     </div>
                     <div id="meetings-container">
+                    {% if ongoing_meetings.count > 0 %}
+                        <div class="round-container inner-container meetings-list-div" id="ongoing-meetings-list-div">
+                            <div style="display: flex; align-items: center;">
+                                <md-icon style="color: black;">calendar_clock</md-icon>
+                                <strong style="color: black; margin-left: 0.2em">進行中的會議</strong>
+                            </div>
+                            <div class="meetings-list">
+                                <md-list id="ongoing-meetings-list">
+                                    {% for meeting in ongoing_meetings %}
+                                        <md-list-item type="link" target="_blank" href="{% url 'meeting_info' meeting.id %}">
+                                            <div class="meeting-text" slot="headline">{{ meeting.name }}</div>
+                                            <div class="meeting-text" slot="supporting-text">開始於 {{ meeting.start_time|date:"Y-m-d H:i" }}</div>
+                                            <md-icon class="meeting-text" slot="end">open_in_new</md-icon>
+                                        </md-list-item>
+                                        <div class="divider meeting-divider"></div>
+                                    {% empty %}
+                                        <md-list-item>沒有即將在 2 週內開始的會議</md-list-item>
+                                    {% endfor %}
+                                </md-list>
+                            </div>
+                        </div>
+                    {% endif %}
                         <div class="round-container inner-container meetings-list-div" id="upcoming-meetings-list-div">
                             <div style="display: flex; align-items: center;">
                                 <md-icon style="color: black;">upcoming</md-icon>

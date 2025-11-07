@@ -1,5 +1,7 @@
 # coding=utf-8
 from django.shortcuts import render
+from django.db.models import Q
+
 import datetime
 from zoneinfo import ZoneInfo
 from markdown import Markdown
@@ -55,6 +57,10 @@ def index(request):
         upcoming_meetings = DMeeting.objects.filter(start_time__range=(now, two_weeks_ahead)).order_by("start_time")
         past_meetings = (DMeeting.objects.filter(start_time__lt=now, end_time__range=(two_weeks_ago, now))
                          .order_by("-end_time"))
+        # fetch ongoing meetings
+        start_time_q = Q(start_time__lte=now)
+        end_time_q = Q(end_time=None) | Q(end_time__gte=now)
+        ongoing_meetings = DMeeting.objects.filter(start_time_q & end_time_q).order_by("start_time")
         recent_warn_history = request.user.warning_history.order_by("-time")[:5]
         return render(
             request,
@@ -63,6 +69,7 @@ def index(request):
                 "pinned_announcements": pinned_announcements_condensed,
                 "upcoming_meetings": upcoming_meetings,
                 "past_meetings": past_meetings,
+                "ongoing_meetings": ongoing_meetings,
                 "recent_warn_history": recent_warn_history
             }
         )

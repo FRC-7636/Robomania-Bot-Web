@@ -244,3 +244,20 @@ p {
     width: 100%;
     height: 100%;
 }
+
+#ongoing-meetings-list-div {
+    flex: none;
+    animation: breathing 3s linear infinite alternate;
+}
+
+@keyframes breathing {
+    0% {
+        background-color: lightgray;
+    }
+    50% {
+        background-color: rgb(161, 213, 255);
+    }
+    100% {
+        background-color: lightgray;
+    }
+}
