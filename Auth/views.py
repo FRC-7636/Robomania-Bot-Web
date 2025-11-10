@@ -72,6 +72,8 @@ def pick_avatar_from_aobuta() -> str:
     }
     icon_char = randint(1, 7)
     icon_num = randint(1, icon_amount[icon_char])
+    if icon_num == icon_amount[icon_char]:  # the last icon is always "dai"
+        icon_num = "dai"
     return base_url + f"icon_0{icon_char}_{icon_num}.jpg"
 
 
