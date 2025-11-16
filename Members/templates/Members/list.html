@@ -51,7 +51,8 @@
                                 <div class="member-avatar"
                                      style="display: flex; align-items: center; justify-content: center;">
                                     <img class="member-avatar-img" src="{{ member.avatar }}"
-                                         alt="{{ member.real_name }} 的頭像">
+                                         onerror="this.src='{% static 'img/user.png' %}'"
+                                         alt="{{ member.real_name|escape }} 的頭像">
                                 </div>
                                 <div class="vertical-spacer"></div>
                                 <span class="member-item-text member-real-name">{{ member.real_name }}</span>
