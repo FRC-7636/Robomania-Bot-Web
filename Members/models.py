@@ -51,6 +51,7 @@ class DMember(AbstractBaseUser, PermissionsMixin):
     warning_points = models.FloatField("警告點數", default=0.0)
     email_address = models.EmailField("Email", blank=True, null=True)
     avatar = models.URLField("頭像", blank=True, null=True)
+    allow_login = models.BooleanField("允許登入", default=True)
 
     is_staff = models.BooleanField(default=False)
     objects = DMemberManager()

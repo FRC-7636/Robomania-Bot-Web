@@ -3,9 +3,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 
-from os import getenv  # noqa
+from os import getenv
 from random import randint
 import logging
 import datetime
@@ -36,6 +36,10 @@ def to_next_page(request):
 
 
 def login_procedure(request, user, method):
+    if not user.allow_login:
+        return redirect(
+            f"{reverse('login')}?error=此帳號已被禁止登入。若有任何問題，請聯絡主幹或管理員。"
+        )
     login(request, user)
     x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
     if x_forwarded_for:
