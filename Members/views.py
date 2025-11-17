@@ -1,9 +1,10 @@
 # coding=utf-8
-from django.http import HttpResponseForbidden, HttpResponseBadRequest
+from django.http import HttpResponseForbidden, HttpResponseBadRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect, reverse
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Group
-from json import load, loads, JSONDecodeError
+from django.contrib.sessions.models import Session
+from json import load, loads, dumps, JSONDecodeError
 from pprint import pprint
 from os import path
 from logging import warning
@@ -116,6 +117,25 @@ def edit(request, member_id):
             "joined_groups": joined_groups,
         }
         return render(request, "Members/edit.html", data)
+
+
+@permission_required("Members.change_dmember")
+def disable_member(request, member_id):
+    if request.method != "POST":
+        return HttpResponseForbidden()
+    # Disable the member
+    member = get_object_or_404(DMember, discord_id=member_id)
+    member.allow_login = False
+    member.save()
+    # Sign out all sessions of the user
+    all_sessions = Session.objects.all()
+    session_count = 0
+    for session in all_sessions:
+        session_data = session.get_decoded()
+        if session_data.get("_auth_user_id") == str(member.id):
+            session.delete()
+            session_count += 1
+    return HttpResponse(dumps({"signed_out_sessions": session_count}), content_type="application/json")
 
 
 @login_required

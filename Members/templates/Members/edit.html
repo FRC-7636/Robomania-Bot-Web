@@ -74,12 +74,21 @@
                     </md-chip-set>
                 </div>
             </div>
-            <md-filled-button type="button" id="submit-button">
-                <div style="display: flex; align-items: center; justify-content: center;">
-                    <span class="material-symbols-outlined button-icon">check</span>
-                    <span>儲存變更</span>
-                </div>
-            </md-filled-button>
+            <div id="button-container">
+                <md-filled-button type="button" id="submit-button" style="flex: 3;">
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                        <span class="material-symbols-outlined button-icon">check</span>
+                        <span>儲存變更</span>
+                    </div>
+                </md-filled-button>
+                <md-filled-tonal-button type="button" id="disable-button" {% if not member.allow_login %}disabled{% endif %}
+                                  style="flex: 1; --md-filled-tonal-button-container-color: #ff3333;">
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                        <span class="material-symbols-outlined button-icon">block</span>
+                        <span>停用此成員的帳號</span>
+                    </div>
+                </md-filled-tonal-button>
+            </div>
         </form>
     </div>
 {% endblock %}
