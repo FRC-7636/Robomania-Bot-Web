@@ -41,3 +41,28 @@ class UserFileForm(ModelForm):
             'file': '檔案物件',
             'name': '名稱',
         }
+
+
+def mdimage_file_path(instance, filename):
+    return f"mdimages/{instance.uuid}"
+
+
+class MDImage(models.Model):
+    class Meta:
+        verbose_name = "Markdown 附圖"
+        verbose_name_plural = "Markdown 附圖"
+        ordering = ['-uploaded_at']
+
+    def __str__(self):
+        return str(self.uuid)
+
+    image = models.ImageField("圖片", upload_to=mdimage_file_path, max_length=300)
+    uuid = models.UUIDField("UUID", default=uuid4, editable=False, unique=True)
+    uploader = models.ForeignKey("Members.DMember", verbose_name="上傳者", on_delete=models.CASCADE)
+    uploaded_at = models.DateTimeField("上傳時間", auto_now_add=True)
+
+
+class MDImageForm(ModelForm):
+    class Meta:
+        model = MDImage
+        fields = ['image']

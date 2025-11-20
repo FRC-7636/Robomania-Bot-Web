@@ -137,11 +137,23 @@
                         const easyMDE = new EasyMDE({
                             element: document.getElementById("md-editor"),
                             forceSync: true,
-                            autosave: {
-                                enabled: true,
-                                uniqueId: "meeting-description-editor",
-                            },
                             spellChecker: false,
+                            uploadImage: true,
+                            imageUploadEndpoint: "{% url 'mdimage_upload' %}",
+                            imageCSRFToken: document.querySelector('input[name="csrfmiddlewaretoken"]').value,
+                            imageTexts: {
+                                sbInit: "拖放或貼上圖片到此處以上傳",
+                                sbOnDragEnter: "放開以上傳圖片",
+                                sbOnDrop: "正在上傳「#images_names#」...",
+                                sbProgress: "正在上傳「#file_name#」... (#progress#%)",
+                                sbOnUploaded: "已上傳「#image_name#」",
+                            },
+                            errorMessages: {
+                                noFileGiven: "必須選擇一個檔案。",
+                                typeNotAllowed: "「#image_name#」是不允許的檔案類型。",
+                                fileTooLarge: "圖片「#image_name#」的尺寸 #image_size# 超過最大允許尺寸 #image_max_size#。",
+                                importError: "上傳圖片「#image_name#」時發生錯誤。"
+                            }
                         });
                         {% autoescape off %}
                         easyMDE.value(`{{ meeting_description }}`);

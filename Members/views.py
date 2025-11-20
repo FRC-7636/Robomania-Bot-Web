@@ -1,5 +1,9 @@
 # coding=utf-8
-from django.http import HttpResponseForbidden, HttpResponseBadRequest, HttpResponse
+from django.http import (
+    HttpResponseBadRequest,
+    HttpResponse,
+    HttpResponseNotAllowed,
+)
 from django.shortcuts import get_object_or_404, render, redirect, reverse
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Group
@@ -122,7 +126,7 @@ def edit(request, member_id):
 @permission_required("Members.change_dmember")
 def disable_member(request, member_id):
     if request.method != "POST":
-        return HttpResponseForbidden()
+        return HttpResponseNotAllowed(["POST"])
     # Disable the member
     member = get_object_or_404(DMember, discord_id=member_id)
     member.allow_login = False

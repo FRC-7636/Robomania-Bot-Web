@@ -1,6 +1,6 @@
 # coding=utf-8
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.conf import settings
 from django.utils.http import content_disposition_header
@@ -10,8 +10,7 @@ from magika import Magika
 from uuid import uuid4
 from os import remove
 
-from .models import UserFile, UserFileForm
-
+from .models import UserFile, UserFileForm, MDImage, MDImageForm
 
 MAGIKA = Magika()
 TEMP_DIR = settings.BASE_DIR / "temp"
@@ -28,7 +27,7 @@ def uploader_upload(request):
             user_file = form.save(commit=False)
             user_file.uploader = request.user
             user_file.require_login = (
-                request.POST.get("require_login", "false") == "true"
+                    request.POST.get("require_login", "false") == "true"
             )
             require_password = request.POST.get("require_password", "false") == "true"
             if require_password:
@@ -94,4 +93,46 @@ def uploader_download(request, uuid):
             filename=user_file.name,
         )
         response["X-Accel-Redirect"] = user_file.file.url
+    return response
+
+
+@login_required()
+def mdimage_upload(request):
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    form = MDImageForm(request.POST, request.FILES)
+    if form.is_valid():
+        md_image: MDImage = form.save(commit=False)
+        md_image.uploader = request.user
+        # check the file before saving
+        file = request.FILES["image"]
+        # limit file size to 2 MB
+        if file.size > 2 * 1024 * 1024:
+            return HttpResponse('{"error":"fileTooLarge"}', content_type="application/json", status=413)
+        # get MIME type of the uploaded file
+        # save the file to a temporary location instead of reading it directly
+        temp_path = TEMP_DIR / str(uuid4())
+        with open(temp_path, "wb+") as destination:
+            for chunk in file.chunks():
+                destination.write(chunk)
+        file_type = MAGIKA.identify_path(temp_path).output.group
+        if file_type != "image":
+            # delete the temporary file after getting the MIME type
+            remove(temp_path)
+            return HttpResponse('{"error":"typeNotAllowed"}', content_type="application/json", status=415)
+        # delete the temporary file after getting the MIME type
+        remove(temp_path)
+        md_image.save()
+        return HttpResponse(
+            f'{{"data":{{"filePath":"user_uploads/mdimages/{md_image.uuid}.png"}}}}',
+            content_type="application/json",
+            status=200,
+        )
+    return HttpResponse('{"error":"typeNotAllowed"}', content_type="application/json", status=415)
+
+
+def mdimage_download(request, uuid):
+    md_image = get_object_or_404(MDImage, uuid=uuid)
+    response = HttpResponse(content_type="image/*")
+    response["X-Accel-Redirect"] = md_image.image.url
     return response
