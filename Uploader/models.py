@@ -4,7 +4,7 @@ from django.forms import ModelForm
 from uuid import uuid4
 
 
-def file_path(instance, filename):
+def user_file_path(instance, filename):
     """
     Generate a file path for the uploaded file.
     The path will be 'uploader/<uuid>/<filename>'.
@@ -22,7 +22,7 @@ class UserFile(models.Model):
     def __str__(self):
         return f"{self.name} ({self.mimetype})"
 
-    file = models.FileField("檔案物件", upload_to=file_path, max_length=300)
+    file = models.FileField("檔案物件", upload_to=user_file_path, max_length=300)
     uuid = models.UUIDField("UUID", default=uuid4, editable=False, unique=True)
     name = models.CharField("名稱", help_text="使用者下載檔案時，將顯示此名稱", max_length=20)
     mimetype = models.CharField("MIME 類型", max_length=255)

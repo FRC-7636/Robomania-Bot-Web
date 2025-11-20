@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             name="file",
             field=models.FileField(
                 max_length=300,
-                upload_to=Uploader.models.file_path,
+                upload_to=Uploader.models.user_file_path,
                 verbose_name="檔案物件",
             ),
         ),

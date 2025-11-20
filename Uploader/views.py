@@ -19,7 +19,7 @@ TEMP_DIR = settings.BASE_DIR / "temp"
 
 # Create your views here.
 @login_required()
-def index(request):
+def uploader_upload(request):
     if request.method == "POST":
         form = UserFileForm(request.POST, request.FILES)
         if request.FILES["file"].size > 100 * 1024 * 1024:
@@ -58,7 +58,7 @@ def index(request):
     return render(request, "Uploader/index.html")
 
 
-def download(request, uuid):
+def uploader_download(request, uuid):
     user_file = get_object_or_404(UserFile, uuid=uuid)
     if request.method == "DELETE":
         if request.user.has_perm("Uploader.delete_userfile"):
