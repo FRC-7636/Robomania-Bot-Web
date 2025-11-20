@@ -49,10 +49,10 @@ def uploader_upload(request):
             # delete the temporary file after getting the MIME type
             remove(temp_path)
             user_file.save()
-            return redirect(f"{reverse('upload_index')}?success={str(user_file.uuid)}")
+            return redirect(f"{reverse('uploader_upload')}?success={str(user_file.uuid)}")
         else:
             return redirect(
-                f"{reverse('upload_index')}?error=未知錯誤，請檢查託管設定。"
+                f"{reverse('uploader_upload')}?error=未知錯誤，請檢查託管設定。"
             )
     return render(request, "Uploader/index.html")
 
