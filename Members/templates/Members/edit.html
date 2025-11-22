@@ -81,13 +81,23 @@
                         <span>儲存變更</span>
                     </div>
                 </md-filled-button>
-                <md-filled-tonal-button type="button" id="disable-button" {% if not member.allow_login %}disabled{% endif %}
-                                  style="flex: 1; --md-filled-tonal-button-container-color: #ff3333;">
-                    <div style="display: flex; align-items: center; justify-content: center;">
-                        <span class="material-symbols-outlined button-icon">block</span>
-                        <span>停用此成員的帳號</span>
-                    </div>
-                </md-filled-tonal-button>
+                {% if member.allow_login %}
+                    <md-filled-tonal-button type="button" id="disable-button"
+                                      style="flex: 1; --md-filled-tonal-button-container-color: #ff3333;">
+                        <div style="display: flex; align-items: center; justify-content: center;">
+                            <span class="material-symbols-outlined button-icon">block</span>
+                            <span>停用此成員的帳號</span>
+                        </div>
+                    </md-filled-tonal-button>
+                {% else %}
+                    <md-filled-tonal-button type="button" id="enable-button"
+                                      style="flex: 1; --md-filled-tonal-button-container-color: #ff3333;">
+                        <div style="display: flex; align-items: center; justify-content: center;">
+                            <span class="material-symbols-outlined button-icon">restart_alt</span>
+                            <span>重新啟用此成員的帳號</span>
+                        </div>
+                    </md-filled-tonal-button>
+                {% endif %}
             </div>
         </form>
     </div>

@@ -1,7 +1,7 @@
 # coding=utf-8
 from django.http import (
-    HttpResponseBadRequest,
     HttpResponse,
+    HttpResponseBadRequest,
     HttpResponseNotAllowed,
 )
 from django.shortcuts import get_object_or_404, render, redirect, reverse
@@ -140,6 +140,17 @@ def disable_member(request, member_id):
             session.delete()
             session_count += 1
     return HttpResponse(dumps({"signed_out_sessions": session_count}), content_type="application/json")
+
+
+@permission_required(["Members.change_dmember"])
+def enable_member(request, member_id):
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    # Enable the member
+    member = get_object_or_404(DMember, discord_id=member_id)
+    member.allow_login = True
+    member.save()
+    return HttpResponse()
 
 
 @login_required

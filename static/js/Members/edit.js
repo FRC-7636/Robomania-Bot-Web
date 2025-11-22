@@ -49,27 +49,52 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("member-editor-form").requestSubmit();
     })
 
-    document.getElementById("disable-button").addEventListener("click", () => {
-        if (confirm("確定要停用此成員的帳號？\n停用後，此成員將無法再次登入此網頁，所有現有的工作階段亦會被登出。")) {
-            fetch(window.location.origin + window.location.pathname.replace("edit", "disable"), {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": document.querySelector('input[name="csrfmiddlewaretoken"]').value,
-                }})
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Response not OK. (HTTP status " + response.status + ")");
-                }
-                return response.json();
-            })
-            .then(data => {
-                alert(`已成功停用此成員的帳號。\n使用者的 ${data.signed_out_sessions} 個工作階段已被登出。`);
-                window.location.reload();
-            })
-            .catch((error) => {
-                alert("停用此帳號時失敗，請稍後再試。");
-                console.error(error);
-            });
-        }
-    });
+    if (document.getElementById("disable-button") !== null) {
+        document.getElementById("disable-button").addEventListener("click", () => {
+            if (confirm("確定要停用此成員的帳號？\n停用後，此成員將無法再次登入此網頁，所有現有的工作階段亦會被登出。")) {
+                fetch(window.location.origin + window.location.pathname.replace("edit", "disable"), {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": document.querySelector('input[name="csrfmiddlewaretoken"]').value,
+                    }})
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Response not OK. (HTTP status " + response.status + ")");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(`已成功停用此成員的帳號。\n使用者的 ${data.signed_out_sessions} 個工作階段已被登出。`);
+                    window.location.reload();
+                })
+                .catch((error) => {
+                    alert("停用此帳號時失敗，請稍後再試。");
+                    console.error(error);
+                });
+            }
+        });
+    } else if (document.getElementById("enable-button") !== null) {
+        document.getElementById("enable-button").addEventListener("click", () => {
+            if (confirm("確定要重新啟用此成員的帳號？")) {
+                fetch(window.location.origin + window.location.pathname.replace("edit", "enable"), {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": document.querySelector('input[name="csrfmiddlewaretoken"]').value,
+                    }})
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Response not OK. (HTTP status " + response.status + ")");
+                    }
+                    alert("已成功重啟此成員的帳號。");
+                    window.location.reload();
+                })
+                .catch((error) => {
+                    alert("啟用此帳號時失敗，請稍後再試。");
+                    console.error(error);
+                });
+            }
+        });
+    } else {
+        console.error("Neither disable-button nor enable-button found.");
+    }
 })
