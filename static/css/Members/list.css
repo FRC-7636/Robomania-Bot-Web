@@ -8,6 +8,10 @@
     background-color: darkgray;
 }
 
+.disabled-member {
+    filter: contrast(50%);
+}
+
 .member-item {
     display: flex;
     width: 100%;

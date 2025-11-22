@@ -44,7 +44,8 @@
                     </md-list-item>
                     <div class="divider"></div>
                     {% for member in members %}
-                        <md-list-item type="link" href="{% url 'member_info' member.discord_id %}">
+                        <md-list-item type="link" href="{% url 'member_info' member.discord_id %}"
+                        {% if not member.allow_login %}class="disabled-member"{% endif %}>
                             <div class="member-item">
                                 <span class="member-item-text member-id">{{ member.pk }}</span>
                                 <div class="vertical-spacer"></div>
