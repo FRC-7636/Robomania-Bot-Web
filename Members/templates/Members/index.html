@@ -15,6 +15,14 @@
 {% block main_content %}
     <div class="soft-container" id="member-info-container">
         <h1 style="margin: 0.3em 0;">「{{ member.real_name }}」的資訊</h1>
+        {% if not member.allow_login %}
+            <div
+                style="display: flex; flex-direction: row; gap: 0.25em; padding: 0.2em; border-radius: 0.5em;
+                       background-color: rgba(255, 255, 255, 0.2); font-style: italic;">
+                <span class="material-symbols-outlined">error</span>
+                <span>此成員的帳號已遭到停用。</span>
+            </div>
+        {% endif %}
         <div id="panels-container">
             <div class="round-container panel" id="member-info-panel">
                 <div class="panel-title">
