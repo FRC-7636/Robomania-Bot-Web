@@ -9,7 +9,7 @@
 }
 
 .disabled-member {
-    filter: contrast(50%);
+    filter: contrast(25%);
 }
 
 .member-item {
