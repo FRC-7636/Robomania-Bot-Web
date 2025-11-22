@@ -3,17 +3,39 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.conf import settings
+from django.core.files import File
 from django.utils.http import content_disposition_header
 from django.contrib.auth.hashers import make_password, check_password
 
-from magika import Magika
+from magika import Magika, ContentTypeInfo
 from uuid import uuid4
 from os import remove
+from PIL import Image
+import io
 
 from .models import UserFile, UserFileForm, MDImage, MDImageForm
 
 MAGIKA = Magika()
 TEMP_DIR = settings.BASE_DIR / "temp"
+
+
+def get_file_type(file: File) -> ContentTypeInfo:
+    # save the file to a temporary location instead of reading it directly
+    temp_path = TEMP_DIR / str(uuid4())
+    with open(temp_path, "wb+") as destination:
+        for chunk in file.chunks():
+            destination.write(chunk)
+    result = MAGIKA.identify_path(temp_path).output
+    remove(temp_path)
+    return result
+
+
+def image_to_webp(original: File) -> File:
+    img = Image.open(original)
+    output = io.BytesIO()
+    img.save(output, format="WEBP")
+    output.seek(0)
+    return File(output, name=f"{original.name.rsplit('.', 1)[0]}.webp")
 
 
 # Create your views here.
@@ -38,16 +60,7 @@ def uploader_upload(request):
                 if len(password) < 6:
                     return redirect(f"{reverse('upload_index')}?error=密碼長度需至少 6 個字元。")
                 user_file.password = make_password(password)
-            # get MIME type of the uploaded file
-            file = request.FILES["file"]
-            # save the file to a temporary location instead of reading it directly
-            temp_path = TEMP_DIR / str(uuid4())
-            with open(temp_path, "wb+") as destination:
-                for chunk in file.chunks():
-                    destination.write(chunk)
-            user_file.mimetype = MAGIKA.identify_path(temp_path).output.mime_type
-            # delete the temporary file after getting the MIME type
-            remove(temp_path)
+            user_file.mimetype = get_file_type(request.FILES["file"]).mime_type
             user_file.save()
             return redirect(f"{reverse('uploader_upload')}?success={str(user_file.uuid)}")
         else:
@@ -109,22 +122,14 @@ def mdimage_upload(request):
         # limit file size to 2 MB
         if file.size > 2 * 1024 * 1024:
             return HttpResponse('{"error":"fileTooLarge"}', content_type="application/json", status=413)
-        # get MIME type of the uploaded file
-        # save the file to a temporary location instead of reading it directly
-        temp_path = TEMP_DIR / str(uuid4())
-        with open(temp_path, "wb+") as destination:
-            for chunk in file.chunks():
-                destination.write(chunk)
-        file_type = MAGIKA.identify_path(temp_path).output.group
+        file_type = get_file_type(file).group
         if file_type != "image":
-            # delete the temporary file after getting the MIME type
-            remove(temp_path)
             return HttpResponse('{"error":"typeNotAllowed"}', content_type="application/json", status=415)
-        # delete the temporary file after getting the MIME type
-        remove(temp_path)
+        converted_img = image_to_webp(file)
+        md_image.image.save(converted_img.name, converted_img)
         md_image.save()
         return HttpResponse(
-            f'{{"data":{{"filePath":"user_uploads/mdimages/{md_image.uuid}.png"}}}}',
+            f'{{"data":{{"filePath":"user_uploads/mdimages/{md_image.uuid}.webp"}}}}',
             content_type="application/json",
             status=200,
         )
@@ -133,6 +138,6 @@ def mdimage_upload(request):
 
 def mdimage_download(request, uuid):
     md_image = get_object_or_404(MDImage, uuid=uuid)
-    response = HttpResponse(content_type="image/*")
+    response = HttpResponse(content_type="image/webp")
     response["X-Accel-Redirect"] = md_image.image.url
     return response
