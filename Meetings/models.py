@@ -7,7 +7,7 @@ import datetime
 
 
 def everyone_mention():
-    return ['@everyone']
+    return ["@everyone"]
 
 
 # Create your models here.
@@ -70,7 +70,10 @@ class DAbsentRequest(models.Model):
         return f"{self.meeting} - {self.member}"
 
     member = models.ForeignKey(
-        "Members.DMember", verbose_name="成員", on_delete=models.CASCADE
+        "Members.DMember",
+        verbose_name="成員",
+        related_name="absent_requests",
+        on_delete=models.CASCADE,
     )
     meeting = models.ForeignKey(
         DMeeting,
