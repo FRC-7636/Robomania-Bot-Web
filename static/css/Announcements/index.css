@@ -17,6 +17,11 @@
     color: #555;
 }
 
+#announcement-content-panel img {
+    max-width: 100%;
+    height: auto;
+}
+
 #panels-container {
     display: flex;
     flex-direction: column;
