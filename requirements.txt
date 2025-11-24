@@ -6,7 +6,7 @@ daphne~=4.2.1
 Twisted[tls,http2]
 django-debug-toolbar~=6.1.0
 django-compressor~=4.6.0
-asgiref~=3.10.0
+asgiref~=3.11.0
 channels~=4.3.1
 requests~=2.32.5
 python-dotenv~=1.2.1
