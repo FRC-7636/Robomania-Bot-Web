@@ -107,7 +107,7 @@ class MeetingSignIn(models.Model):
         verbose_name_plural = "會議簽到"
 
     def __str__(self):
-        return f"{self.uuid} - {self.meeting}"
+        return f"{self.meeting} - {self.uuid}"
 
     creator = models.ForeignKey(
         "Members.DMember",
