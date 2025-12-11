@@ -147,6 +147,12 @@ def discord_login_view(request):
             and DMember.objects.get(discord_id=discord_id).password != ""
         ):
             user = DMember.objects.get(discord_id=discord_id)
+            # update the avatar
+            user.avatar = (
+                f"https://cdn.discordapp.com/avatars/{user_info['id']}/{user_info['avatar']}"
+                f".png?size=256"
+            )
+            user.save()
             # login the user
             return login_procedure(request, user, "Discord OAuth2")
         else:
