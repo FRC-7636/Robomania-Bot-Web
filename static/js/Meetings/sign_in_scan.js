@@ -1,23 +1,29 @@
 document.addEventListener("DOMContentLoaded", function () {
     const signedInCount = document.getElementById("signed-in-count");
     const countdownTimer = document.getElementById("countdown-timer");
+    const qrContent = document.getElementById("qrcode-content");
+
+    function setTimer(seconds) {
+        const hours = Math.floor(seconds / 3600).toString().padStart(2, "0");
+        const minutes = Math.floor((seconds % 3600) / 60).toString().padStart(2, "0");
+        const secs = Math.floor(seconds % 60).toString().padStart(2, "0");
+        countdownTimer.textContent = `${hours}:${minutes}:${secs}`;
+    }
 
     const startTime = new Date(document.getElementById("sing-in-start-time").value).getTime();
     const endTime = new Date(document.getElementById("sing-in-end-time").value).getTime();
     if (startTime > Date.now()) {
         document.getElementById("countdown-head").textContent = "距離開放還有";
+        qrContent.textContent = "簽到尚未開放";
         setInterval(() => {
             const now = Date.now();
             const distanceSec = (startTime - now) / 1000;
 
             if (distanceSec <= 0) {
-                window.location.reload()
+                window.location.reload();
             }
 
-            const hours = Math.floor(distanceSec / 3600).toString().padStart(2, "0");
-            const minutes = Math.floor((distanceSec % 3600) / 60).toString().padStart(2, "0");
-            const seconds = Math.floor(distanceSec % 60).toString().padStart(2, "0");
-            countdownTimer.textContent = `${hours}:${minutes}:${seconds}`;
+            setTimer(distanceSec);
         }, 1000)
     } else {
         const signInCountdown = setInterval(() => {
@@ -25,16 +31,13 @@ document.addEventListener("DOMContentLoaded", function () {
             const distanceSec = (endTime - now) / 1000;
 
             if (distanceSec <= 0) {
-                document.getElementById("qrcode-content").textContent = "簽到已結束";
+                qrContent.textContent = "簽到已結束";
                 countdownTimer.textContent = "00:00:00";
                 clearInterval(signInCountdown);
                 return;
             }
 
-            const hours = Math.floor(distanceSec / 3600).toString().padStart(2, "0");
-            const minutes = Math.floor((distanceSec % 3600) / 60).toString().padStart(2, "0");
-            const seconds = Math.floor(distanceSec % 60).toString().padStart(2, "0");
-            countdownTimer.textContent = `${hours}:${minutes}:${seconds}`;
+            setTimer(distanceSec);
         }, 1000)
     }
 

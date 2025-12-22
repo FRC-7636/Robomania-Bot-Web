@@ -452,8 +452,6 @@ def sign_in_create_view(request, meeting_id):
 def sign_in_scan_view(request, meeting_id, sign_in_uuid):
     meeting = get_object_or_404(DMeeting, pk=meeting_id)
     sign_in = get_object_or_404(MeetingSignIn, uuid=sign_in_uuid)
-    if sign_in.ended_at and sign_in.ended_at < datetime.datetime.now(tz=TAIPEI_TZ):
-        return HttpResponse("This sign-in session has already ended.", status=403)
     signed_in_record_count = SingInRecord.objects.filter(sign_in_method=sign_in).count()
     signed_in_records = SingInRecord.objects.filter(sign_in_method=sign_in).order_by(
         "-signed_in_at"
