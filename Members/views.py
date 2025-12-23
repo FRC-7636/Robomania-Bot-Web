@@ -23,6 +23,7 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
 from .models import DMember, WarningHistory
+from .forms import BulkEditForm
 from .serializers import DMemberSerializer, WarningHistorySerializer
 
 
@@ -56,6 +57,40 @@ def sort_groups(groups: list[str]) -> dict[str, list[str]]:
     }
 
 
+def warning_points_operation(member: DMember, points: float, reason: str, operator: DMember, notes: str = ""):
+    warn_history = WarningHistory(
+        member=member,
+        operator=operator,
+        reason=reason,
+        points=points,
+        notes=notes,
+    )
+    warn_history.save()
+    member.warning_points += points
+    member.save()
+    if member.warning_points < 0:
+        auto_warn_history = WarningHistory(
+            member=member,
+            operator=operator,
+            reason="自動補正",
+            points=-member.warning_points,
+            notes="為避免點數為負，系統自動補足點數至 0。",
+        )
+        auto_warn_history.save()
+        member.warning_points = 0.0
+        member.save()
+    # send websocket notification after autocorrection
+    channel = get_channel_layer()
+    async_to_sync(channel.group_send)(
+        "member_updates",
+        {
+            "type": "member.add_warning_points",
+            "warning_detail": WarningHistorySerializer(warn_history).data,
+        },
+    )
+    return warn_history
+
+
 # Create your views here.
 @login_required
 def info(request, member_id):
@@ -85,7 +120,45 @@ def list_members(request):
     ):
         return redirect(f"{reverse('member_list')}?order_by=pk")
     members = members.order_by(request.GET["order_by"])
-    return render(request, "Members/list.html", {"members": members})
+    return render(
+        request,
+        "Members/list.html",
+        {
+            "members": members,
+            "can_edit": request.user.has_perm("Members.change_dmember"),
+        },
+    )
+
+
+@login_required
+@permission_required("Members.change_dmember")
+def bulk_edit_members(request):
+    if request.method == "POST":
+        form = BulkEditForm(request.POST)
+        if form.is_valid():
+            member_ids = form.cleaned_data["member_ids"]
+            gen = form.cleaned_data.get("gen")
+            reason = form.cleaned_data.get("reason")
+            points = form.cleaned_data.get("points")
+            notes = form.cleaned_data.get("notes")
+            for member_id in member_ids:
+                member = get_object_or_404(DMember, pk=member_id)
+                if gen is not None:
+                    member.gen = gen
+                member.save()
+                if points is not None and reason:
+                    warning_points_operation(
+                        member=member,
+                        operator=request.user,
+                        points=points,
+                        reason=reason,
+                        notes=notes or "",
+                    )
+            return redirect("member_list")
+        return HttpResponseBadRequest("Invalid form data.")
+    members = DMember.objects.all()
+    reload_team_rules()
+    return render(request, "Members/bulk_edit.html", {"members": members, "team_rules": TEAM_RULES})
 
 
 @login_required
@@ -139,7 +212,9 @@ def disable_member(request, member_id):
         if session_data.get("_auth_user_id") == str(member.id):
             session.delete()
             session_count += 1
-    return HttpResponse(dumps({"signed_out_sessions": session_count}), content_type="application/json")
+    return HttpResponse(
+        dumps({"signed_out_sessions": session_count}), content_type="application/json"
+    )
 
 
 @permission_required(["Members.change_dmember"])
@@ -162,36 +237,12 @@ def edit_warning_points(request, member_id):
     if request.method == "POST":
         if abs(float(request.POST["points"])) > 5:
             return HttpResponseBadRequest("單次增減點數不可超過 5 點。")
-        warn_history = WarningHistory(
+        warning_points_operation(
             member=member,
             operator=request.user,
+            points=float(request.POST["points"]),
             reason=request.POST["reason"],
-            points=request.POST["points"],
-            notes=request.POST["notes"],
-        )
-        warn_history.save()
-        points_before = member.warning_points
-        member.warning_points = points_before + float(request.POST["points"])
-        member.save()
-        if member.warning_points < 0:
-            auto_warn_history = WarningHistory(
-                member=member,
-                operator=request.user,
-                reason="自動補正",
-                points=-member.warning_points,
-                notes="為避免點數為負，系統自動補足點數至 0。",
-            )
-            auto_warn_history.save()
-            member.warning_points = 0.0
-            member.save()
-        # send websocket notification after autocorrection
-        channel = get_channel_layer()
-        async_to_sync(channel.group_send)(
-            "member_updates",
-            {
-                "type": "member.add_warning_points",
-                "warning_detail": WarningHistorySerializer(warn_history).data,
-            },
+            notes=request.POST.get("notes", ""),
         )
         return redirect("member_info", member_id=member_id)
     else:
@@ -204,13 +255,21 @@ class MembersViewSet(ModelViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [DjangoModelPermissions]
 
-    filterset_fields = ("discord_id", "real_name", "email_address", "gen", "warning_points")
+    filterset_fields = (
+        "discord_id",
+        "real_name",
+        "email_address",
+        "gen",
+        "warning_points",
+    )
 
     queryset = DMember.objects.all()
     serializer_class = DMemberSerializer
 
     @action(methods=["GET"], detail=False)
     def bad_guys(self, request):
-        bad_guys = DMember.objects.filter(warning_points__gt=0).order_by("-warning_points")
+        bad_guys = DMember.objects.filter(warning_points__gt=0).order_by(
+            "-warning_points"
+        )
         serializer = self.get_serializer(bad_guys, many=True)
         return Response(serializer.data)

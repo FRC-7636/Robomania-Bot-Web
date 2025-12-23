@@ -14,7 +14,15 @@
 
 {% block main_content %}
     <div class="soft-container" id="member-list-container">
-        <h1 style="margin: 0.3em 0;">成員列表</h1>
+        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+            <h1 style="margin: 0.3em 0;">成員列表</h1>
+            <md-filled-button href="{% url "member_bulk_edit" %}" style="height: fit-content;" {% if not can_edit %} disabled {% endif %}>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 0.3em;">
+                    <span class="material-symbols-outlined">edit_note</span>
+                    <span>批次操作</span>
+                </div>
+            </md-filled-button>
+        </div>
         <div class="round-container" id="members-list">
             <div class="round-container inner-container members-list-div" id="members-list-content">
                 <md-list style="width: 100%;">

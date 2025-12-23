@@ -1,0 +1,42 @@
+#panels-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 0.5em;
+}
+
+.round-container {
+    height: max-content;
+}
+
+#members-list {
+    flex: 4;
+}
+
+#actions-container {
+    flex: 1;
+    background-color: rgba(255, 255, 255, 0.2);
+    margin-top: 0.5em;
+}
+
+.member-checkbox {
+    flex: 1;
+}
+
+.checkbox-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#bulk-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    width: 100%;
+    margin-top: 0.5em;
+}
+
+#bulk-edit-form .divider {
+    border-color: white;
+}
