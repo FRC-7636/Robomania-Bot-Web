@@ -24,7 +24,7 @@ class UserFile(models.Model):
 
     file = models.FileField("檔案物件", upload_to=user_file_path, max_length=300)
     uuid = models.UUIDField("UUID", default=uuid4, editable=False, unique=True)
-    name = models.CharField("名稱", help_text="使用者下載檔案時，將顯示此名稱", max_length=20)
+    name = models.CharField("名稱", help_text="使用者下載檔案時，將顯示此名稱", max_length=100)
     mimetype = models.CharField("MIME 類型", max_length=255)
     uploader = models.ForeignKey("Members.DMember", verbose_name="上傳者", on_delete=models.CASCADE)
     uploaded_at = models.DateTimeField("上傳時間", auto_now_add=True)

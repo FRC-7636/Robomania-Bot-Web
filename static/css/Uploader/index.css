@@ -151,3 +151,10 @@
     width: 100%;
     gap: 0.25em;
 }
+
+#progress-bar {
+    width: 100%;
+    border-radius: 100em;
+    --md-linear-progress-track-height: calc(2em + 10px);
+    --md-linear-progress-active-indicator-height: calc(2em + 10px);
+}

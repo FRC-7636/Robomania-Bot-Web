@@ -46,6 +46,21 @@ document.addEventListener("DOMContentLoaded", function(event) {
     const fileInput = document.getElementById("file-input");
     const passwordInput = document.getElementById("password-input");
     const confirmPasswordInput = document.getElementById("confirm-password-input");
+    const progressBar = document.getElementById("progress-bar");
+    
+    function updateProgressBar(event) {
+        if (event.lengthComputable) {
+            if (progressBar.indeterminate) {
+                progressBar.removeAttribute("indeterminate");
+            }
+            const percentComplete = event.loaded / event.total;
+            progressBar.value = percentComplete;
+            console.log(`${(percentComplete * 100).toFixed(2)} %`);
+        } else {  // Indeterminate state
+            progressBar.removeAttribute("value");
+            progressBar.indeterminate = true;
+        }
+    }
 
     dropZone.addEventListener("dragenter", function (e) {
         e.preventDefault();
@@ -122,21 +137,42 @@ document.addEventListener("DOMContentLoaded", function(event) {
         }
     })
 
-    document.getElementById("upload-button").addEventListener("click", function () {
+    document.getElementById("upload-button").addEventListener("click", function (event) {
         const fileNameInput = document.getElementById("file-name-input");
-        if (fileNameInput.value.length > 20) {
+        if (fileNameInput.value.length > 100) {
             fileNameInput.error = true;
-            fileNameInput.errorText = "檔案名稱不得超過 20 個字元。";
+            fileNameInput.errorText = "檔案名稱不得超過 100 個字元。";
         } else {
             fileNameInput.error = false;
             fileNameInput.errorText = "";
-            document.getElementById("upload-form").requestSubmit();
+            event.target.style.display = "none";
+
+            const xhr = new XMLHttpRequest();
+            const formData = new FormData(document.getElementById("upload-form"));
+
+            xhr.open("POST", window.location.href, true);
+
+            xhr.upload.addEventListener("loadstart", () => {
+                progressBar.style.display = "block";
+            });
+            xhr.upload.addEventListener("progress", updateProgressBar);
+            xhr.upload.addEventListener("error", () => {
+                alert("上傳過程中發生錯誤，請稍後再試。");
+            });
+            xhr.addEventListener("loadend", () => {
+                if (xhr.status === 200) {
+                    window.location.replace(xhr.responseURL);
+                }
+            })
+
+            xhr.send(formData);
+            // document.getElementById("upload-form").requestSubmit();
         }
     })
 
     function markPasswordMismatch() {
-        let password = passwordInput.value;
-        let confirmPassword = confirmPasswordInput.value;
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
 
         if (password !== confirmPassword) {
             confirmPasswordInput.error = true;

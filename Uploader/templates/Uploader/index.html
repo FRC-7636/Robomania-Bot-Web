@@ -23,8 +23,8 @@
             <div id="vertical-spacer"></div>
             <div id="result-text"></div>
         </div>
-        <form name="upload-form" id="upload-form" method="post" enctype="multipart/form-data"
-              style="width: -webkit-fill-available; margin-top: 0.5em;">
+        <form name="upload-form" id="upload-form" action="{% url "uploader_upload" %}" method="post"
+              enctype="multipart/form-data" style="width: -webkit-fill-available; margin-top: 0.5em;">
             {% csrf_token %}
             <div class="round-container panel" id="uploader-panel">
                 <input id="file-input" type="file" name="file" required>
@@ -64,7 +64,7 @@
                             <span class="panel-title-text">託管設定</span>
                         </div>
                         <div id="file-settings-content">
-                            <md-filled-text-field label="檔案名稱" name="name" maxlength="20" id="file-name-input"
+                            <md-filled-text-field label="檔案名稱" name="name" maxlength="100" id="file-name-input"
                                                   supporting-text="使用者下載檔案時，將顯示此名稱"
                                                   required></md-filled-text-field>
                             <input id="require-login-input" type="hidden" name="require_login" value="false">
@@ -95,6 +95,7 @@
                             <span style="margin-left: 0.5em;">上傳</span>
                         </div>
                     </md-filled-button>
+                    <md-linear-progress indeterminate id="progress-bar" style="display: none;"></md-linear-progress>
                     <span style="font-size: 0.75em;">上傳檔案即表示你同意「託管服務規定」。</span>
                 </div>
             </div>
