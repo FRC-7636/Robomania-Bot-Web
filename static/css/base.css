@@ -71,6 +71,11 @@ md-filter-chip {
     top: 0;
     padding-top: 70px; /* Adjust for header height */
     width: 100%;
+    transition: padding-top 0.1s;
+}
+
+.container.collapsed {
+    padding-top: 0;
 }
 
 .divider {
@@ -91,6 +96,11 @@ md-filter-chip {
     display: flex;
     flex-direction: column;
     align-items: start;
+    transition: padding-top 0.1s;
+}
+
+.soft-container.collapsed {
+    padding-top: 0;
 }
 
 .round-container {

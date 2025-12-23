@@ -16,11 +16,23 @@ document.addEventListener("DOMContentLoaded", function(e) {
             e.target.classList.remove("collapsed");
             e.target.textContent = "收合 ↑";
             document.getElementsByTagName("header")[0].classList.remove("collapsed");
+            if (document.getElementsByClassName("container").length > 0) {
+                document.getElementsByClassName("container")[0].classList.remove("collapsed");
+            }
+            if (document.getElementsByClassName("soft-container").length > 0) {
+                document.getElementsByClassName("soft-container")[0].classList.remove("collapsed");
+            }
         }
         else {
             e.target.classList.add("collapsed");
             e.target.textContent = "展開 ↓";
             document.getElementsByTagName("header")[0].classList.add("collapsed");
+            if (document.getElementsByClassName("container").length > 0) {
+                document.getElementsByClassName("container")[0].classList.add("collapsed");
+            }
+            if (document.getElementsByClassName("soft-container").length > 0) {
+                document.getElementsByClassName("soft-container")[0].classList.add("collapsed");
+            }
         }
     })
 })
