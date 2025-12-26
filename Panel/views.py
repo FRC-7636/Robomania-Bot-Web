@@ -39,7 +39,7 @@ def unmark(text):
 # Create your views here.
 def index(request):
     if request.user.is_authenticated:
-        pinned_announcements = Announcement.objects.filter(is_pinned=True)
+        pinned_announcements = Announcement.objects.filter(is_pinned=True).order_by("-created_at")
         pinned_announcements_condensed = []
         for ann in pinned_announcements:
             title = ann.title
