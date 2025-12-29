@@ -159,6 +159,14 @@
                             新增簽到階段
                         </div>
                     </md-filled-button>
+                    <md-filled-button href="{% url "meeting_signin_export" meeting.pk %}"
+                            {% if not can_view_sign_in %} disabled {% endif %}>
+                        <div style="display: flex; align-items: center; height: min-content;">
+                            <span class="material-symbols-outlined button-icon">
+                                csv</span>
+                            匯出簽到名單 (CSV)
+                        </div>
+                    </md-filled-button>
                 </div>
             </div>
         </div>

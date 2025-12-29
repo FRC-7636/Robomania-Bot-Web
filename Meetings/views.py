@@ -3,11 +3,14 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.conf import settings
+from django.utils.http import content_disposition_header
 
 import datetime
 from zoneinfo import ZoneInfo
 import json
 import logging
+from csv import DictWriter
+from io import StringIO
 
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import DjangoModelPermissions
@@ -469,6 +472,37 @@ def sign_in_scan_view(request, meeting_id, sign_in_uuid):
 
 
 @login_required
+@permission_required(["Meetings.view_meetingsignin"])
+def export_sign_in_records(request, meeting_id):
+    meeting = get_object_or_404(DMeeting, pk=meeting_id)
+    sign_in_records = SingInRecord.objects.filter(
+        sign_in_method__meeting=meeting
+    ).order_by("signed_in_at", "sign_in_method__started_at")
+    with StringIO() as csvfile:
+        writer = DictWriter(
+            csvfile,
+            fieldnames=["member_discord_id", "member_real_name", "signed_in_at", "sign_in_uuid"],
+        )
+        writer.writeheader()
+        for record in sign_in_records:
+            writer.writerow(
+                {
+                    "member_discord_id": record.member.discord_id,
+                    "member_real_name": record.member.real_name,
+                    "signed_in_at": record.signed_in_at.astimezone(TAIPEI_TZ).strftime(
+                        "%Y/%m/%d %H:%M:%S"
+                    ),
+                    "sign_in_uuid": str(record.sign_in_method.uuid),
+                }
+            )
+        response = HttpResponse(csvfile.getvalue(), content_type="text/csv")
+        response["Content-Disposition"] = content_disposition_header(
+            True, f"簽到記錄_{meeting.name}_{datetime.datetime.now(TAIPEI_TZ).strftime('%Y%m%d_%H%M%S')}.csv"
+        )
+        return response
+
+
+@login_required
 def submit_absent_request(request, meeting_id):
     meeting = get_object_or_404(DMeeting, pk=meeting_id)
     now = datetime.datetime.now(tz=TAIPEI_TZ)
@@ -560,14 +594,6 @@ def review_absent_requests_api(request, meeting_id):
                 )
         return HttpResponse(json.dumps(review_conflicts), status=200)
     return HttpResponse("Method not allowed", status=405)
-
-
-def test_ws(request):
-    channel = get_channel_layer()
-    async_to_sync(channel.group_send)(
-        "meeting_updates", {"type": "test.message", "text": "This is a test message."}
-    )
-    return HttpResponse("Done", status=200)
 
 
 class MeetingsViewSet(ModelViewSet):
