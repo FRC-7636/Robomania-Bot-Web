@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     "Panel.apps.PanelConfig",
     "Uploader.apps.UploaderConfig",
     "Announcements.apps.AnnouncementsConfig",
-    "WinterTraining.apps.WintertrainingConfig",
+    # "WinterTraining.apps.WintertrainingConfig",
     # DRF
     "drf_redesign",
     "rest_framework",
