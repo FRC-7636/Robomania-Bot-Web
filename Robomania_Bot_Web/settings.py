@@ -28,7 +28,7 @@ SECRET_KEY = getenv("DJANGO_SECRET_KEY")
 DEBUG = getenv("IS_DEBUG", "True").lower() == "true"
 
 ALLOWED_HOSTS = ["*"]
-CSRF_TRUSTED_ORIGINS = ["https://frc7636.dpdns.org", "https://panel.team7636.com",
+CSRF_TRUSTED_ORIGINS = ["https://frc7636.dpdns.org", "https://panel.team7636.com", "https://test.team7636.com",
                         "http://127.0.0.1", "http://localhost"]
 
 INTERNAL_IPS = [
