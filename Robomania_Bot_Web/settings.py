@@ -212,7 +212,7 @@ STATICFILES_FINDERS = [
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
-STATIC_ROOT = "/var/www/rwb/statics/"
+STATIC_ROOT = "/var/www/rwb/statics"
 COMPRESS_OFFLINE = True
 COMPRESS_FILTERS = {
     'css': ['compressor.filters.css_default.CssAbsoluteFilter', 'compressor.filters.cssmin.rCSSMinFilter'],
