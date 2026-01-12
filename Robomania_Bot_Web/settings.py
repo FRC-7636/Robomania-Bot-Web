@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "Panel.apps.PanelConfig",
     "Uploader.apps.UploaderConfig",
     "Announcements.apps.AnnouncementsConfig",
+    "WinterTraining.apps.WintertrainingConfig",
     # DRF
     "drf_redesign",
     "rest_framework",
@@ -211,7 +212,7 @@ STATICFILES_FINDERS = [
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
-STATIC_ROOT = BASE_DIR / "web_statics"
+STATIC_ROOT = "/var/www/rwb/static/"
 COMPRESS_OFFLINE = True
 COMPRESS_FILTERS = {
     'css': ['compressor.filters.css_default.CssAbsoluteFilter', 'compressor.filters.cssmin.rCSSMinFilter'],
