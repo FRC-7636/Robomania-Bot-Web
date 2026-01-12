@@ -224,7 +224,7 @@ COMPRESS_YUGLIFY_JS_ARGUMENTS = "--terminal --mangle --toplevel"
 # User uploads
 
 MEDIA_URL = "user_uploads_nginx/"
-MEDIA_ROOT = BASE_DIR / "user_uploads"
+MEDIA_ROOT = "/var/www/rwb/user_uploads"
 
 
 # Default primary key field type
