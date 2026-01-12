@@ -6,4 +6,4 @@ python3 manage.py migrate
 python3 manage.py collectstatic --noinput
 rm -R web_statics/CACHE
 python3 manage.py compress
-sudo systemctl restart roboweb
+sudo systemctl restart rwb
