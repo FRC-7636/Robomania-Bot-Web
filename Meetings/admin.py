@@ -4,7 +4,6 @@ from .models import DMeeting, DAbsentRequest, MeetingSignIn, SingInRecord
 
 
 # Register your models here.
-
 @admin.register(DMeeting)
 class DMeetingAdmin(admin.ModelAdmin):
     list_display = (
