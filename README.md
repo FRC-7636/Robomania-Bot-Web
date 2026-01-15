@@ -5,5 +5,3 @@
 - 會議規劃：預定會議、假單系統、簽到系統等
 - 公告管理：發布公告、釘選功能、「同步至 Discord」等
 - 其他服務：檔案託管
-
-> Testing sync between Codeberg and GitHub
