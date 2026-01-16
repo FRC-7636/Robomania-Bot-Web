@@ -2,7 +2,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect, reverse
 
 from os import getenv
@@ -126,6 +126,7 @@ def login_view(request):
 
 
 def discord_login_view(request):
+    return HttpResponseNotFound("由於伺服器網路設置問題，此功能已停用。請改用其他登入方式。")
     code = request.GET.get("code", None)
     if code:
         dc_auth_obj = DiscordAuth(
@@ -255,6 +256,7 @@ def password_change_view(request):
 
 @login_required
 def sync_avatar_view(request):
+    return HttpResponseNotFound("由於伺服器網路設置問題，此功能已停用。")
     code = request.GET.get("code", None)
     if code:
         dc_auth_obj = DiscordAuth(
