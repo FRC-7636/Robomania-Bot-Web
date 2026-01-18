@@ -5,9 +5,9 @@ import requests
 class DiscordAuth:
     def __init__(
         self,
-        client_id: int | str,
-        client_secret: str,
-        host: str,
+        client_id: int | str = None,
+        client_secret: str = None,
+        host: str = None,
         api_middleware_url: str = None,
         middleware_token: str = None,
     ):
@@ -28,6 +28,8 @@ class DiscordAuth:
         redirect_uri_suffix="/accounts/login/discord/",
         scope="identify email guilds",
     ):
+        if not (self.client_id and self.client_secret):
+            raise ValueError("client_id and client_secret must be provided.")
         url = "https://discord.com/api/v10/oauth2/token"
         if self.refresh_token is None:
             if code is None:
@@ -141,13 +143,31 @@ class DiscordAuth:
         else:
             raise Exception(f"Failed to get user guilds: {response.text}")
 
+    def send_request_via_middleware(self, method: str, url: str, headers: dict = None, data: dict = None):
+        """
+        Send a request via the API middleware.
+        """
+        if self.api_middleware_url is None or self.middleware_token_header is None:
+            raise ValueError("API middleware URL or Token is not set.")
+        response = requests.post(
+            self.api_middleware_url,
+            json={
+                "method": method,
+                "url": url,
+                "headers": headers,
+                "data": data,
+            },
+            headers=self.middleware_token_header,
+        )
+        return response
+
 
 if __name__ == "__main__":
     from dotenv import load_dotenv
     from os import getenv
     from pprint import pprint
 
-    load_dotenv("../CONFIG.env")
+    load_dotenv("CONFIG.env")
     test_obj = DiscordAuth(
         getenv("DISCORD_CLIENT_ID"),
         getenv("DISCORD_CLIENT_SECRET"),

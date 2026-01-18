@@ -2,7 +2,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, reverse
 
 from os import getenv
@@ -19,7 +19,7 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
 from .models import LoginCode
-from .discord_auth import DiscordAuth
+from discord_auth import DiscordAuth
 from .serializers import LoginCodeSerializer
 from Members.models import DMember
 
