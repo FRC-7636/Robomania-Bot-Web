@@ -126,12 +126,13 @@ def login_view(request):
 
 
 def discord_login_view(request):
-    return HttpResponseNotFound("由於伺服器網路設置問題，此功能已停用。請改用其他登入方式。")
     code = request.GET.get("code", None)
     if code:
         dc_auth_obj = DiscordAuth(
             getenv("DISCORD_CLIENT_ID"), getenv("DISCORD_CLIENT_SECRET"),
-            f"{'http' if '127.0.0.1' in request.get_host() else 'https'}://{request.get_host()}"
+            f"{'http' if '127.0.0.1' in request.get_host() else 'https'}://{request.get_host()}",
+            getenv("DISCORD_API_MIDDLEWARE_URL"),
+            getenv("DISCORD_API_MIDDLEWARE_TOKEN"),
         )
         dc_auth_obj.update_access_token(code)
         # check if user is in the FRC #7636 server
@@ -256,12 +257,14 @@ def password_change_view(request):
 
 @login_required
 def sync_avatar_view(request):
-    return HttpResponseNotFound("由於伺服器網路設置問題，此功能已停用。")
     code = request.GET.get("code", None)
     if code:
         dc_auth_obj = DiscordAuth(
-            getenv("DISCORD_CLIENT_ID"), getenv("DISCORD_CLIENT_SECRET"),
-            f"{'http' if '127.0.0.1' in request.get_host() else 'https'}://{request.get_host()}"
+            getenv("DISCORD_CLIENT_ID"),
+            getenv("DISCORD_CLIENT_SECRET"),
+            f"{'http' if '127.0.0.1' in request.get_host() else 'https'}://{request.get_host()}",
+            getenv("DISCORD_API_MIDDLEWARE_URL"),
+            getenv("DISCORD_API_MIDDLEWARE_TOKEN"),
         )
         dc_auth_obj.update_access_token(
             code, redirect_uri_suffix="/accounts/sync_avatar/", scope="identify"
