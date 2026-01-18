@@ -21,6 +21,7 @@ import requests
 
 from .models import Announcement
 from .serializers import AnnouncementSerializer
+from discord_auth import DiscordAuth
 
 TAIPEI_TZ = ZoneInfo("Asia/Taipei")
 
@@ -58,16 +59,26 @@ def announce_to_discord(announcement: Announcement):
         message = message[:1997] + "..."
     webhook_url = getenv("DISCORD_WEBHOOK_URL")
     try:
-        result = requests.post(
-            webhook_url,
-            headers={"Content-Type": "application/json"},
-            json={
-                "content": message
-            },
+        # Commented out to use middleware instead
+        # result = requests.post(
+        #     webhook_url,
+        #     headers={"Content-Type": "application/json"},
+        #     json={
+        #         "content": message
+        #     },
+        # )
+        # if not result.ok:
+        #     raise Exception(f"HTTP {result.status_code} ({result.text})")
+        # logging.info(f"Announcement #{announcement.pk} sent to Discord webhook.")
+        dc_auth_obj = DiscordAuth(
+            api_middleware_url=getenv("DISCORD_API_MIDDLEWARE_URL"),
+            middleware_token=getenv("DISCORD_API_MIDDLEWARE_TOKEN"),
         )
-        if not result.ok:
-            raise Exception(f"HTTP {result.status_code} ({result.text})")
-        logging.info(f"Announcement #{announcement.pk} sent to Discord webhook.")
+        dc_auth_obj.send_request_via_middleware(
+            "POST",
+            webhook_url,
+            data={"content": message},
+        )
     except Exception as e:
         logging.error(
             f"Failed to send announcement #{announcement.pk} to Discord webhook: {e}"
