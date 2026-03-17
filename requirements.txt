@@ -1,4 +1,4 @@
-Django~=6.0.1
+Django~=6.0.3
 djangorestframework~=3.16.1
 django-filter~=25.2
 drf-redesign~=0.6.0
@@ -6,12 +6,12 @@ daphne~=4.2.1
 Twisted[tls,http2]
 django-debug-toolbar~=6.2.0
 django-compressor~=4.6.0
-asgiref~=3.11.0
+asgiref~=3.11.1
 channels~=4.3.2
 requests~=2.32.5
-python-dotenv~=1.2.1
-pillow~=12.1.0
+python-dotenv~=1.2.2
+pillow~=12.1.1
 tzdata~=2025.3
-magika~=1.0.1
+magika~=1.0.2
 colorlog~=6.10.1
 markdown~=3.10
