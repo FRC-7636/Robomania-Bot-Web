@@ -12,6 +12,6 @@ requests~=2.33.1
 python-dotenv~=1.2.2
 pillow~=12.2.0
 tzdata~=2026.1
-magika~=1.0.2
+magika~=1.0.3
 colorlog~=6.10.1
 markdown~=3.10
