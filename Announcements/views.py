@@ -46,6 +46,7 @@ def validate_announcement_data(data) -> tuple[bool, str]:
             return False, "pin_until"
     return True, ""
 
+# TEST
 
 def announce_to_discord(announcement: Announcement):
     message = f"""\
