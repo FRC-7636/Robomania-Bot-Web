@@ -24,6 +24,7 @@ from .serializers import AnnouncementSerializer
 from discord_auth import DiscordAuth
 
 TAIPEI_TZ = ZoneInfo("Asia/Taipei")
+WEBHOOK_URL = getenv("DISCORD_WEBHOOK_URL")
 
 
 def validate_announcement_data(data) -> tuple[bool, str]:
@@ -57,42 +58,39 @@ def announce_to_discord(announcement: Announcement):
 """
     if len(message) > 2000:
         message = message[:1997] + "..."
-    webhook_url = getenv("DISCORD_WEBHOOK_URL")
-    try:
-        # Commented out to use middleware instead
-        # result = requests.post(
-        #     webhook_url,
-        #     headers={"Content-Type": "application/json"},
-        #     json={
-        #         "content": message
-        #     },
-        # )
-        # if not result.ok:
-        #     raise Exception(f"HTTP {result.status_code} ({result.text})")
-        # logging.info(f"Announcement #{announcement.pk} sent to Discord webhook.")
-        dc_auth_obj = DiscordAuth(
-            api_middleware_url=getenv("DISCORD_API_MIDDLEWARE_URL"),
-            middleware_token=getenv("DISCORD_API_MIDDLEWARE_TOKEN"),
-        )
-        dc_auth_obj.send_request_via_middleware(
-            "POST",
-            webhook_url,
-            data={"content": message},
-        )
-    except Exception as e:
-        logging.error(
-            f"Failed to send announcement #{announcement.pk} to Discord webhook: {e}"
-        )
-        # send websocket notification
-        channel = get_channel_layer()
-        async_to_sync(channel.group_send)(
-            "announcement_updates",
-            {
-                "type": "announcement.announce",
-                "announcement": AnnouncementSerializer(announcement).data,
-            },
-        )
-        logging.info(f"Announcement #{announcement.pk} sent via websocket as fallback.")
+        # 1. Directly to Discord webhook
+        if isinstance(WEBHOOK_URL, str):
+            result = requests.post(
+                WEBHOOK_URL,
+                headers={"Content-Type": "application/json"},
+                json={
+                    "content": message
+                },
+            )
+            logging.info(f"Announcement #{announcement.pk} sent to Discord webhook.")
+            if not result.ok:
+                # 2. Use middleware
+                dc_auth_obj = DiscordAuth(
+                    api_middleware_url=getenv("DISCORD_API_MIDDLEWARE_URL"),
+                    middleware_token=getenv("DISCORD_API_MIDDLEWARE_TOKEN"),
+                )
+                dc_auth_obj.send_request_via_middleware(
+                    "POST",
+                    WEBHOOK_URL,
+                    data={"content": message},
+                )
+        else:
+            logging.warning("`WEBHOOK_URL` not set, using websocket as fallback.")
+            # send websocket notification
+            channel = get_channel_layer()
+            async_to_sync(channel.group_send)(
+                "announcement_updates",
+                {
+                    "type": "announcement.announce",
+                    "announcement": AnnouncementSerializer(announcement).data,
+                },
+            )
+            logging.info(f"Announcement #{announcement.pk} sent via websocket as fallback.")
 
 
 # Create your views here.
