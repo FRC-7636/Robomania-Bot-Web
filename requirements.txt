@@ -15,4 +15,4 @@ tzdata~=2026.4
 magika~=1.0.2
 colorlog~=6.12.0
 markdown~=3.11
-aiohttp~=3.14.3
+aiohttp~=3.14.5
