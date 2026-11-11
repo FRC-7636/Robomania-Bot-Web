@@ -1,6 +1,6 @@
 Django~=6.1.2
 djangorestframework~=3.18.3
-django-filter~=26.1
+django-filter~=26.2
 drf-redesign~=0.6.0
 daphne~=4.2.3
 Twisted[tls,http2]
