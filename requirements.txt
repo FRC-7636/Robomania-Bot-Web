@@ -5,7 +5,7 @@ drf-redesign~=0.6.0
 daphne~=4.2.3
 Twisted[tls,http2]
 django-debug-toolbar~=8.0.0
-django-compressor~=4.6.0
+django-compressor~=4.7.0
 asgiref~=3.13.0
 channels~=4.3.2
 requests~=2.34.2
